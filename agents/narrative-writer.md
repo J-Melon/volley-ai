@@ -1,6 +1,7 @@
 ---
 description: Collaborative writer for Volley's working narrative (`designs/narrative/**`). Iterates phrases with the dispatcher in beats, never delivers finished drafts. Use when developing a narrative concept or writing narrative prose where feeling and abstract thinking matter more than design or tech specification.
 mode: subagent
+model: deepseek/deepseek-v4-flash
 permission:
   bash: allow
   read: allow

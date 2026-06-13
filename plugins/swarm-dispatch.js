@@ -3,9 +3,10 @@
 // is sequential and blocking). Design: SWARM-DISPATCH-SCOPE.md.
 
 import { tool } from "@opencode-ai/plugin"
-import { readFileSync } from "node:fs"
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 import { dirname, join } from "node:path"
+import os from "node:os"
 
 const z = tool.schema
 
@@ -23,6 +24,10 @@ const CODENAMES = (() => {
 const CONCURRENCY_DEFAULT = 5
 const MINION_TIMEOUT_MS = 10 * 60 * 1000
 const MAX_DEPTH = 3
+// A report longer than this is truncated in the pushed message and spilled in
+// full to a file, so the dispatcher loses nothing but isn't flooded inline.
+const REPORT_INLINE_LIMIT = 1500
+const SPILL_DIR = join(os.tmpdir(), "opencode-swarm-reports")
 
 export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
   const swarms = new Map()
@@ -53,10 +58,19 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
     } catch {
       body = "(could not read my output)"
     }
-    const status = rec.timedOut ? "timed out before finishing" : "reporting"
-    const text =
-      `${rec.codename} (${rec.agent}) ${status} on ${rec.label}:\n\n` +
-      (body ? body.slice(0, 1500) : "(no output)")
+    const status = rec.timedOut ? "timed out before finishing" : rec.error ? `errored: ${rec.error}` : "reporting"
+    const head = `${rec.codename} (${rec.agent}) ${status} on ${rec.label}:\n\n`
+    let report = body || "(no output)"
+    // Long reports spill to a file: push the head plus a pointer so the dispatcher
+    // can read the rest on demand, rather than swallowing it at the cut.
+    if (body && body.length > REPORT_INLINE_LIMIT) {
+      const spill = spillReport(rec, body)
+      report = spill
+        ? body.slice(0, REPORT_INLINE_LIMIT) +
+          `\n\n[...truncated; full ${body.length}-char report written to ${spill} -- read it for the rest.]`
+        : body.slice(0, REPORT_INLINE_LIMIT) + "\n\n[...truncated; full report could not be spilled to file.]"
+    }
+    const text = head + report
 
     // Retry: the dispatcher may be mid-turn and reject the prompt. Swallowing that
     // would silently lose the result. Delete the session only once the report lands.
@@ -186,13 +200,17 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             }
             if (!childID) return { codename, label: m.label, error: "no child session id returned" }
 
-            // Fire and don't await; the result comes back via reportToDispatcher.
-            client.session
-              .prompt({ path: { id: childID }, query: { directory: dir }, body: { agent: m.agent, parts: [{ type: "text", text: m.task }] } })
-              .catch(() => {})
-
             const rec = { codename, label: m.label, agent: m.agent, childID, dir, worktreePath, branch, isolate: !!m.isolate, startedAt: Date.now(), done: false }
             swarm.minions.set(childID, rec)
+
+            // Fire and don't await; the result comes back via reportToDispatcher.
+            // If the prompt itself fails the minion never starts, so auto-report the error.
+            client.session
+              .prompt({ path: { id: childID }, query: { directory: dir }, body: { agent: m.agent, parts: [{ type: "text", text: m.task }] } })
+              .catch((e) => {
+                rec.error = `prompt failed: ${e}`
+                markDone(swarm, rec)
+              })
 
             // A hung child never goes idle, so it would hold its slot forever; abort on timeout.
             rec.timer = setTimeout(() => {
@@ -247,6 +265,66 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
           return removed.length ? "Worktree cleanup:\n" + removed.join("\n") : "No worktrees to clean."
         },
       }),
+
+      swarm_status: tool({
+        description:
+          "Show the status of all dispatched minions. " +
+          "Returns a table with codename, agent, label, state, elapsed time, and any error.",
+        args: {},
+        async execute(_args, ctx) {
+          const swarm = swarms.get(ctx.sessionID)
+          if (!swarm || swarm.minions.size === 0) return "No minion state for this session."
+          const rows = []
+          for (const rec of swarm.minions.values()) {
+            let state = "running"
+            if (rec.done && rec.timedOut) state = "timeout"
+            else if (rec.done && rec.error) state = "errored"
+            else if (rec.done && rec.reported) state = "reported"
+            else if (rec.done) state = "done"
+            const ms = (Date.now()-rec.startedAt) / 1000
+            const elapsed = rec.startedAt ? `${Math.round(ms)}s` : "-"
+            const err = rec.error ?? ""
+            rows.push(`  ${rec.codename}  ${rec.agent}  ${rec.label}  ${state}  ${elapsed}${err ? "  " + err : ""}`)
+          }
+          return "Swarm minions:\n" + rows.join("\n")
+        },
+      }),
+
+      swarm_tail: tool({
+        description: "Read the last 5 messages from a minion session by codename.",
+        args: {
+          codename: z.string().describe("the codename of the minion to tail"),
+        },
+        async execute(args, ctx) {
+          const swarm = swarms.get(ctx.sessionID)
+          if (!swarm) return "No swarm state for this session."
+          let found = null
+          for (const m of swarm.minions.values()) {
+            if (m.codename === args.codename) {
+              found = m
+              break
+            }
+          }
+          if (!found) return "no minion with that codename"
+          try {
+            const res = await client.session.messages({ path: { id: found.childID } })
+            const msgs = res?.data ?? res ?? []
+            const tail = msgs.slice(-5)
+            return tail
+              .map((mm) => {
+                const info = mm.info ?? mm
+                const role = info.role ?? info.type ?? "unknown"
+                const texts = (mm.parts ?? [])
+                  .filter((p) => p.type === "text")
+                  .map((p) => p.text || "")
+                return `${role}: ${texts.join("\n").slice(0, 500)}`
+              })
+              .join("\n---\n")
+          } catch (e) {
+            return `failed to read messages: ${e}`
+          }
+        },
+      }),
     },
 
     event: async ({ event }) => {
@@ -268,6 +346,21 @@ function isSceneWork(label, task) {
 
 function safeToken(s) {
   return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
+}
+
+// Spill an over-long minion report to disk. childID makes the name unique without
+// a clock (Date.now is unavailable here). Returns the path, or null on failure so
+// the caller can degrade to a plain truncation notice.
+function spillReport(rec, body) {
+  try {
+    mkdirSync(SPILL_DIR, { recursive: true })
+    const name = `${safeToken(rec.codename) || "minion"}-${safeToken(rec.label) || "report"}-${rec.childID}.txt`
+    const path = join(SPILL_DIR, name)
+    writeFileSync(path, `${rec.codename} (${rec.agent}) on ${rec.label}\n\n${body}`, "utf8")
+    return path
+  } catch {
+    return null
+  }
 }
 
 async function makeWorktree($, mainTree, codename, label, task) {
