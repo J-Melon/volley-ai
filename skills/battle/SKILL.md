@@ -9,8 +9,8 @@ A *challenge* is the PR (see [`pr`](../pr/SKILL.md)); a *battle* is the review r
 
 The shape, in brief:
 
-- A battle is a confidence pass over a shipped challenge, dispatched to minions, not an in-thread audit.
+- A battle is a confidence pass over a shipped challenge, fanned out to reviewer minions, not an in-thread audit.
 - The floor is one independent reviewer on every PR. Reading my own diff is not a review; "yours to merge" off my own reading alone is the tell.
-- The loop: ground-read review state, dispatch reviewers scoped to the diff, converge without churn, resolve the verdict against the issue's AC from the inline threads, fire the bot review, then push and move on (CI calls back only on failure). Josh's merge is the gate.
+- The loop: ground-read review state, fan reviewers via `swarm_dispatch` scoped to the diff (read-only, parallel; [[feedback_swarm_dispatch_tools]]), `swarm_collect` the findings and reconcile the plan ([[feedback_todo_is_the_live_plan]]), converge without churn, resolve the verdict against the issue's AC from the inline threads, fire the bot review, then push and move on (CI calls back only on failure). Josh's merge is the gate.
 
 Read the memory branch for the full process.
