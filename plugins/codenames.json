@@ -337,7 +337,6 @@
       "Disco Stu",
       "Hans",
       "Jasper",
-      "Snake",
       "Legs",
       "Louie",
       "Artie",
@@ -520,12 +519,13 @@
       "Fake-Crash"
     ],
     "metal-gear": [
+      "Solid Snake",
       "Otacon",
       "Raiden",
       "Ocelot",
       "Big Boss",
-      "Liquid",
-      "Solidus",
+      "Liquid Snake",
+      "Solidus Snake",
       "Meryl",
       "Naomi",
       "Mei Ling",
@@ -593,7 +593,7 @@
       "Cunningham",
       "Elisa",
       "Ursula",
-      "Venom"
+      "Venom Snake"
     ],
     "volley": [
       "Martha"
