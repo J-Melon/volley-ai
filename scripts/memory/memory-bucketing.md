@@ -433,7 +433,6 @@
 - feedback_research_source_diversify
 - project_giveaway_chargeback_rules
 - project_marketing_public_good
-- project_pricing_model_goodwill
 - project_shuck_sanctuary
 - project_studio_structure
 - reference_legal_identity
