@@ -8,7 +8,7 @@ const TRIGGERS = [
   { keywords: /\b(reconcile|rule.*violated|grep.*surfaces?)\b/i, skill: "reconcile" },
   { keywords: /\b(handoff|letter|session.*close)\b/i, skill: "handoff" },
 ]
-const STALE_AFTER = 5
+const STALE_AFTER = 25
 
 /** @type {import("@opencode-ai/plugin").Plugin} */
 export const SkillNudge = async ({ client }) => {
