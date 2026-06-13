@@ -45,10 +45,16 @@ dispatcher invokes it by name. Two tools:
      working / talking to Josh. THIS is the non-blocking part.
    - Track dispatched children in plugin state (Map: parentID -> [child records]).
 
-2. `swarm_collect({ wait=false })` (or auto via event hook)
-   - Returns the status + final message of each child for the calling dispatcher.
-   - With wait:true, blocks until all children idle; with wait:false, snapshots
-     current state (done / running).
+2. RESULTS ARE PUSHED, NOT POLLED (supersedes the old swarm_collect tool, removed).
+   - When a minion finishes (or times out), it REPORTS BACK to the dispatcher in
+     its own voice: reportToDispatcher reads its final message and wakes the
+     dispatcher via client.session.prompt (real prompt, so it arrives as an event).
+     The dispatcher has no perception of time, so completion must arrive, never be
+     polled for. A minion reporting is a system notification, not a nag.
+   - The report is retried with backoff if the dispatcher is mid-turn (a swallowed
+     failure would silently lose the result). The minion's session is deleted only
+     after the report lands; isolate:true records are tombstoned (kept in the map)
+     until swarm_cleanup removes their worktree, then evicted.
 
 Plus an `event` handler on `session.idle`: when a child (one whose parentID is a
 known dispatcher) goes idle, mark it done in plugin state. Optionally re-inject a
