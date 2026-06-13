@@ -1,6 +1,7 @@
 ---
 description: Check that new GDScript code has matching tests and that the assertions test behaviour, not implementation. Fires when a `**/*.gd` diff has no matching `tests/unit/**` change.
 mode: subagent
+model: deepseek/deepseek-v4-flash
 permission:
   bash: allow
   read: allow

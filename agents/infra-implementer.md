@@ -1,6 +1,7 @@
 ---
 description: Repo and pipeline plumbing that ends with a PR open for the maintainer to merge. Fires when the dispatcher needs a Bash-equipped author for non-game infrastructure: CI workflows, lefthook and `.claude/hooks`, `.gitattributes`/`.gitignore`/`.lfsconfig`, Makefile, `project.godot`/`export_presets.cfg` config, wrangler/Worker projects, and the check scripts in root `ci/` plus `scripts/memory/`. Distinct from `gdscript-implementer` (game `.gd` and scenes) and `test-author` (GUT tests); reach for those when the work is game code or tests.
 mode: subagent
+model: deepseek/deepseek-v4-flash
 permission:
   bash: allow
   read: allow
