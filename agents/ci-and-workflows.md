@@ -1,7 +1,7 @@
 ---
 description: Review `.github/**` workflow changes for job dependency correctness, action pinning, permission scope, and butler/itch push discipline. Fires on any `.github/**` diff.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: deepseek/deepseek-v4-flash
 permission:
   bash: allow
   read: allow
