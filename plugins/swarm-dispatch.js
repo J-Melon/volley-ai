@@ -335,6 +335,60 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
           }
         },
       }),
+
+      swarm_kill: tool({
+        description: "Kill a running minion by codename. Aborts its session, removes its worktree if isolated, and cleans up. Falls back to DB and filesystem cleanup when the minion is not in the current swarm state (e.g. after a restart).",
+        args: {
+          codename: z.string().describe("the codename of the minion to kill"),
+        },
+        async execute(args, ctx) {
+          const swarm = swarms.get(ctx.sessionID)
+          let found = null
+          if (swarm) {
+            for (const m of swarm.minions.values()) {
+              if (m.codename === args.codename) {
+                found = m
+                break
+              }
+            }
+          }
+          if (found) {
+            found.error = "killed by dispatcher"
+            try { await client.session.abort({ path: { id: found.childID } }) } catch {}
+            try { await client.session.delete({ path: { id: found.childID } }) } catch {}
+            if (found.worktreePath) {
+              try { await removeWorktree($, worktree, found.worktreePath) } catch {}
+            }
+            found.done = true
+            if (found.timer) clearTimeout(found.timer)
+            swarm.minions.delete(found.childID)
+            swarm.usedNames.delete(found.codename)
+            return `killed ${args.codename} (${found.label})`
+          }
+          // Fallback: scan DB and filesystem for orphaned sessions and worktrees
+          // matching this codename.
+          try {
+            const res = await client.session.list()
+            const sessions = res?.data ?? res ?? []
+            let cleaned = 0
+            for (const s of sessions) {
+              if (!s.title?.includes(`${args.codename} (`)) continue
+              try { await client.session.delete({ path: { id: s.id } }) } catch {}
+              cleaned++
+            }
+            if (cleaned) return `killed ${args.codename}: cleaned ${cleaned} orphaned session(s)`
+          } catch {}
+          // Last resort: check for stale worktree on disk
+          const paths = [`${directory}/../volley-${args.codename.toLowerCase()}`]
+          for (const p of paths) {
+            try {
+              await removeWorktree($, worktree, p)
+              return `killed ${args.codename}: removed orphaned worktree at ${p}`
+            } catch {}
+          }
+          return `no minion, orphaned session, or worktree found for ${args.codename}`
+        },
+      }),
     },
 
     event: async ({ event }) => {

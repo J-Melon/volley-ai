@@ -12,7 +12,7 @@ At runtime, OpenCode loads from its own config directories, not from this repo. 
 |---|---|---|
 | `skills/**/SKILL.md` | `~/.config/opencode/skills/<name>/SKILL.md` | Dispatcher and minion agents |
 | `plugins/*.js` | `volley/.opencode/plugins/*.js` | opencode server (hot-reload on restart) |
-| `agents/*.md` | `volley/.opencode/agents/*.md` | minion agent dispatch |
+| `agents/*.md` | `volley/.opencode/agents/*.md` **and** `~/.config/opencode/agents/*.md` | Project dir for non-isolated; global for worktree-isolated minions |
 
 The runtime copies are **not** the source of truth. Edits go here first, then sync out. A `make sync` (TBD) will automate this direction.
 
@@ -31,7 +31,7 @@ The runtime copies are **not** the source of truth. Edits go here first, then sy
 
 | Plugin | What it does |
 |---|---|
-| `swarm-dispatch.js` | `swarm_dispatch`, `swarm_cleanup`, `swarm_status`, `swarm_tail` |
+| `swarm-dispatch.js` | `swarm_dispatch`, `swarm_cleanup`, `swarm_status`, `swarm_tail`, `swarm_kill` |
 | `em-dash.js` | Blocks em dashes and spaced-hyphen prose connectors |
 | `review-verdict-guard.js` | Blocks `gh pr review --comment --body` (self-approval trap) |
 | `caps.js` | Enforces character caps on Linear bodies and review comments |
