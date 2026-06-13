@@ -22,11 +22,11 @@ export const GitGuards = async () => {
         )
       }
 
-      // block-direct-push-to-main: changes must go through a PR.
+      // block-direct-push-to-main on volley game repo only, not volley-ai.
       const pushToMain = /git\s+push\s+(?:-u\s+)?\S*\s+(?:main|master)(\s|$)/.test(cmd)
-      if (pushToMain && !/(?:--force|--delete)/.test(cmd)) {
+      if (pushToMain && !/volley-ai/.test(cmd) && !/(?:--force|--delete)/.test(cmd)) {
         throw new Error(
-          "Direct push to main/master is blocked. Changes must be pushed to a feature branch and landed via PR."
+          "Direct push to main/master on the game repo is blocked. Push to a feature branch and land via PR."
         )
       }
 
