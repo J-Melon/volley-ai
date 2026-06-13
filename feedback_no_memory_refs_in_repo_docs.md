@@ -25,4 +25,4 @@ The skills under `ai/skills/**` ARE part of the repo but they explicitly mirror 
 
 ## Pre-flight check
 
-Before saving any file under `designs/`, `README.md`, `CONTRIBUTING.md`, `CLAUDE.md`, or any `.gd` / `.tscn` comment: grep the diff for `feedback_` and `.claude/projects`. Hits = inline the content, drop the path.
+Before saving any file under `designs/`, `README.md`, `CONTRIBUTING.md`, `CLAUDE.md`, or any `.gd` / `.tscn` comment: grep the diff for `feedback_`, `.claude/projects`, and `volley-ai` (the memory forest now lives at `~/gamedev/volley-ai`). Hits = inline the content, drop the path.

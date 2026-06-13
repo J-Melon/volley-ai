@@ -8,7 +8,7 @@ metadata:
   originSessionId: 9066ef19-7b82-42a7-aaa1-b62fb15b6ebb
 ---
 
-Memory files live in `/home/josh/.claude/projects/-home-josh-gamedev-volley/memory/` and only reach me. Open-source contributors (and future me reading the repo without my memory) cannot see them. A rule that disciplines their work has to land in the repo too.
+Memory files live in `~/gamedev/volley-ai/` and only reach me. Open-source contributors (and future me reading the repo without my memory) cannot see them. A rule that disciplines their work has to land in the repo too.
 
 ## How to apply
 

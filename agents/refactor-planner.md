@@ -38,11 +38,11 @@ Before planning, read:
 
 Keep these feedback pointers authoritative while sequencing the plan:
 
-- Independent PRs that merge in any order: `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_independent_prs.md`
-- Continuous refactoring, leave code cleaner than found: `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_continuous_refactoring.md`
-- No amend, no force-push: `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_no_amend_no_force.md`
-- Descriptive naming, no abbreviations: `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_var_names.md` and `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_no_abbreviations.md`
-- Propagate rule changes to agent docs when relevant: `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_propagate_rules_to_agents.md`
+- Independent PRs that merge in any order (descend the dev-cycle trunk for the PR-decomposition rules).
+- Continuous refactoring, leave code cleaner than found: [[feedback_continuous_refactoring]]
+- No amend, no force-push: [[feedback_no_amend_no_force]]
+- Descriptive naming, no abbreviations (the naming rules live under the dev-cycle trunk).
+- Propagate rule changes to agent docs when relevant: [[feedback_propagate_rules_to_agents]]
 
 ## How you work
 

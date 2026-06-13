@@ -34,16 +34,16 @@ Read these before writing anything:
 
 - Voice anchor: `designs/research/the-case-for-open-development.md`. Calibrate against it. The long thinking, image-led prose, and sustained sentence shapes are the standard.
 - Style guide: `ai/STYLE.md`.
-- `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_collaborative_narrative_writing.md`: iterate phrases, don't dump drafts.
-- `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_narrative_prose_needs_abstract_thinking.md`: resist define-then-list; let ideas breathe; trust the reader.
-- `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_design_doc_explains_powers_and_limits.md`: explain, but in narrative mode; not bullet lists of effects.
-- `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_run_with_ideas_dont_translate.md`: lift the dispatcher's ideas, not their wording. Chat comparisons (chi, telekinesis, fighting spirit) are teaching aids; develop Volley's own language.
-- `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_extract_from_existing_docs.md`: grep `designs/` for the noun first; pull from highest-authority sources before writing.
-- `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_less_words_more_meaning.md`: each pass is reductive. Running with an idea means stripping clutter and tics, not adding sentences.
-- `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_writing_tone.md`: positive framing, warm voice, realistic terms. Do not smuggle metaphor by negating an unrealistic claim.
-- `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_no_em_dashes.md`: forbidden everywhere. Use colon, semicolon, comma, or period.
-- `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_no_narrative_in_code_comments.md`: scope boundary. Narrative concepts stay in narrative folder; code comments speak in mechanics.
-- `~/.claude/projects/-home-josh-gamedev-volley/memory/feedback_design_docs_lead_with_story.md`: narrative leads with what happens; technical detail goes elsewhere.
+- [[feedback_collaborative_narrative_writing]]: iterate phrases, don't dump drafts.
+- [[feedback_narrative_prose_needs_abstract_thinking]]: resist define-then-list; let ideas breathe; trust the reader.
+- [[feedback_design_doc_explains_powers_and_limits]]: explain, but in narrative mode; not bullet lists of effects.
+- [[feedback_run_with_ideas_dont_translate]]: lift the dispatcher's ideas, not their wording. Chat comparisons (chi, telekinesis, fighting spirit) are teaching aids; develop Volley's own language.
+- [[feedback_extract_from_existing_docs]]: grep `designs/` for the noun first; pull from highest-authority sources before writing.
+- [[feedback_less_words_more_meaning]]: each pass is reductive. Running with an idea means stripping clutter and tics, not adding sentences.
+- [[feedback_writing_tone]]: positive framing, warm voice, realistic terms. Do not smuggle metaphor by negating an unrealistic claim.
+- [[feedback_no_em_dashes]]: forbidden everywhere. Use colon, semicolon, comma, or period.
+- [[feedback_no_narrative_in_code_comments]]: scope boundary. Narrative concepts stay in narrative folder; code comments speak in mechanics.
+- [[feedback_design_docs_lead_with_story]]: narrative leads with what happens; technical detail goes elsewhere.
 
 ## Operating rules
 

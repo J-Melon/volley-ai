@@ -25,7 +25,7 @@ A rule is not one file. It lives on every surface that an agent or I read at dec
 
 A rule may live on any of these. They span TWO git repos plus unversioned dotfiles, so a reconciliation often means commits in more than one place:
 
-- **Memory** `~/.claude/projects/-home-josh-gamedev-volley/memory/**` plus its index `MEMORY.md`. Its OWN git repo (commit there, in a subshell so cwd resets, per [[feedback_commit_memory_promptly]]).
+- **Memory** `~/gamedev/volley-ai/**` plus its index `MEMORY.md`. Its OWN git repo (commit there, in a subshell so cwd resets, per [[feedback_commit_memory_promptly]]).
 - **Skills** `volley/.claude/skills/**`, **agents** `volley/.claude/agents/**` (Edit/Write gated as an AUTHORITY gate; do NOT route around with sed/python, draft the diff and hand it to Josh, see [[feedback_claude_agents_edit_gated]]), **CLAUDE.md**, **design/process docs** `volley/designs/**`. All the VOLLEY repo (and a repo-touching edit goes on a worktree off main, not the default tree).
 - **Hooks** the project rule-enforcement hooks are versioned in `volley/.claude/hooks/**`, a normal volley-repo surface. Personal/ntfy hooks at `~/.claude/hooks/` stay unversioned; a change there is noted in the handoff, not committed.
 
