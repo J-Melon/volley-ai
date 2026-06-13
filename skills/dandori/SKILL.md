@@ -19,7 +19,7 @@ Dandori is the implementation plan (stage 3, Plan), not the mission-shape walk. 
    - Reviewers: code-quality, gdscript-conventions, test-coverage by default, plus the domain reviewers the diff fires (signals-lifecycle, godot-scene, save-format-warden, asset-pipeline, ci-and-workflows, docs-and-writing).
    - Battlers: devils-advocate to stress-test the approach; integration-scenario-author for adversarial cross-system scenarios.
 
-   Each minion gets a codename from the rotating pool (Gravity Falls, Hitchhiker's, Oddworld, Omori, Outer Wilds Hearthians and Nomai, Martha) chosen to fit the case. Codename rotates per work unit; role is stable.
+   Each minion gets a codename from the themed pool (Gravity Falls, Hitchhiker's, Oddworld, Omori, Outer Wilds Hearthians and Nomai, Martha). Under OpenCode the `swarm_dispatch` tool assigns the codename at spawn and sets it as the child session title (`Feldspar (code-quality): SH-254`), so I no longer hand-pick or log codenames; I just dispatch and the title carries the name. Role is stable; codename is per minion.
 
 2. **Recon the surfaces.** Before confirm, dispatch a read-only Explore minion to locate each work unit's fix surface (file plus function) and produce a file-overlap map across the units. Use it to lock non-overlapping write slices for concurrent worktrees, or to collapse units that share a file into one serialized stream. This grounds the crew's slices in current state instead of inferring them from the issue bodies. Catching two units that share a file at plan time beats catching it after they clobber each other on the same branch. Recon is read-only and reads excerpts, not the impl; the claiming minion still does its own step-1 file work.
 
@@ -27,7 +27,7 @@ Dandori is the implementation plan (stage 3, Plan), not the mission-shape walk. 
 
 4. **Split shape.** Decide how many PRs the feature becomes, governed by [`feedback_feature_pr_decomposition`]: the fewest PRs such that each one is independently shippable on trunk (compiles, suite green, no half-wired feature). Default is one feature, one branch, one PR (units fold serially onto it). When units can be made genuinely independent by landing a shared contract first, a parallel split into independent PRs is preferred, but only up to **3 PRs**; past 3 the contract churn dominates, so go serial. The **+1000 added-line** cap is a hard ceiling per PR: when the accumulated diff crosses it, PR the largest independently-shippable prefix and move the remainder to a follow-up off main (a forced 1->2 split is fine). Never cut a unit in half for the line count. A feature that genuinely cannot be sliced into independently-shippable sub-1000-line PRs is a planning smell to flag here, not at fold time.
 
-5. **Confirm.** List the crew, the recon-grounded slices, the scope caps, and the split shape. Wait for go before dispatching.
+5. **Confirm and seed the plan.** List the crew, the recon-grounded slices, the scope caps, and the split shape. Wait for go before dispatching. On go, **write the plan into the session todo**: one entry per work unit with its state (pending), so the todo becomes the live plan-state I navigate by. This is the anchor I reconcile against on every return from a fan-out and rewrite freely when discovery reshapes the work (see [[feedback_todo_is_the_live_plan]]). Dandori is where the anchor is seeded; nothing else seeds it.
 
 ## What this skill replaces
 

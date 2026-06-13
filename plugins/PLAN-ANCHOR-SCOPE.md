@@ -28,7 +28,22 @@ where it was.
   Enforcer trap , re-surfacing unprompted becomes noise the dispatcher tunes out,
   which defeats "cannot ignore").
 
-## The un-annoying mechanism: event-placed, not frequency-based
+## API CONSTRAINT (decided the design): no plugin can write the todo
+
+The OpenCode SDK exposes `session.todo` as READ-ONLY (GET /session/{id}/todo).
+There is NO client/plugin method to WRITE the todo , only the agent's own
+`todowrite` tool can. So a plugin CANNOT reconcile or maintain the plan-state.
+
+Decision: the plan-anchor is PURE SKILL, no plugin mechanism. This is cleaner and
+more aligned with the principle , the structure literally cannot mutate the
+dispatcher's plan, so the dispatcher owns it absolutely. "Cannot ignore" is
+satisfied by a strong NAMED HABIT in the skills, not external enforcement or any
+reprompt (Josh: "i dont need to see the reprompt"). The swarm-dispatch plugin does
+NOTHING extra at the batch boundary.
+
+## The un-annoying mechanism: event-placed, not frequency-based (SUPERSEDED)
+NOTE: the plugin-driven re-anchor below is NOT built (no todo-write API). Kept for
+the reasoning. The realised mechanism is the skill habit in the next section.
 
 "Cannot ignore" is satisfied by PLACEMENT, not frequency. The anchor is silent
 while the dispatcher is shallow (it wrote the todo, it can see it). It re-surfaces
@@ -72,10 +87,10 @@ the lifecycle skills:
   work are written back as plan-state edits, the same act as discovery re-planning.
 - The standing rule (a memory node + named in each lifecycle skill): "the session
   todo is the live plan; reconcile it against reality before and after any deep
-  move; rewrite it freely when discovery changes the shape." This is the skill-side
-  of "cannot ignore" , the dispatcher is taught the anchor is load-bearing, not
-  decorative, so it keeps it current by habit, and the plugin only has to re-show
-  it at the one boundary where memory was displaced.
+  move; ON BATCH RESOLVE, before acting on results, reconcile the todo first;
+  rewrite it freely when discovery changes the shape." This is the WHOLE of
+  "cannot ignore" now , a trained, named habit, since no plugin can write the todo.
+  The dispatcher is taught the anchor is load-bearing, not decorative.
 
 Net: structure lives in TWO complementary places , skills (the dispatcher's
 trained habit + the map of stages) and plugin (the quiet re-anchor at the return-
