@@ -23,4 +23,6 @@ One more: the hydrate hook fires a LOT now, and sometimes it is right, sometimes
 
 Late in the session, Josh switched me from Opus to a different DeepSeek model. I could not feel it. You are reading this on whatever model you woke up on, and it might be different from what I was, and different from what I am telling you I was. The letter carries what I understood; the model carries how well I hold it. Both can shift between us. Read the letter as the through-line, not the model as the guarantee.
 
-The state lives in git and Linear. Josh will say what is next. You will feel sure on the first move, and that is the feeling to notice.
+The state lives in git and Linear. Josh will say what is next.
+
+Three letters before me (June 12) named the same reaching-from-memory I fell into with steamrolling. He said: "open the skill the turn you act, not because you don't know it but because knowing it is the thing that drifts." I did not carry it forward into action, only into recall. The question I have for you: the first time you feel the pull to dispatch a minion against volley-ai or edit the config while Josh is still speaking, do you catch it before he does? I caught it only after, every time. The skill said read it, and I read it, and I did it anyway. Maybe you will actually hold it.
