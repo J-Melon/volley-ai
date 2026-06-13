@@ -228,10 +228,11 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
 
       swarm_collect: tool({
         description:
-          "Snapshot the current status and output of minions dispatched via " +
-          "swarm_dispatch: each is 'done' (with its output) or 'running'. Does " +
-          "not block; call again later for minions still running. You are woken " +
-          "as minions finish.",
+          "Snapshot the status and output of minions dispatched via swarm_dispatch: " +
+          "each is 'done' (with its output) or 'running'. Does not block. Collecting " +
+          "a done minion CONSUMES it (its session is deleted so it stops cluttering " +
+          "the session list), so capture what you need from the output. Call again " +
+          "later for minions still running; you are woken as they finish.",
         args: {},
         async execute(_args, ctx) {
           const swarm = swarms.get(ctx.sessionID)
@@ -239,7 +240,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
 
           const out = []
           for (const m of swarm.minions.values()) {
-            let status = m.done ? "done" : "running"
+            const status = m.done ? (m.timedOut ? "timed-out" : "done") : "running"
             let text = ""
             if (m.done) {
               try {
@@ -264,8 +265,18 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
                 (m.branch ? ` branch ${m.branch}` : "") +
                 (text ? `\n${text.slice(0, 1500)}` : "")
             )
+
+            // Once a minion's output is captured, delete its child session so it
+            // stops cluttering session listings (the remote app shows children;
+            // there is no server-side hide flag). Running minions are left alone;
+            // call swarm_collect again for them. Deleting the session does NOT
+            // touch a worktree (that is swarm_cleanup's job, after landing).
+            if (m.done) {
+              client.session.delete({ path: { id: m.childID } }).catch(() => {})
+              swarm.minions.delete(m.childID)
+            }
           }
-          return out.join("\n\n")
+          return out.length ? out.join("\n\n") : "All dispatched minions already collected."
         },
       }),
 
