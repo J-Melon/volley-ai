@@ -45,7 +45,7 @@ export const SkillNudge = async ({ client }) => {
         for (let i = msgs.length-1; i >= 0 && userTexts.length < 3; i--) {
           const m = msgs[i]
           const info = m.info ?? m
-          if ((info.role ?? info.type) !== "user") continue
+          if ((info.role ?? info.type) !== "assistant") continue
           userTexts.push((m.parts ?? []).filter((p) => p.type === "text").map((p) => p.text || "").join("\n"))
         }
         text = userTexts.join("\n")
