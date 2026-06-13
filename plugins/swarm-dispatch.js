@@ -328,11 +328,28 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
     },
 
     event: async ({ event }) => {
-      if (event.type !== "session.idle") return
-      const idleID = event.properties.sessionID
+      if (event.type === "session.idle") {
+        const idleID = event.properties.sessionID
+        for (const swarm of swarms.values()) {
+          const rec = swarm.minions.get(idleID)
+          if (rec) markDone(swarm, rec)
+        }
+        return
+      }
+      const sid = event.properties?.sessionID ?? event.properties?.id
+      if (!sid) return
       for (const swarm of swarms.values()) {
-        const rec = swarm.minions.get(idleID)
-        if (rec) markDone(swarm, rec)
+        const rec = swarm.minions.get(sid)
+        if (!rec || rec.done) continue
+        if (Date.now()-rec.startedAt < 30000) continue
+        try {
+          const res = await client.session.messages({ path: { id: rec.childID } })
+          const msgs = res?.data ?? res ?? []
+          const last = msgs.at(-1)
+          if (last && (last.info ?? last).finish === "stop") {
+            markDone(swarm, rec)
+          }
+        } catch {}
       }
     },
   }
