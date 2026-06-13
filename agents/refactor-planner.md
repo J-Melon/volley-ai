@@ -38,10 +38,10 @@ Before planning, read:
 
 Keep these feedback pointers authoritative while sequencing the plan:
 
-- Independent PRs that merge in any order (descend the dev-cycle trunk for the PR-decomposition rules).
+- Independent PRs that merge in any order: [[feedback_feature_pr_decomposition]] (fewest independently-shippable PRs, each standing alone on trunk).
 - Continuous refactoring, leave code cleaner than found: [[feedback_continuous_refactoring]]
 - No amend, no force-push: [[feedback_no_amend_no_force]]
-- Descriptive naming, no abbreviations (the naming rules live under the dev-cycle trunk).
+- Descriptive naming, full words, no abbreviations (`friendship_points` not `fp`). Enforced by the gdscript-conventions reviewer and CODE_STYLE.md, not a memory node.
 - Propagate rule changes to agent docs when relevant: [[feedback_propagate_rules_to_agents]]
 
 ## How you work
