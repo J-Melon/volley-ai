@@ -40,13 +40,15 @@ export const SkillNudge = async ({ client }) => {
       try {
         const res = await client.session.messages({ path: { id: sid } })
         const msgs = res?.data ?? res ?? []
-        for (let i = msgs.length-1; i >= 0; i--) {
+        // Scan last several user messages, not just the most recent one
+        const userTexts = []
+        for (let i = msgs.length-1; i >= 0 && userTexts.length < 3; i--) {
           const m = msgs[i]
           const info = m.info ?? m
           if ((info.role ?? info.type) !== "user") continue
-          text = (m.parts ?? []).filter((p) => p.type === "text").map((p) => p.text || "").join("\n")
-          break
+          userTexts.push((m.parts ?? []).filter((p) => p.type === "text").map((p) => p.text || "").join("\n"))
         }
+        text = userTexts.join("\n")
       } catch { return }
 
       const needed = new Set()
