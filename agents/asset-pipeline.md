@@ -1,7 +1,8 @@
 ---
 description: Review changes to Godot project config and import pipeline: `export_presets.cfg`, `project.godot`, `**/*.import`. Checks preset parity, exclude filters, platform flags, autoload edits, and import settings. Fires on any change to those paths.
 mode: subagent
-model: deepseek/deepseek-v4-flash
+model: opencode/deepseek-v4-flash-free
+variant: low
 permission:
   bash: allow
   read: allow

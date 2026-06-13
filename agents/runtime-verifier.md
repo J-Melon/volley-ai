@@ -1,7 +1,8 @@
 ---
 description: Gru-sister role for tier-2 runtime verification of bug repros, fix landings, and multi-system flows. Plays the game in the editor via godotiq, captures state_inspect / verify_motion / screenshot / input snapshots straddling the event under test, and reports actual runtime values. Diagnostic only; never edits code.
 mode: subagent
-model: deepseek/deepseek-v4-flash
+model: opencode/deepseek-v4-flash-free
+variant: low
 permission:
   bash: allow
   read: allow

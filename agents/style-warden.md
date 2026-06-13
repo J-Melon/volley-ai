@@ -1,7 +1,8 @@
 ---
 description: Review GDScript diffs for the lint-invisible style rules in CODE_STYLE.md and implementer-nits.md, the mechanical conventions gdlint cannot catch and the other reviewers disclaim. Comments, blank-line spacing, full words, descriptive names, magic-numbers-into-data, @export over @onready, resource clustering. Fires on any `**/*.gd` change.
 mode: subagent
-model: deepseek/deepseek-v4-flash
+model: opencode/deepseek-v4-flash-free
+variant: low
 permission:
   bash: allow
   read: allow

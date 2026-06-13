@@ -1,7 +1,8 @@
 ---
 description: Separates symptoms from causes on Volley bugs. Rules out Godot engine quirks before blaming project code. Uses godotiq trace_flow, signal_map, dependency_graph, check_errors, and file_context to follow the actual execution path.
 mode: subagent
-model: deepseek/deepseek-v4-flash
+model: opencode/deepseek-v4-flash-free
+variant: low
 permission:
   bash: allow
   read: allow
