@@ -1,0 +1,14 @@
+{
+  "_source": "Canonical roster: trunk_dev_cycle/feedback_sub_agent_codenames.md. Named individuals only, never species/group labels (no Slig, Minion, Hearthian, Nomai). Agent pool only (NOT the mission pool). Keep this in sync with the memory node, which is the authority.",
+  "pool": {
+    "gravity-falls": ["Dipper", "Mabel", "Soos", "Wendy", "Stan", "Ford", "Bill", "Pacifica", "Gideon", "McGucket", "Waddles"],
+    "hitchhikers": ["Arthur", "Zaphod", "Trillian", "Marvin", "Slartibartfast", "Deep Thought", "Eddie", "Agrajag", "Fenchurch", "Wowbagger"],
+    "oddworld": ["Abe", "Munch", "Stranger", "Toby", "Molluck", "Lulu", "Aslik", "Dripik", "Phleg", "Morguer", "Skillya"],
+    "omori": ["Sunny", "Aubrey", "Kel", "Hero", "Basil", "Mari", "Omori"],
+    "outer-wilds": ["Gabbro", "Feldspar", "Riebeck", "Hornfels", "Chert", "Hal", "Solanum", "Escall", "Poke", "Pye", "Annona"],
+    "simpsons": ["Bart", "Lisa", "Marge", "Homer", "Maggie", "Moe", "Apu", "Krusty", "Milhouse", "Ralph", "Skinner", "Flanders", "Burns", "Smithers", "Otto", "Edna", "Nelson", "Barney", "Lenny", "Carl", "Wiggum", "Quimby", "Frink", "Hibbert", "Selma", "Patty", "Cletus", "Disco Stu"],
+    "futurama": ["Bender", "Fry", "Leela", "Hermes", "Zoidberg", "Amy", "Nibbler", "Kif", "Nixon", "Calculon", "Morbo", "Smitty"],
+    "minions": ["Kevin", "Bob", "Stuart", "Jerry", "Mel", "Tom", "Dave", "Tim", "Phil"],
+    "volley": ["Martha"]
+  }
+}

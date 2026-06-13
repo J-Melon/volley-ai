@@ -1,43 +1,30 @@
-// Swarm dispatch for OpenCode: parallel, non-blocking subagents with the
-// dispatcher (Gru) staying reachable, and results collected back. Drives the
-// volley-ai agents. The capability OpenCode lacks natively (its task tool is
-// sequential + blocking, issues #14195/#15069); this fills it via the session API.
-//
-// Tools registered:
-//   swarm_dispatch  - fan out N codenamed minions as concurrent child sessions,
-//                     return immediately (dispatcher keeps working)
-//   (minions report back automatically: each wakes the dispatcher with its result
-//    in its own voice when it finishes. No collect step, no polling.)
-//   swarm_cleanup   - remove spent worktrees (isolate:true minions)
-//
-// Design + probe results: see SWARM-DISPATCH-SCOPE.md.
+// Swarm dispatch for OpenCode: parallel, non-blocking subagents that report back
+// to the dispatcher when done. Fills the gap left by the native task tool (which
+// is sequential and blocking). Design: SWARM-DISPATCH-SCOPE.md.
 
 import { tool } from "@opencode-ai/plugin"
+import { readFileSync } from "node:fs"
+import { fileURLToPath } from "node:url"
+import { dirname, join } from "node:path"
 
 const z = tool.schema
 
-// Themed codename pool (dispatch convention). One per in-flight minion.
-const CODENAMES = [
-  // Gravity Falls
-  "Dipper", "Mabel", "Soos", "Wendy", "Ford", "Stan", "Bill",
-  // Hitchhiker's
-  "Arthur", "Ford2", "Zaphod", "Trillian", "Marvin", "Slartibartfast",
-  // Oddworld
-  "Abe", "Munch", "Stranger",
-  // Omori
-  "Sunny", "Aubrey", "Kel", "Hero", "Basil",
-  // Outer Wilds (Hearthians + Nomai)
-  "Feldspar", "Gabbro", "Riebeck", "Chert", "Esker", "Solanum", "Poke",
-  // Martha
-  "Martha",
-]
+// Pool is canonical data in codenames.json (authority: feedback_sub_agent_codenames),
+// not hardcoded here, so it can't drift.
+const CODENAMES = (() => {
+  try {
+    const here = dirname(fileURLToPath(import.meta.url))
+    return Object.values(JSON.parse(readFileSync(join(here, "codenames.json"), "utf8")).pool).flat()
+  } catch {
+    return ["Dipper", "Zaphod", "Feldspar", "Bender", "Kevin", "Martha"]
+  }
+})()
 
 const CONCURRENCY_DEFAULT = 5
-const MINION_TIMEOUT_MS = 10 * 60 * 1000 // 10 min; abort a hung minion
-const MAX_DEPTH = 3 // refuse minion-spawns-minion past this
+const MINION_TIMEOUT_MS = 10 * 60 * 1000
+const MAX_DEPTH = 3
 
 export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
-  // dispatcherID -> { minions: Map<childID, record>, usedNames: Set }
   const swarms = new Map()
 
   function getSwarm(id) {
@@ -49,11 +36,8 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
     return s
   }
 
-  // A finished minion reports back to the dispatcher in its own voice. This is a
-  // system notification, not a nag: the dispatcher dispatched the work and is
-  // waiting on it, so the result WAKES the dispatcher (real prompt, not noReply)
-  // the moment it lands. The dispatcher has no perception of time; completion must
-  // arrive as an event, never be polled for.
+  // A finished minion wakes the dispatcher with its result, in its own voice. The
+  // dispatcher has no sense of time, so completion must arrive, never be polled for.
   async function reportToDispatcher(swarm, rec) {
     let body = ""
     try {
@@ -63,10 +47,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
         const mm = msgs[i]
         const info = mm.info ?? mm
         if ((info.role ?? info.type) !== "assistant") continue
-        body = (mm.parts ?? [])
-          .filter((p) => p.type === "text")
-          .map((p) => p.text || "")
-          .join("\n")
+        body = (mm.parts ?? []).filter((p) => p.type === "text").map((p) => p.text || "").join("\n")
         break
       }
     } catch {
@@ -77,18 +58,12 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
       `${rec.codename} (${rec.agent}) ${status} on ${rec.label}:\n\n` +
       (body ? body.slice(0, 1500) : "(no output)")
 
-    // Wake the dispatcher with the report. The dispatcher may be mid-turn, in which
-    // case the prompt can be rejected; a swallowed failure would silently lose the
-    // result, the worst failure for a push model. So RETRY with backoff until it
-    // lands. Only after it lands do we delete the minion's session, a failed report
-    // must never orphan the result.
+    // Retry: the dispatcher may be mid-turn and reject the prompt. Swallowing that
+    // would silently lose the result. Delete the session only once the report lands.
     let delivered = false
     for (let attempt = 0; attempt < 6; attempt++) {
       try {
-        await client.session.prompt({
-          path: { id: swarm.dispatcherID },
-          body: { parts: [{ type: "text", text }] },
-        })
+        await client.session.prompt({ path: { id: swarm.dispatcherID }, body: { parts: [{ type: "text", text }] } })
         delivered = true
         break
       } catch {
@@ -98,21 +73,12 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
 
     if (delivered) {
       rec.reported = true
-      // Report landed; the minion's session is spent. Delete it to keep the session
-      // list clean. Deleting the session never touches a worktree.
       client.session.delete({ path: { id: rec.childID } }).catch(() => {})
-      // Evict only NON-isolate minions. An isolate:true writer's worktree still has
-      // to be cleaned by swarm_cleanup, which finds it via swarm.minions, so keep
-      // the record (tombstoned, reported:true) until cleanup removes the worktree.
-      // Evicting it here would orphan the worktree on disk.
+      // Keep isolate records: swarm_cleanup finds their worktree via this map.
       if (!rec.isolate) swarm.minions.delete(rec.childID)
     }
-    // If undelivered after retries: leave the session intact so the result is not
-    // lost. It stays in the list (visible) and the dispatcher can still read it.
   }
 
-  // Idempotent completion: clear the timeout, free the codename, drain one queued
-  // minion into the freed slot. Called from both the idle event and the timeout.
   function markDone(swarm, rec) {
     if (rec.done) return
     rec.done = true
@@ -123,28 +89,26 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
       const next = swarm.pending.shift()
       swarm.launch(next, next.index).catch(() => {})
     }
-    // Report back to the dispatcher in the minion's voice (push, not pull).
     reportToDispatcher(swarm, rec)
   }
 
-  function pickCodename(swarm, role, index) {
+  function pickCodename(swarm) {
     const free = CODENAMES.find((n) => !swarm.usedNames.has(n))
     if (free) {
       swarm.usedNames.add(free)
       return free
     }
-    // pool exhausted within one fan-out: fall back, do not invent on-theme names
-    return `${role}-${index + 1}`
+    // No -1/-2 suffix: that collapses two agents into one handle (banned). Names
+    // free on completion, so null here means a fan-out wider than the whole pool.
+    return null
   }
 
-  // Depth guard: walk the parent chain; refuse if too deep.
   async function depthOf(sessionID) {
     let depth = 0
     let cur = sessionID
     for (let i = 0; i < MAX_DEPTH + 2 && cur; i++) {
       try {
-        const res = await client.session.get({ path: { id: cur } })
-        const info = res?.data ?? res
+        const info = (await client.session.get({ path: { id: cur } }))?.data ?? null
         cur = info?.parentID
         if (cur) depth++
         else break
@@ -173,24 +137,17 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
                 agent: z.string().describe("agent id, e.g. code-quality, gdscript-implementer"),
                 task: z.string().describe("the brief for this minion"),
                 label: z.string().describe("short task label for the session title, e.g. SH-254"),
-                isolate: z
-                  .boolean()
-                  .optional()
-                  .describe("true = give this WRITER its own git worktree. Never for scene work."),
+                isolate: z.boolean().optional().describe("true = give this WRITER its own git worktree. Never for scene work."),
               })
             )
             .describe("the minions to dispatch in parallel"),
-          concurrency: z
-            .number()
-            .optional()
-            .describe(`max concurrent minions (default ${CONCURRENCY_DEFAULT})`),
+          concurrency: z.number().optional().describe(`max concurrent minions (default ${CONCURRENCY_DEFAULT})`),
         },
         async execute(args, ctx) {
           const dispatcherID = ctx.sessionID
 
-          const depth = await depthOf(dispatcherID)
-          if (depth >= MAX_DEPTH) {
-            return `Refused: dispatch depth ${depth} reaches the cap (${MAX_DEPTH}). A minion may not spawn a deep chain of sub-minions.`
+          if ((await depthOf(dispatcherID)) >= MAX_DEPTH) {
+            return `Refused: dispatch depth reaches the cap (${MAX_DEPTH}). A minion may not spawn a deep chain of sub-minions.`
           }
 
           const swarm = getSwarm(dispatcherID)
@@ -199,15 +156,20 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
           const queue = [...args.minions]
 
           async function launch(m, index) {
-            const codename = pickCodename(swarm, m.agent, index)
+            const codename = pickCodename(swarm)
+            if (!codename) {
+              return {
+                label: m.label,
+                error:
+                  "codename pool exhausted; let some minions finish (they free their names on report) before dispatching more.",
+              }
+            }
             const title = `${codename} (${m.agent}): ${m.label}`
             let dir = directory
             let worktreePath = null
             let branch = null
 
             if (m.isolate) {
-              // Worktree isolation (writers only). The scene-work guard inspects
-              // BOTH task and label (scene risk is in the task, not the label).
               const wt = await makeWorktree($, worktree, codename, m.label, m.task)
               if (wt.error) return { codename, label: m.label, error: wt.error }
               dir = wt.path
@@ -215,45 +177,24 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
               branch = wt.branch
             }
 
-            // Create the child session under this dispatcher.
             let childID
             try {
-              const res = await client.session.create({
-                body: { parentID: dispatcherID, title },
-                query: { directory: dir },
-              })
+              const res = await client.session.create({ body: { parentID: dispatcherID, title }, query: { directory: dir } })
               childID = (res?.data ?? res)?.id
             } catch (e) {
               return { codename, label: m.label, error: `session.create failed: ${e}` }
             }
             if (!childID) return { codename, label: m.label, error: "no child session id returned" }
 
-            // Fire the prompt; do NOT await the model's completion.
+            // Fire and don't await; the result comes back via reportToDispatcher.
             client.session
-              .prompt({
-                path: { id: childID },
-                query: { directory: dir },
-                body: { agent: m.agent, parts: [{ type: "text", text: m.task }] },
-              })
-              .catch(() => {}) // a prompt failure surfaces when the minion reports back
+              .prompt({ path: { id: childID }, query: { directory: dir }, body: { agent: m.agent, parts: [{ type: "text", text: m.task }] } })
+              .catch(() => {})
 
-            const rec = {
-              codename,
-              label: m.label,
-              agent: m.agent,
-              childID,
-              dir,
-              worktreePath,
-              branch,
-              isolate: !!m.isolate,
-              startedAt: Date.now(),
-              done: false,
-            }
+            const rec = { codename, label: m.label, agent: m.agent, childID, dir, worktreePath, branch, isolate: !!m.isolate, startedAt: Date.now(), done: false }
             swarm.minions.set(childID, rec)
 
-            // Enforce the per-minion timeout: a hung child never goes idle, so it
-            // would leak its codename + slot forever. Abort it and mark done so
-            // the queue drains and collect reports it.
+            // A hung child never goes idle, so it would hold its slot forever; abort on timeout.
             rec.timer = setTimeout(() => {
               if (rec.done) return
               client.session.abort({ path: { id: childID } }).catch(() => {})
@@ -264,23 +205,18 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             return rec
           }
 
-          // Respect the concurrency cap: launch up to `cap`, queue the rest. The
-          // session.idle handler frees slots as minions finish (see event hook).
           const initial = queue.splice(0, cap)
           const results = await Promise.all(initial.map((m, i) => launch(m, i)))
           for (const r of results) {
-            if (r.error) {
-              dispatched.push(`  ${r.codename} (${r.label}): FAILED to launch, ${r.error}`)
-            } else {
-              dispatched.push(
-                `  ${r.codename} (${r.agent}) -> ${r.label}` +
-                  (r.isolate ? ` [worktree ${r.branch}]` : "")
-              )
-            }
+            dispatched.push(
+              r.error
+                ? `  ${r.codename ?? "(no name)"} (${r.label}): FAILED to launch, ${r.error}`
+                : `  ${r.codename} (${r.agent}) -> ${r.label}` + (r.isolate ? ` [worktree ${r.branch}]` : "")
+            )
           }
-          // Park the overflow on the swarm so the idle handler can launch them.
+          // Overflow waits for slots; the idle handler launches it via swarm.launch.
           swarm.pending = queue.map((m, i) => ({ ...m, index: cap + i }))
-          swarm.launch = launch // closure the idle handler reuses
+          swarm.launch = launch
 
           const queued = swarm.pending.length
           return (
@@ -292,12 +228,11 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
         },
       }),
 
-
       swarm_cleanup: tool({
         description:
           "Remove the git worktrees created for isolate:true minions, after their " +
           "branches are landed or abandoned. Never removes a worktree with " +
-          "uncommitted changes.",
+          "uncommitted or unmerged work.",
         args: {},
         async execute(_args, ctx) {
           const swarm = swarms.get(ctx.sessionID)
@@ -307,9 +242,6 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             if (!m.worktreePath) continue
             const r = await removeWorktree($, worktree, m.worktreePath)
             removed.push(`  ${m.codename}: ${r}`)
-            // Worktree handled; evict the tombstoned record kept for this purpose
-            // (reportToDispatcher left isolate minions in the map so we could find
-            // their worktree). Only evict once cleanup has actually run on it.
             if (r.startsWith("removed")) swarm.minions.delete(m.childID)
           }
           return removed.length ? "Worktree cleanup:\n" + removed.join("\n") : "No worktrees to clean."
@@ -317,8 +249,6 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
       }),
     },
 
-    // Mark minions done when their child session goes idle, and launch any queued
-    // overflow into the freed slot.
     event: async ({ event }) => {
       if (event.type !== "session.idle") return
       const idleID = event.properties.sessionID
@@ -330,30 +260,19 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
   }
 }
 
-// --- worktree helpers (writers only; see SWARM-DISPATCH-SCOPE.md) ------------
-
-// Scene-work minions must NOT be isolated (GodotIQ is pinned to the main tree; a
-// worktree write to a scene lands in main anyway). The risk lives in the TASK,
-// not just the label, so scan both.
+// Scene work is never isolated: GodotIQ is pinned to the main tree, so a worktree
+// write to a scene lands in main anyway. The risk is in the task, not just the label.
 function isSceneWork(label, task) {
   return /\.tscn|\.tres|scene|node_ops|build_scene/i.test(`${label}\n${task}`)
 }
 
-// Clamp any string to a safe path/branch token: lowercase alnum + hyphen only.
-// Guards the pool-exhausted codename fallback (`${role}-${n}`) against path
-// traversal or odd characters reaching the git command.
 function safeToken(s) {
   return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
 }
 
 async function makeWorktree($, mainTree, codename, label, task) {
   if (isSceneWork(label, task)) {
-    return {
-      error:
-        "isolate:true refused for scene work, GodotIQ is bound to the main tree, " +
-        "so a worktree write would land in main regardless. Run scene minions " +
-        "serial on the main tree instead.",
-    }
+    return { error: "isolate:true refused for scene work; GodotIQ is bound to the main tree. Run scene minions serial on main." }
   }
   const slug = safeToken(label)
   const name = safeToken(codename) || "minion"
@@ -369,9 +288,7 @@ async function makeWorktree($, mainTree, codename, label, task) {
 
 async function removeWorktree($, mainTree, path) {
   try {
-    // Never remove work that hasn't landed. Two gates:
-    // 1. uncommitted changes in the worktree, and
-    // 2. commits on the branch not yet reachable from main (committed-but-unmerged).
+    // Never destroy unlanded work: refuse on uncommitted changes or unmerged commits.
     const status = await $`git -C ${path} status --porcelain`.quiet().text()
     if (status.trim()) return `SKIPPED ${path}: uncommitted changes present`
     const unmerged = await $`git -C ${path} log --oneline main..HEAD`.quiet().text().catch(() => "")
