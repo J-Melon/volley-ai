@@ -356,7 +356,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
           const res = await client.session.messages({ path: { id: rec.childID } })
           const msgs = res?.data ?? res ?? []
           const last = msgs.at(-1)
-          if (last && (["stop","length"].includes((last.info ?? last).finish))) {
+          if (last && (["stop","length","content_filter","error"].includes((last.info ?? last).finish))) {
             markDone(swarm, rec)
           }
         } catch {}
