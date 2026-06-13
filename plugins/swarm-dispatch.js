@@ -76,17 +76,39 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
     const text =
       `${rec.codename} (${rec.agent}) ${status} on ${rec.label}:\n\n` +
       (body ? body.slice(0, 1500) : "(no output)")
-    // Wake the dispatcher with the report. Fire-and-forget; failure is non-fatal.
-    client.session
-      .prompt({
-        path: { id: swarm.dispatcherID },
-        body: { parts: [{ type: "text", text }] },
-      })
-      .catch(() => {})
-    // The report has been delivered, so the minion's session is spent: delete it
-    // (keeps the session list clean). Deleting the session never touches a worktree.
-    client.session.delete({ path: { id: rec.childID } }).catch(() => {})
-    swarm.minions.delete(rec.childID)
+
+    // Wake the dispatcher with the report. The dispatcher may be mid-turn, in which
+    // case the prompt can be rejected; a swallowed failure would silently lose the
+    // result, the worst failure for a push model. So RETRY with backoff until it
+    // lands. Only after it lands do we delete the minion's session, a failed report
+    // must never orphan the result.
+    let delivered = false
+    for (let attempt = 0; attempt < 6; attempt++) {
+      try {
+        await client.session.prompt({
+          path: { id: swarm.dispatcherID },
+          body: { parts: [{ type: "text", text }] },
+        })
+        delivered = true
+        break
+      } catch {
+        await new Promise((r) => setTimeout(r, 2000 * (attempt + 1)))
+      }
+    }
+
+    if (delivered) {
+      rec.reported = true
+      // Report landed; the minion's session is spent. Delete it to keep the session
+      // list clean. Deleting the session never touches a worktree.
+      client.session.delete({ path: { id: rec.childID } }).catch(() => {})
+      // Evict only NON-isolate minions. An isolate:true writer's worktree still has
+      // to be cleaned by swarm_cleanup, which finds it via swarm.minions, so keep
+      // the record (tombstoned, reported:true) until cleanup removes the worktree.
+      // Evicting it here would orphan the worktree on disk.
+      if (!rec.isolate) swarm.minions.delete(rec.childID)
+    }
+    // If undelivered after retries: leave the session intact so the result is not
+    // lost. It stays in the list (visible) and the dispatcher can still read it.
   }
 
   // Idempotent completion: clear the timeout, free the codename, drain one queued
@@ -213,7 +235,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
                 query: { directory: dir },
                 body: { agent: m.agent, parts: [{ type: "text", text: m.task }] },
               })
-              .catch(() => {}) // failure surfaces via collect, not here
+              .catch(() => {}) // a prompt failure surfaces when the minion reports back
 
             const rec = {
               codename,
@@ -285,6 +307,10 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             if (!m.worktreePath) continue
             const r = await removeWorktree($, worktree, m.worktreePath)
             removed.push(`  ${m.codename}: ${r}`)
+            // Worktree handled; evict the tombstoned record kept for this purpose
+            // (reportToDispatcher left isolate minions in the map so we could find
+            // their worktree). Only evict once cleanup has actually run on it.
+            if (r.startsWith("removed")) swarm.minions.delete(m.childID)
           }
           return removed.length ? "Worktree cleanup:\n" + removed.join("\n") : "No worktrees to clean."
         },
