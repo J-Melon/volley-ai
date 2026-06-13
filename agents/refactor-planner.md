@@ -1,7 +1,7 @@
 ---
 description: Produce a sequenced refactor plan with blast radius and ordering, grounded in impact_check, dependency_graph, and signal_map. Writes a plan, not code. Fires on "plan a refactor of X", "rename across the codebase", "extract Y", any rename or extract touching three or more files, and autoload changes.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: deepseek/deepseek-v4-flash
 permission:
   bash: deny
   read: allow
