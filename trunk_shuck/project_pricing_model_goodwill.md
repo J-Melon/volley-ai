@@ -26,7 +26,7 @@ Band 0 is what the developer's own time alone can produce: the playable proof-of
 
 Final price is a function of what funding has actually built. The studio publishes a [funding matrix](https://github.com/shuck-dev/volley/blob/main/designs/research/funding-matrix.md) (`designs/research/funding-matrix.md`) mapping cumulative-funding bands → game shape at that band → download price at that band.
 
-- **Baseline funding:** **£700/month minimum** from the developer's own passive income, committed before any external money arrives. £700 × 12 = £8,400/year, which carries the project from Band 0 through mid-Band 2 in the first year on baseline alone. This is one of three counted funding sources (alongside download revenue and Patreon).
+- **Baseline funding:** **£700/month minimum** from the developer's own passive income, committed before any external money arrives. Over the 2-year cycle that is £16,800 on baseline alone (per the public funding matrix), which keeps the project firmly inside Band 0 with no external revenue. This is one of three counted funding sources (alongside download revenue and Patreon).
 - **Floor (Band 0):** the playable proof-of-concept; developer's time plus the baseline.
 - The published [funding matrix](https://github.com/shuck-dev/volley/blob/main/designs/research/funding-matrix.md) is the authority for the per-band price points and game shapes. Higher-band pricing (Steam parity and the ceiling band) and the cumulative-funding thresholds that trigger them are internal planning; consult the private funding planning, not this node, for those figures. Aseprite is the per-product price anchor; the open-development essay is the underlying why.
 
