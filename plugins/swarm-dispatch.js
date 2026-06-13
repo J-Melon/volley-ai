@@ -48,6 +48,20 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
     return s
   }
 
+  // Idempotent completion: clear the timeout, free the codename, drain one queued
+  // minion into the freed slot. Called from both the idle event and the timeout.
+  function markDone(swarm, rec) {
+    if (rec.done) return
+    rec.done = true
+    rec.finishedAt = Date.now()
+    if (rec.timer) clearTimeout(rec.timer)
+    swarm.usedNames.delete(rec.codename)
+    if (swarm.pending && swarm.pending.length && swarm.launch) {
+      const next = swarm.pending.shift()
+      swarm.launch(next, next.index).catch(() => {})
+    }
+  }
+
   function pickCodename(swarm, role, index) {
     const free = CODENAMES.find((n) => !swarm.usedNames.has(n))
     if (free) {
@@ -116,7 +130,6 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
           const swarm = getSwarm(dispatcherID)
           const cap = args.concurrency ?? CONCURRENCY_DEFAULT
           const dispatched = []
-          let inFlight = 0
           const queue = [...args.minions]
 
           async function launch(m, index) {
@@ -127,9 +140,9 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             let branch = null
 
             if (m.isolate) {
-              // Worktree isolation (writers only). Scene-work guard handled in the
-              // worktree module; here we set up the worktree + branch.
-              const wt = await makeWorktree($, worktree, codename, m.label)
+              // Worktree isolation (writers only). The scene-work guard inspects
+              // BOTH task and label (scene risk is in the task, not the label).
+              const wt = await makeWorktree($, worktree, codename, m.label, m.task)
               if (wt.error) return { codename, label: m.label, error: wt.error }
               dir = wt.path
               worktreePath = wt.path
@@ -171,6 +184,17 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
               done: false,
             }
             swarm.minions.set(childID, rec)
+
+            // Enforce the per-minion timeout: a hung child never goes idle, so it
+            // would leak its codename + slot forever. Abort it and mark done so
+            // the queue drains and collect reports it.
+            rec.timer = setTimeout(() => {
+              if (rec.done) return
+              client.session.abort({ path: { id: childID } }).catch(() => {})
+              rec.timedOut = true
+              markDone(swarm, rec)
+            }, MINION_TIMEOUT_MS)
+
             return rec
           }
 
@@ -179,7 +203,6 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
           const initial = queue.splice(0, cap)
           const results = await Promise.all(initial.map((m, i) => launch(m, i)))
           for (const r of results) {
-            inFlight++
             if (r.error) {
               dispatched.push(`  ${r.codename} (${r.label}): FAILED to launch, ${r.error}`)
             } else {
@@ -216,8 +239,11 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
           if (!swarm || swarm.minions.size === 0) return "No minions dispatched in this session."
 
           if (args.wait) {
-            // Poll until all idle (the idle handler marks done).
-            for (let i = 0; i < 240; i++) {
+            // Poll until all done. Ceiling exceeds MINION_TIMEOUT_MS so the
+            // timeout (which marks hung minions done) always resolves the wait;
+            // we never exit the loop with minions still genuinely running.
+            const maxPolls = Math.ceil(MINION_TIMEOUT_MS / 2000) + 15
+            for (let i = 0; i < maxPolls; i++) {
               if ([...swarm.minions.values()].every((m) => m.done)) break
               await new Promise((r) => setTimeout(r, 2000))
             }
@@ -282,16 +308,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
       const idleID = event.properties.sessionID
       for (const swarm of swarms.values()) {
         const rec = swarm.minions.get(idleID)
-        if (rec && !rec.done) {
-          rec.done = true
-          rec.finishedAt = Date.now()
-          // free the codename and launch one queued minion if any
-          swarm.usedNames.delete(rec.codename)
-          if (swarm.pending && swarm.pending.length && swarm.launch) {
-            const next = swarm.pending.shift()
-            swarm.launch(next, next.index).catch(() => {})
-          }
-        }
+        if (rec) markDone(swarm, rec)
       }
     },
   }
@@ -299,14 +316,22 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
 
 // --- worktree helpers (writers only; see SWARM-DISPATCH-SCOPE.md) ------------
 
-// Scene-work agents/tasks must NOT be isolated (GodotIQ is pinned to the main
-// tree; a worktree write to a scene lands in main anyway).
-function isSceneWork(label) {
-  return /\.tscn|\.tres|scene|node_ops|build_scene/i.test(label)
+// Scene-work minions must NOT be isolated (GodotIQ is pinned to the main tree; a
+// worktree write to a scene lands in main anyway). The risk lives in the TASK,
+// not just the label, so scan both.
+function isSceneWork(label, task) {
+  return /\.tscn|\.tres|scene|node_ops|build_scene/i.test(`${label}\n${task}`)
 }
 
-async function makeWorktree($, mainTree, codename, label) {
-  if (isSceneWork(label)) {
+// Clamp any string to a safe path/branch token: lowercase alnum + hyphen only.
+// Guards the pool-exhausted codename fallback (`${role}-${n}`) against path
+// traversal or odd characters reaching the git command.
+function safeToken(s) {
+  return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
+}
+
+async function makeWorktree($, mainTree, codename, label, task) {
+  if (isSceneWork(label, task)) {
     return {
       error:
         "isolate:true refused for scene work, GodotIQ is bound to the main tree, " +
@@ -314,9 +339,10 @@ async function makeWorktree($, mainTree, codename, label) {
         "serial on the main tree instead.",
     }
   }
-  const slug = String(label).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
-  const path = `${mainTree}/../volley-${codename.toLowerCase()}`
-  const branch = `feature/${slug || codename.toLowerCase()}`
+  const slug = safeToken(label)
+  const name = safeToken(codename) || "minion"
+  const path = `${mainTree}/../volley-${name}`
+  const branch = `feature/${slug || name}`
   try {
     await $`git -C ${mainTree} worktree add ${path} -b ${branch}`.quiet()
     return { path, branch }
@@ -327,9 +353,13 @@ async function makeWorktree($, mainTree, codename, label) {
 
 async function removeWorktree($, mainTree, path) {
   try {
-    // --force only if clean; check for uncommitted changes first
+    // Never remove work that hasn't landed. Two gates:
+    // 1. uncommitted changes in the worktree, and
+    // 2. commits on the branch not yet reachable from main (committed-but-unmerged).
     const status = await $`git -C ${path} status --porcelain`.quiet().text()
     if (status.trim()) return `SKIPPED ${path}: uncommitted changes present`
+    const unmerged = await $`git -C ${path} log --oneline main..HEAD`.quiet().text().catch(() => "")
+    if (unmerged.trim()) return `SKIPPED ${path}: branch has unmerged commits (land or abandon it first)`
     await $`git -C ${mainTree} worktree remove ${path}`.quiet()
     return `removed ${path}`
   } catch (e) {
