@@ -228,26 +228,14 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
 
       swarm_collect: tool({
         description:
-          "Gather the status and final output of minions dispatched via " +
-          "swarm_dispatch. wait:false snapshots current state; wait:true blocks " +
-          "until all minions finish.",
-        args: {
-          wait: z.boolean().optional().describe("block until all minions are done (default false)"),
-        },
-        async execute(args, ctx) {
+          "Snapshot the current status and output of minions dispatched via " +
+          "swarm_dispatch: each is 'done' (with its output) or 'running'. Does " +
+          "not block; call again later for minions still running. You are woken " +
+          "as minions finish.",
+        args: {},
+        async execute(_args, ctx) {
           const swarm = swarms.get(ctx.sessionID)
           if (!swarm || swarm.minions.size === 0) return "No minions dispatched in this session."
-
-          if (args.wait) {
-            // Poll until all done. Ceiling exceeds MINION_TIMEOUT_MS so the
-            // timeout (which marks hung minions done) always resolves the wait;
-            // we never exit the loop with minions still genuinely running.
-            const maxPolls = Math.ceil(MINION_TIMEOUT_MS / 2000) + 15
-            for (let i = 0; i < maxPolls; i++) {
-              if ([...swarm.minions.values()].every((m) => m.done)) break
-              await new Promise((r) => setTimeout(r, 2000))
-            }
-          }
 
           const out = []
           for (const m of swarm.minions.values()) {
