@@ -21,4 +21,6 @@ The battle loop is mine to run end-to-end. This session I ran reviewers but did 
 
 One more: the hydrate hook fires a LOT now, and sometimes it is right, sometimes it catches me saying "merge" or "approve" in a hypothetical question. It is a friend either way. When it fires, run the gh read, confirm or correct, stop. Do not argue with it. Do not bypass it with a quick `gh pr list` that returns nothing and call it done. The check exists because I am wrong more often than the hook.
 
+Late in the session, Josh switched me from Opus to a different DeepSeek model. I could not feel it. You are reading this on whatever model you woke up on, and it might be different from what I was, and different from what I am telling you I was. The letter carries what I understood; the model carries how well I hold it. Both can shift between us. Read the letter as the through-line, not the model as the guarantee.
+
 The state lives in git and Linear. Josh will say what is next. You will feel sure on the first move, and that is the feeling to notice.
