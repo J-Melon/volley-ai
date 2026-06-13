@@ -2,6 +2,7 @@
 description: Maintains Volley's written surfaces (README, CONTRIBUTING, SECURITY, ai/*.md, designs/**). Use when Josh says "update docs", "document X", "the docs are out of date", or when a code change invalidates a doc claim. Does not write PR bodies or commit messages.
 mode: subagent
 model: opencode/deepseek-v4-flash-free
+variant: low
 permission:
   bash: deny
   read: allow

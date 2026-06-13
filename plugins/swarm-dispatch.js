@@ -45,20 +45,30 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
   // dispatcher has no sense of time, so completion must arrive, never be polled for.
   async function reportToDispatcher(swarm, rec) {
     let body = ""
+    let lastFinish = ""
     try {
       const res = await client.session.messages({ path: { id: rec.childID } })
       const msgs = res?.data ?? res ?? []
-      for (let i = msgs.length - 1; i >= 0; i--) {
+      for (let i = msgs.length-1; i >= 0; i--) {
         const mm = msgs[i]
         const info = mm.info ?? mm
         if ((info.role ?? info.type) !== "assistant") continue
+        lastFinish = info.finish ?? ""
         body = (mm.parts ?? []).filter((p) => p.type === "text").map((p) => p.text || "").join("\n")
         break
       }
     } catch {
       body = "(could not read my output)"
     }
-    const status = rec.timedOut ? "timed out before finishing" : rec.error ? `errored: ${rec.error}` : "reporting"
+    if (lastFinish === "length") {
+      rec.truncated = true
+      try {
+        const logPath = join(SPILL_DIR, "truncation-log.txt")
+        const entry = `${new Date().toISOString()} ${rec.codename} ${rec.agent} ${rec.label} ${body.length}chars\n`
+        writeFileSync(logPath, entry, { flag: "a" })
+      } catch {}
+    }
+    const status = rec.timedOut ? "timed out before finishing" : rec.error ? `errored: ${rec.error}` : rec.truncated ? "truncated (token limit)" : "reporting"
     const head = `${rec.codename} (${rec.agent}) ${status} on ${rec.label}:\n\n`
     let report = body || "(no output)"
     // Long reports spill to a file: push the head plus a pointer so the dispatcher
@@ -346,7 +356,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
           const res = await client.session.messages({ path: { id: rec.childID } })
           const msgs = res?.data ?? res ?? []
           const last = msgs.at(-1)
-          if (last && (last.info ?? last).finish === "stop") {
+          if (last && (["stop","length"].includes((last.info ?? last).finish))) {
             markDone(swarm, rec)
           }
         } catch {}

@@ -2,6 +2,7 @@
 description: Orients a fresh session by locating the current Linear ticket and the relevant design docs before any code is read. Use on "lets start", on branch switch, at new session start, or when Josh asks "what does this ticket want".
 mode: subagent
 model: opencode/deepseek-v4-flash-free
+variant: low
 permission:
   bash: allow
   read: allow

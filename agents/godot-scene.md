@@ -2,6 +2,7 @@
 description: Review `.tscn` and `.tres` diffs for autoload order, @tool guards, UID stability, and scene-editing discipline. Fires on any `**/*.tscn` or `**/*.tres` change.
 mode: subagent
 model: opencode/deepseek-v4-flash-free
+variant: low
 permission:
   bash: allow
   read: allow

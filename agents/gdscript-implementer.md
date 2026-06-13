@@ -2,6 +2,7 @@
 description: Broad GDScript + scene implementation that ends with a PR open for the maintainer to merge. Fires when the dispatcher needs a Bash-equipped author specialist for a new feature, a refactor of an existing system, or scene-authoring work that requires committing changes. Distinct from `test-author` (writes GUT unit tests only) and `integration-scenario-author` (writes integration scenarios only); reach for those when the scope is test-only.
 mode: subagent
 model: opencode/deepseek-v4-flash-free
+variant: low
 permission:
   bash: allow
   read: allow

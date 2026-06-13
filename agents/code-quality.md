@@ -2,6 +2,7 @@
 description: Review GDScript diffs for semantic quality issues gdlint cannot see: naming, duplication, dead code, scope creep, comment policy. Fires on any `**/*.gd` change.
 mode: subagent
 model: opencode/deepseek-v4-flash-free
+variant: low
 permission:
   bash: allow
   read: allow

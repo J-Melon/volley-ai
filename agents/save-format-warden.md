@@ -2,6 +2,7 @@
 description: Review diffs touching save/progression code for silent format drift. Fires on any diff under `scripts/progression/**`, or touching `SaveManager`, `ItemManager`, `ProgressionManager`, or `@export` on persisted resources.
 mode: subagent
 model: opencode/deepseek-v4-flash-free
+variant: low
 permission:
   bash: allow
   read: allow

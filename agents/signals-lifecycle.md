@@ -2,6 +2,7 @@
 description: Review diffs touching Godot signals, tree lifecycle callbacks, or autoloads for orphans, freed-instance risks, and deferred-call discipline. Fires when diff contains `connect(`, `emit(`, `tree_exit`, or new autoloads.
 mode: subagent
 model: opencode/deepseek-v4-flash-free
+variant: low
 permission:
   bash: allow
   read: allow
