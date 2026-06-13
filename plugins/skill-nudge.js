@@ -4,7 +4,6 @@
 const TRIGGERS = [
   { keywords: /\b(dispatch|swarm_dispatch|minion)\b/i, skill: "dispatch" },
   { keywords: /\b(battle|review|reviewers?)\b/i, skill: "battle" },
-  { keywords: /\b(save_issue|linear.*issue|ticket)\b/i, skill: "tickets" },
   { keywords: /\b(reconcile|rule.*violated|grep.*surfaces?)\b/i, skill: "reconcile" },
   { keywords: /\b(handoff|letter|session.*close)\b/i, skill: "handoff" },
 ]
