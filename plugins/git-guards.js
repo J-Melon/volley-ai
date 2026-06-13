@@ -22,6 +22,14 @@ export const GitGuards = async () => {
         )
       }
 
+      // block-direct-push-to-main: changes must go through a PR.
+      const pushToMain = /git\s+push\s+(?:-u\s+)?\S*\s+(?:main|master)(\s|$)/.test(cmd)
+      if (pushToMain && !/(?:--force|--delete)/.test(cmd)) {
+        throw new Error(
+          "Direct push to main/master is blocked. Changes must be pushed to a feature branch and landed via PR."
+        )
+      }
+
       // git-rebase-ask: rebase / pull --rebase. Claude asked; OpenCode blocks
       // with a reason (run it yourself). Matches git rebase, and git pull with
       // --rebase or -r.
