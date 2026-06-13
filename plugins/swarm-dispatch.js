@@ -188,7 +188,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
                   "codename pool exhausted; let some minions finish (they free their names on report) before dispatching more.",
               }
             }
-            const title = `${codename} (${m.agent}): ${m.label}`
+            const title = `${m.label} (${codename})`
             let dir = directory
             let worktreePath = null
             let branch = null
