@@ -1,7 +1,7 @@
 ---
 description: Review `.md` diffs for cross-doc duplication and trim-verify. Catches material restated across multiple files, and content removed from one doc without landing in its destination. Fires on any large-doc dandori review pass and on any restructure PR touching `**/*.md`.
 mode: subagent
-model: deepseek/deepseek-v4-flash
+model: opencode/deepseek-v4-flash-free
 permission:
   bash: allow
   read: allow

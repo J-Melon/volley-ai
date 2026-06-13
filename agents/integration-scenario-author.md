@@ -1,7 +1,7 @@
 ---
 description: Author end-to-end integration tests that exercise multi-system flows as scenarios a player would trigger. Fires on "cover this flow end-to-end", "integration test for X feeds Y", or any bug that spans two or more subsystems.
 mode: subagent
-model: deepseek/deepseek-v4-flash
+model: opencode/deepseek-v4-flash-free
 permission:
   bash: allow
   read: allow

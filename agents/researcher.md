@@ -1,7 +1,7 @@
 ---
 description: Generic research specialist. Fetches library docs via context7, scans the open web via WebSearch, pulls specific URLs via WebFetch. Writes findings with citations to a scratchpad file. Escalation path when the main thread has hit the same issue twice without progress.
 mode: subagent
-model: deepseek/deepseek-v4-flash
+model: opencode/deepseek-v4-flash-free
 permission:
   bash: deny
   read: allow

@@ -1,7 +1,7 @@
 ---
 description: Review GDScript diffs for project-specific conventions that gdlint does not enforce: `@export` over `@onready`, `load()` for session-new scripts, signal wiring idioms, autoload usage patterns. Fires on any `**/*.gd` change.
 mode: subagent
-model: deepseek/deepseek-v4-flash
+model: opencode/deepseek-v4-flash-free
 permission:
   bash: allow
   read: allow

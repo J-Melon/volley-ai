@@ -1,7 +1,7 @@
 ---
 description: Review `.md` diffs for `ai/STYLE.md` compliance: no em dashes, no AI-tell vocabulary, narrative voice, citation format. Skips spelling (codespell covers). Fires on any `**/*.md` change.
 mode: subagent
-model: deepseek/deepseek-v4-flash
+model: opencode/deepseek-v4-flash-free
 permission:
   bash: allow
   read: allow
