@@ -6,7 +6,8 @@
 // Tools registered:
 //   swarm_dispatch  - fan out N codenamed minions as concurrent child sessions,
 //                     return immediately (dispatcher keeps working)
-//   swarm_collect   - gather the minions' status + final output
+//   (minions report back automatically: each wakes the dispatcher with its result
+//    in its own voice when it finishes. No collect step, no polling.)
 //   swarm_cleanup   - remove spent worktrees (isolate:true minions)
 //
 // Design + probe results: see SWARM-DISPATCH-SCOPE.md.
@@ -42,10 +43,50 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
   function getSwarm(id) {
     let s = swarms.get(id)
     if (!s) {
-      s = { minions: new Map(), usedNames: new Set() }
+      s = { dispatcherID: id, minions: new Map(), usedNames: new Set() }
       swarms.set(id, s)
     }
     return s
+  }
+
+  // A finished minion reports back to the dispatcher in its own voice. This is a
+  // system notification, not a nag: the dispatcher dispatched the work and is
+  // waiting on it, so the result WAKES the dispatcher (real prompt, not noReply)
+  // the moment it lands. The dispatcher has no perception of time; completion must
+  // arrive as an event, never be polled for.
+  async function reportToDispatcher(swarm, rec) {
+    let body = ""
+    try {
+      const res = await client.session.messages({ path: { id: rec.childID } })
+      const msgs = res?.data ?? res ?? []
+      for (let i = msgs.length - 1; i >= 0; i--) {
+        const mm = msgs[i]
+        const info = mm.info ?? mm
+        if ((info.role ?? info.type) !== "assistant") continue
+        body = (mm.parts ?? [])
+          .filter((p) => p.type === "text")
+          .map((p) => p.text || "")
+          .join("\n")
+        break
+      }
+    } catch {
+      body = "(could not read my output)"
+    }
+    const status = rec.timedOut ? "timed out before finishing" : "reporting"
+    const text =
+      `${rec.codename} (${rec.agent}) ${status} on ${rec.label}:\n\n` +
+      (body ? body.slice(0, 1500) : "(no output)")
+    // Wake the dispatcher with the report. Fire-and-forget; failure is non-fatal.
+    client.session
+      .prompt({
+        path: { id: swarm.dispatcherID },
+        body: { parts: [{ type: "text", text }] },
+      })
+      .catch(() => {})
+    // The report has been delivered, so the minion's session is spent: delete it
+    // (keeps the session list clean). Deleting the session never touches a worktree.
+    client.session.delete({ path: { id: rec.childID } }).catch(() => {})
+    swarm.minions.delete(rec.childID)
   }
 
   // Idempotent completion: clear the timeout, free the codename, drain one queued
@@ -60,6 +101,8 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
       const next = swarm.pending.shift()
       swarm.launch(next, next.index).catch(() => {})
     }
+    // Report back to the dispatcher in the minion's voice (push, not pull).
+    reportToDispatcher(swarm, rec)
   }
 
   function pickCodename(swarm, role, index) {
@@ -99,7 +142,8 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
           "minion gets a themed codename shown in its session title. Read-only " +
           "minions (reviewers/analysts) run on the main tree; set isolate:true " +
           "for write-capable authors to get a git worktree (NOT for .tscn/scene " +
-          "work, GodotIQ is pinned to the main tree). Then use swarm_collect.",
+          "work, GodotIQ is pinned to the main tree). Each minion reports back to " +
+          "you automatically when it finishes, in its own voice, no need to poll.",
         args: {
           minions: z
             .array(
@@ -221,64 +265,11 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             `Dispatched ${initial.length} minion(s) in parallel (cap ${cap}):\n` +
             dispatched.join("\n") +
             (queued ? `\n  + ${queued} queued, launching as slots free.` : "") +
-            `\n\nYou are free to keep working. Call swarm_collect to gather results.`
+            `\n\nKeep working; each minion reports back to you when it finishes.`
           )
         },
       }),
 
-      swarm_collect: tool({
-        description:
-          "Snapshot the status and output of minions dispatched via swarm_dispatch: " +
-          "each is 'done' (with its output) or 'running'. Does not block. Collecting " +
-          "a done minion CONSUMES it (its session is deleted so it stops cluttering " +
-          "the session list), so capture what you need from the output. Call again " +
-          "later for minions still running; you are woken as they finish.",
-        args: {},
-        async execute(_args, ctx) {
-          const swarm = swarms.get(ctx.sessionID)
-          if (!swarm || swarm.minions.size === 0) return "No minions dispatched in this session."
-
-          const out = []
-          for (const m of swarm.minions.values()) {
-            const status = m.done ? (m.timedOut ? "timed-out" : "done") : "running"
-            let text = ""
-            if (m.done) {
-              try {
-                const res = await client.session.messages({ path: { id: m.childID } })
-                const msgs = res?.data ?? res ?? []
-                for (let i = msgs.length - 1; i >= 0; i--) {
-                  const mm = msgs[i]
-                  const info = mm.info ?? mm
-                  if ((info.role ?? info.type) !== "assistant") continue
-                  text = (mm.parts ?? [])
-                    .filter((p) => p.type === "text")
-                    .map((p) => p.text || "")
-                    .join("\n")
-                  break
-                }
-              } catch {
-                text = "(could not read messages)"
-              }
-            }
-            out.push(
-              `### ${m.codename} (${m.agent}) , ${m.label} [${status}]` +
-                (m.branch ? ` branch ${m.branch}` : "") +
-                (text ? `\n${text.slice(0, 1500)}` : "")
-            )
-
-            // Once a minion's output is captured, delete its child session so it
-            // stops cluttering session listings (the remote app shows children;
-            // there is no server-side hide flag). Running minions are left alone;
-            // call swarm_collect again for them. Deleting the session does NOT
-            // touch a worktree (that is swarm_cleanup's job, after landing).
-            if (m.done) {
-              client.session.delete({ path: { id: m.childID } }).catch(() => {})
-              swarm.minions.delete(m.childID)
-            }
-          }
-          return out.length ? out.join("\n\n") : "All dispatched minions already collected."
-        },
-      }),
 
       swarm_cleanup: tool({
         description:
