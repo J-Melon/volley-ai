@@ -1,7 +1,10 @@
 ---
 name: After a challenge merges, branch fresh for follow-up work
 description: never keep piling commits onto a branch whose challenge already merged; always cut a new branch off current main
-type: feedback
+metadata:
+  parent: trunk_dev_cycle
+  node_type: memory
+  type: feedback
 originSessionId: 63a922cb-9834-46c0-b48d-fd28a7512bb9
 ---
 When a challenge merges (squash or otherwise), the branch it was on is effectively retired. Never push more commits to that branch name. Always cut a fresh branch off current `origin/main` for follow-up work.
