@@ -22,6 +22,13 @@ export const GitGuards = async () => {
         )
       }
 
+      // block-release-delete: never delete a GitHub release.
+      if (/gh release delete(\s|$)/i.test(cmd)) {
+        throw new Error(
+          "Never delete a GitHub release. Recreate by publishing a new tag instead."
+        )
+      }
+
       // block-direct-push-to-main on volley game repo only, not volley-ai.
       const pushToMain = /git\s+push\s+(?:-u\s+)?\S*\s+(?:main|master)(\s|$)/.test(cmd)
       if (pushToMain && !/volley-ai/.test(cmd) && !/(?:--force|--delete)/.test(cmd)) {
