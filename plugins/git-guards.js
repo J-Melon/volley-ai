@@ -1,10 +1,7 @@
-// Git/shell command guards, ported from the Claude PreToolUse(Bash) hooks.
-// Each gates on the `bash` tool's command text and throws to deny (OpenCode's
-// equivalent of Claude's permissionDecision:"deny"). Throwing surfaces the
-// message to the agent as the block reason.
+// Git/shell command guards for cases too complex for opencode.json permission
+// patterns. Simple deny rules (gh pr merge, gh release delete, git rebase, git
+// branch -D, etc.) live in opencode.json.
 //
-// Ported hooks: block-pr-merge, git-rebase-ask (degraded: ask -> block, since
-// OpenCode has no return-an-ask primitive), rm-permission-reason.
 // Fail open: a guard that cannot parse its input does not throw.
 
 /** @type {import("@opencode-ai/plugin").Plugin} */
@@ -15,52 +12,11 @@ export const GitGuards = async () => {
       const cmd = output?.args?.command
       if (typeof cmd !== "string" || cmd.length === 0) return
 
-      // block-pr-merge: only the maintainer merges PRs.
-      if (/gh pr merge(\s|$)/i.test(cmd)) {
-        throw new Error(
-          "Only the maintainer merges PRs (via Merge when ready). The agent must not run gh pr merge, including --auto."
-        )
-      }
-
-      // block-release-delete: never delete a GitHub release.
-      if (/gh release delete(\s|$)/i.test(cmd)) {
-        throw new Error(
-          "Never delete a GitHub release. Recreate by publishing a new tag instead."
-        )
-      }
-
-      // block-release-create: releases are human-authored.
-      if (/gh release create(\s|$)/i.test(cmd)) {
-        throw new Error(
-          "Releases are created by hand. Draft the notes, push the tag, Josh creates it."        )
-      }
-
       // block-direct-push-to-main on volley game repo only, not volley-ai.
       const pushToMain = /git\s+push\s+(?:-u\s+)?\S*\s+(?:main|master)(\s|$)/.test(cmd)
       if (pushToMain && !/volley-ai/.test(cmd) && !/(?:--force|--delete)/.test(cmd)) {
         throw new Error(
           "Direct push to main/master on the game repo is blocked. Push to a feature branch and land via PR."
-        )
-      }
-
-      // git-rebase-ask: rebase / pull --rebase. Claude asked; OpenCode blocks
-      // with a reason (run it yourself). Matches git rebase, and git pull with
-      // --rebase or -r.
-      if (
-        /(^|[\s&|;`(])git\s+rebase(\s|$)/.test(cmd) ||
-        (/(^|[\s&|;`(])git\s+pull(\s|$)/.test(cmd) && /(--rebase|\s-r(\s|$))/.test(cmd))
-      ) {
-        throw new Error(
-          "git rebase / git pull --rebase is not run unattended here (feedback_never_rebase). Run the rebase yourself, or confirm explicitly."
-        )
-      }
-
-      // block-branch-force-delete: git branch -D is dangerous. Use -d (safe,
-      // refuses unmerged) or confirm the branch is truly stale another way.
-      if (/(^|[\s&|;`(])git\s+branch\s+.*\s-D(\s|$)/.test(cmd) ||
-          /(^|[\s&|;`(])git\s+branch\s+.*(--delete\s+--force|--force\s+--delete)/.test(cmd)) {
-        throw new Error(
-          "git branch -D (force delete) is dangerous, it silently discards unmerged work. Use -d (safe, refuses unmerged) or confirm the branch is truly stale another way."
         )
       }
 
