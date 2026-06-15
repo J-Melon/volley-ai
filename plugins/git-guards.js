@@ -55,6 +55,15 @@ export const GitGuards = async () => {
         )
       }
 
+      // block-branch-force-delete: git branch -D is dangerous. Use -d (safe,
+      // refuses unmerged) or confirm the branch is truly stale another way.
+      if (/(^|[\s&|;`(])git\s+branch\s+.*\s-D(\s|$)/.test(cmd) ||
+          /(^|[\s&|;`(])git\s+branch\s+.*(--delete\s+--force|--force\s+--delete)/.test(cmd)) {
+        throw new Error(
+          "git branch -D (force delete) is dangerous, it silently discards unmerged work. Use -d (safe, refuses unmerged) or confirm the branch is truly stale another way."
+        )
+      }
+
       // rm-permission-reason: rm as a command token (start, whitespace,
       // separator, slash, backslash, or subshell char before it).
       const rmInvoked = /(^|[\s&|;`($\\/])rm\s/.test(cmd)
