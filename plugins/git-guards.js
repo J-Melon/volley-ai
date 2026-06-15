@@ -29,6 +29,12 @@ export const GitGuards = async () => {
         )
       }
 
+      // block-release-create: releases are human-authored.
+      if (/gh release create(\s|$)/i.test(cmd)) {
+        throw new Error(
+          "Releases are created by hand. Draft the notes, push the tag, Josh creates it."        )
+      }
+
       // block-direct-push-to-main on volley game repo only, not volley-ai.
       const pushToMain = /git\s+push\s+(?:-u\s+)?\S*\s+(?:main|master)(\s|$)/.test(cmd)
       if (pushToMain && !/volley-ai/.test(cmd) && !/(?:--force|--delete)/.test(cmd)) {
