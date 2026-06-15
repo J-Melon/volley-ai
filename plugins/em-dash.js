@@ -39,7 +39,10 @@ export const EmDash = async () => {
       if (input.tool === "bash") {
         const cmd = typeof args.command === "string" ? args.command : ""
         if (!PROSE_CMD.test(cmd)) return // grep/sed patterns etc. are exempt
-        scan = cmd
+        // Bash flags (e.g. `-F -`, `-s --no-edit`) legitimately contain hyphens;
+        // only the em-dash check applies to commands.
+        scan = ""
+        if (cmd.includes(EM)) scan = cmd
       } else if (input.tool === "edit") {
         // Only the written side. OpenCode edit args: newString (write),
         // oldString (match target, exempt).
