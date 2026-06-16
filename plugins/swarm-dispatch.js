@@ -392,32 +392,19 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
     },
 
     event: async ({ event }) => {
-      if (event.type === "session.idle") {
-        const idleID = event.properties.sessionID
-        for (const swarm of swarms.values()) {
-          const rec = swarm.minions.get(idleID)
-          if (rec && !rec.done) markDone(swarm, rec)
-        }
-        return
-      }
-      if (event.type === "session.prompt") {
-        const promptID = event.properties?.sessionID ?? event.properties?.id
-        if (!promptID) return
-        for (const swarm of swarms.values()) {
-          const rec = swarm.minions.get(promptID)
-          if (!rec || rec.done) continue
-          const finish = event.properties?.response?.finish ?? ""
-          if (["stop","length","content_filter","error"].includes(finish)) {
-            markDone(swarm, rec)
-          }
-        }
-        return
-      }
       const sid = event.properties?.sessionID ?? event.properties?.id
       if (!sid) return
+
+      // General fallback: any event from a tracked minion triggers a done check.
+      // Idle, prompt-response, error, and catch-all events all flow through here.
       for (const swarm of swarms.values()) {
         const rec = swarm.minions.get(sid)
         if (!rec || rec.done) continue
+
+        // Explicit completion signals
+        if (event.type === "session.idle") { markDone(swarm, rec); continue }
+
+        // Check if the last message has a terminal finish reason
         try {
           const res = await client.session.messages({ path: { id: rec.childID } })
           const msgs = res?.data ?? res ?? []
