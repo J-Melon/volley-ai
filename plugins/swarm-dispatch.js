@@ -396,7 +396,20 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
         const idleID = event.properties.sessionID
         for (const swarm of swarms.values()) {
           const rec = swarm.minions.get(idleID)
-          if (rec) markDone(swarm, rec)
+          if (rec && !rec.done) markDone(swarm, rec)
+        }
+        return
+      }
+      if (event.type === "session.prompt") {
+        const promptID = event.properties?.sessionID ?? event.properties?.id
+        if (!promptID) return
+        for (const swarm of swarms.values()) {
+          const rec = swarm.minions.get(promptID)
+          if (!rec || rec.done) continue
+          const finish = event.properties?.response?.finish ?? ""
+          if (["stop","length","content_filter","error"].includes(finish)) {
+            markDone(swarm, rec)
+          }
         }
         return
       }
@@ -405,7 +418,6 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
       for (const swarm of swarms.values()) {
         const rec = swarm.minions.get(sid)
         if (!rec || rec.done) continue
-        if (Date.now()-rec.startedAt < 30000) continue
         try {
           const res = await client.session.messages({ path: { id: rec.childID } })
           const msgs = res?.data ?? res ?? []
