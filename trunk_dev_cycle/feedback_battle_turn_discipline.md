@@ -12,6 +12,8 @@ metadata:
 
 **A minion report is complete when it arrives.** If a report ends with an "In Progress" heading or lacks a verdict section, the minion finished its session at that point; it did not error, it stopped. Verify once that the file on disk contains no further content, then carry that review surface yourself. Do not wait for a verdict that will never arrive.
 
+**Own the full battle sequence.** When the last reviewer reports, move. Collect all findings, resolve, push fixes if needed, then fire the verdict (`gh workflow run bot-review.yml -f pr=N -f event=APPROVE/REQUEST_CHANGES`). Do not wait for Josh to say "battle" or "synth" or "what about the other PR." The loop is mine.
+
 **Ground every claim with a live read.** Before stating a PR's merge state, CI status, or review count in a verdict or to Josh, run the live `gh` query. Never carry state from memory across turns; the hydrate hook exists because memory is wrong more often than the check.
 
 **Fix discovered issues, then fire the bot review.** Post findings inline at the relevant `path:line`. Push fixes, verify CI resolves, then fire the bot review naming the resolved SHA.
