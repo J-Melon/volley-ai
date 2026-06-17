@@ -20,4 +20,4 @@ The Shuck PR automations drive the two middle moves, but only on a PR Linear has
 **Why:** Two corrections. 2026-04-24: I dispatched Hornfels on SH-240 and left it at Ready; Josh: "should be in progress." 2026-05-28 on SH-434 Anteater 2: with both PRs open I said I'd "move the issues toward Challenged when the PRs merge"; Josh: "challenged means pr is up, is this not a memory?" I had Challenged as a post-merge state when it means PR-open. The lane order was documented but the per-state triggers were not stated sharply, so I mismapped merge.
 
 **How to apply:**
-- The organiser does NOT change issue states. State transitions are Josh's. The organiser links the PR after it opens; the Shuck PR automations handle draft->Dispatched and ready->Challenged, and Josh moves the issue to Completed on merge.
+- Josh moves issue states. The organiser links the PR after it opens; the Shuck PR automations handle draft->Dispatched and ready->Challenged. Josh moves the issue to Completed on merge.
