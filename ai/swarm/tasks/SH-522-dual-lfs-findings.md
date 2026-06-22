@@ -34,20 +34,39 @@ mapping in GitHub's database.
 - Storage is charged hourly based on what is stored
 - Overages at ~$0.0875/GiB bandwidth, ~$0.07/GiB-month storage
 
-### 3. Best compression: PNG to WebP
+### 3. Best compression: PNG to WebP lossy via cwebp
 
-Convert PNG sprites to WebP at quality 85% for the GitHub LFS preview channel.
-WebP is supported by all browsers and GitHub's image rendering. Quality 85% is
-visually near-identical to source PNGs for sprite review.
+**Recipe:** `cwebp -q 80 -m 6 -mt input.png -o output.webp`
 
-| Metric | Current (PNG) | Compressed (WebP Q85) |
-|--------|---------------|----------------------|
-| Total size | ~96 MB | ~15 MB |
-| Per-sprite | 200-400 KB | 30-60 KB |
+Single pass, no two-pass preprocessing needed (oxipng and pngquant produce no
+additional gain when the output target is lossy WebP).
 
-At ~15 MB, the full asset set fits 600x within the 10 GiB free storage tier.
+- `-q 80`: visually lossless for sprite review; edges crisp, alpha clean
+- `-m 6`: maximum compression method, ~5-10% smaller than default
+- `-mt`: multi-threaded, free speedup in CI
 
-Tool: `cwebp` (from libwebp, available via `apt install webp` in CI runners).
+**Why WebP and not AVIF:** AVIF gives slightly smaller files but GitHub does not
+render AVIF in any context (repo view, PR diffs, comment boxes). WebP has been
+supported on github.com since August 2025, including PR diff 2-up view.
+
+**Size reduction:**
+
+| Metric | Current (PNG) | WebP Q80 |
+|--------|---------------|----------|
+| Total (96 MB) | ~96 MB | ~15 MB |
+| Per sprite (200-400 KB) | 200-400 KB | 25-55 KB |
+| Reduction | baseline | ~85% |
+
+**Scale projections:**
+
+| Scale | PNG (raw) | WebP Q80 | Fits in 10 GiB free tier |
+|-------|-----------|----------|--------------------------|
+| Current (96 MB) | 96 MB | ~15 MB | 680x |
+| 1 GB game | 1 GB | ~158 MB | 64x |
+| 10 GB game | 10 GB | ~1.5 GB | 6.6x |
+
+Tool: `cwebp` from `apt install webp` (366 KB package). Ubuntu 24.04 ships
+libwebp 1.3.2. CI install: `sudo apt update && sudo apt install -y webp`.
 
 Source art (PSD, KRA, ASE) and audio (WAV, OGG, MP3) are excluded from GitHub
 LFS: PR reviewers only need sprite previews.
@@ -55,9 +74,10 @@ LFS: PR reviewers only need sprite previews.
 ### 4. CI integration path
 
 1. PR CI fetches LFS assets from the proxy (existing step in `publish.yml`)
-2. Convert all tracked PNGs to WebP at Q85 via `cwebp`
-3. Push WebP files to GitHub LFS: `git lfs push origin --all`
-4. Budget set to $0 in GitHub LFS settings (safety cap)
+2. `sudo apt update && sudo apt install -y webp`
+3. Convert all tracked PNGs: `cwebp -q 80 -m 6 -mt` (single pass, no preprocessing)
+4. Push WebP files to GitHub LFS: `git lfs push origin --all`
+5. Budget set to $0 in GitHub LFS settings (safety cap)
 
 ### 5. Open questions
 
