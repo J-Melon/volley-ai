@@ -7,6 +7,27 @@ metadata:
   originSessionId: 750fc386-96f7-4511-a3d3-efe767fb41ba
 ---
 
-**Resolve the verdict from the inline PR threads, the durable record, not from the agents' direct reports.** A reviewer's findings live as inline comments anchored to the diff, and that is what I read to synthesize and what I reply to. The dispatcher-report-back-to-me is for the part a reviewer cannot anchor inline: off-diff findings, confidence, the failure modes it checked and cleared. So when I converge the battle, I `gh api .../pulls/<n>/comments` and read the live threads, rather than leaning on the prose each agent narrated to me; the threads are the source of truth, the report is the supplement.
+Resolve the verdict from the inline PR threads. The agents' direct reports are
+supplementary (off-diff findings, confidence, failure modes checked). The inline
+comments are the durable record and the source of truth.
 
-This means the brief can shrink: tell reviewers to post findings inline and report only the verdict plus anything off-diff, instead of a full restatement to me. Less duplicated text, and the PR carries the record either way. Josh, 2026-06-08: "on review, you don't really need reports from the agents direct?".
+**When:** after every reviewer has reported, before deciding the verdict.
+
+**How:**
+```
+gh api repos/<owner>/<repo>/pulls/<n>/comments --jq '.[] | {author: .user.login, body: .body[0:120], line: .line}'
+```
+
+Read the live inline threads. Check each finding's severity against the reviewer
+output form: only `issue:` blocks. `suggestion:`, `question:`, `nitpick:` ride
+along. Resolve from severity, not from the reviewer's summary tone. A reviewer
+who says "ship with named changes" but leaves an `issue:` is still a block.
+
+**The agents' report is the supplement, not the verdict input.** A reviewer
+might soften their report to me while their inline findings contain a block. The
+threads carry the finding; the report carries off-diff colour. Read the threads
+first, skim the reports for anything the threads can't carry.
+
+Josh, 2026-06-08: "on review, you don't really need reports from the agents
+direct?". Reinforced 2026-06-22: resolved verdict from agent reports without
+reading inline threads.
