@@ -67,7 +67,7 @@ GitHub Free for orgs includes 10 GiB storage per
 Even at 10 GB game scale, we fit. Budget set to $0 caps overages.
 
 Note: force-pushes and rebases leave orphaned OIDs in LFS storage. GitHub retains
-unreferenced LFS objects for 90 days. At 45 referenced OIDs / 100 MB vs 213
+unreferenced LFS objects for 30 days. At 45 referenced OIDs / 100 MB vs 213
 local cache files / 156 MB, local overhead is ~36%. The storage projections above
 represent steady-state (only referenced objects) and are conservative for CI churn.
 
