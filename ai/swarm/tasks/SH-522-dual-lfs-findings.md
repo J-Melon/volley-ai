@@ -1,4 +1,4 @@
-# SH-522 Duel LFS -- Spike Findings
+# SH-522 Dual LFS -- Spike Findings
 
 ## Goal
 
@@ -21,7 +21,7 @@ compression, no bot, no pointer file changes, no new infrastructure.
 
 ## Key Findings
 
-### 1. GitHub DOES render LFS images in PR diffs
+### 1. GitHub does render LFS images in PR diffs
 
 Verified against PR #994 (pre-proxy merge). GitHub's Content API returns full
 image size for LFS-tracked files, confirming object resolution. GitHub's web UI
@@ -50,7 +50,7 @@ git -c lfs.url=https://github.com/shuck-dev/volley.git/info/lfs \
 The `-c lfs.url=...` override is needed because `.lfsconfig` points to the proxy
 but the push target is GitHub.
 
-### 3. No compression needed at current or projected scale
+### 3. Compression-free at current and projected scale
 
 LFS is content-addressed. Same OID pushed from any PR hits the same object.
 Storage grows with new assets, not with PR count. 96 MB current assets equals
@@ -62,8 +62,14 @@ Storage grows with new assets, not with PR count. 96 MB current assets equals
 | 1 GB game | 1 GB |
 | 10 GB game | 10 GB |
 
-GitHub Free for orgs includes 10 GiB storage. Even at 10 GB game scale, we fit.
-Budget set to $0 caps overages.
+GitHub Free for orgs includes 10 GiB storage per
+[docs.github.com/billing](https://docs.github.com/en/billing/concepts/product-billing/git-lfs).
+Even at 10 GB game scale, we fit. Budget set to $0 caps overages.
+
+Note: force-pushes and rebases leave orphaned OIDs in LFS storage. GitHub retains
+unreferenced LFS objects for 90 days. At 45 referenced OIDs / 100 MB vs 213
+local cache files / 156 MB, local overhead is ~36%. The storage projections above
+represent steady-state (only referenced objects) and are conservative for CI churn.
 
 ### 4. Free tier is abundant
 
@@ -80,8 +86,9 @@ Budget set to $0 caps overages.
 If the game ever approaches the free tier storage limit, WebP lossy via
 `cwebp -q 80 -m 6 -mt` compresses PNG sprites by ~85% with visually lossless
 quality for sprite review. AVIF is unsupported on GitHub. Two-pass preprocessing
-(oxipng, pngquant) adds no benefit when targeting lossy WebP. This is not needed
-now but is researched and ready.
+(oxipng, pngquant) adds no benefit when targeting lossy WebP. Researched and
+ready for when scale demands it. Validate with a real sprite before production
+use: generate a WebP from a representative PNG and compare in a PR diff.
 
 ## Approach Ruled Out
 
@@ -96,6 +103,9 @@ now but is researched and ready.
 ## CI Integration Path
 
 ```yaml
+permissions:
+  contents: write  # required for LFS push via GITHUB_TOKEN
+
 - name: Push LFS objects to GitHub for PR preview
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -105,9 +115,10 @@ now but is researched and ready.
         lfs push --object-id origin $(git lfs ls-files -l | awk '{print $1}')
 ```
 
-Needs: a GITHUB_TOKEN or PAT with repo scope (for LFS push). The built-in
-`secrets.GITHUB_TOKEN` in Actions may need LFS write permissions enabled in
-repo/org settings.
+The built-in `secrets.GITHUB_TOKEN` requires `permissions: contents: write` for
+LFS push. Alternatively, a fine-grained PAT with repo scope. Consider running
+this step as non-blocking (continue-on-error) since a failed LFS push should not
+fail the PR's CI.
 
 GitHub LFS budget should be set to $0 in repo settings as a safety cap.
 
