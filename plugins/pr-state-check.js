@@ -10,7 +10,7 @@
 
 const STATE_CLAIM =
   /\b(merged|is open|is closed|reopened|blocked|approve|approves|approved|approval|passing|passed|failing|failed|mergeable|queued|landed|ready to merge|auto-?merge|all checks|checks? (pass|green|red|fail)|review (passed|verdict|blocked|approved)|green|red)\b/i
-const MENTIONS_PR = /#\d+|\bPRs?\b|pull request/i
+const MENTIONS_PR = /(?<!\b(?:GitHub\s)?issue\s|ticket\s)#\d+|\bPRs?\b|pull request/i
 const GH_READ = /gh pr (view|list|status|checks)|gh api[^\n]*(\/pulls|\/issues)/i
 
 /** @type {import("@opencode-ai/plugin").Plugin} */

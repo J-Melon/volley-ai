@@ -68,7 +68,7 @@ Before any work begins, the milestone exists, the Ride (if needed) exists, and t
 
 ## Phase 4: Dandori, the impl plan
 
-After the milestone is filed, before any minion dispatches, plan implementation per work unit. Dandori is the implementation plan, not the mission-shape walk.
+Before any minion dispatches, plan implementation per work unit. Dandori is the implementation plan, not the mission-shape walk.
 
 **Crew per work unit.** For each issue attached to the milestone, name:
 
