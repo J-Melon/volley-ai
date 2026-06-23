@@ -108,7 +108,6 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
     rec.done = true
     rec.finishedAt = Date.now()
     if (rec.timer) clearTimeout(rec.timer)
-    swarm.usedNames.delete(rec.codename)
     if (swarm.pending && swarm.pending.length && swarm.launch) {
       const next = swarm.pending.shift()
       swarm.launch(next, next.index).catch(() => {})
@@ -122,8 +121,8 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
       swarm.usedNames.add(free)
       return free
     }
-    // No -1/-2 suffix: that collapses two agents into one handle (banned). Names
-    // free on completion, so null here means a fan-out wider than the whole pool.
+    // Names are session-scoped: never freed per-minion. Exhaustion means a
+    // fan-out wider than the whole pool.
     return null
   }
 
@@ -362,7 +361,6 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             found.done = true
             if (found.timer) clearTimeout(found.timer)
             swarm.minions.delete(found.childID)
-            swarm.usedNames.delete(found.codename)
             return `killed ${args.codename} (${found.label})`
           }
           // Fallback: scan DB and filesystem for orphaned sessions and worktrees
