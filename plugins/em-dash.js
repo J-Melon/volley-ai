@@ -12,7 +12,7 @@
 //   - Linear/PR text MCP tools: scan their text args in full.
 
 const EM = "—"
-const SPACED_HYPHEN = /[^ ] - [^ ]/
+const SPACED_HYPHEN = /[^ ] - (?!>)[^ ]/
 
 // Commands that write prose to a permanent surface.
 const PROSE_CMD =
