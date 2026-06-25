@@ -4,7 +4,8 @@ Read this at boot, in full. It is short on purpose.
 
 **1. Render the forest.** Run this and read the whole output (never tail/head/grep it):
 
-    /home/josh/gamedev/volley-ai/scripts/memory/lint-graph-edges.sh --tree
+    f                  # alias: ordered trees only
+    f --all            # full forest incl. unordered bridge nodes
 
 **2. Descend the trunks that matter.** Six trunks. When work touches one, open its file and
 read it before acting; the body is its own index, its `children_dir` holds the leaves, reached
