@@ -17,11 +17,18 @@
 set -euo pipefail
 
 BOLD=$'\033[1m'
+DIM=$'\033[2m'
+MAGENTA=$'\033[35m'
 CYAN=$'\033[36m'
-WHITE=$'\033[37m'
-YELLOW=$'\033[33m'
+BLUE=$'\033[34m'
 GREEN=$'\033[32m'
+YELLOW=$'\033[33m'
+RED=$'\033[31m'
+WHITE=$'\033[37m'
 NC=$'\033[0m'
+
+DEPTH_COLOURS=( "$MAGENTA" "$BLUE" "$GREEN" "$YELLOW" "$CYAN" "$RED" )
+colour_at_depth() { printf '%s' "${DEPTH_COLOURS[$(( $1 % ${#DEPTH_COLOURS[@]} ))]}"; }
 
 mode="lint"
 if [[ "${1:-}" == "--tree" ]]; then
@@ -93,11 +100,12 @@ if [[ "$mode" == "tree" ]]; then
     # Render each root and descend its children. A node whose parent is empty,
     # or whose parent does not resolve to a known node, is treated as a root.
     print_children() {
-        local parent="$1" indent="$2" child
+        local parent="$1" indent="$2" depth="$3" child colour
         for child in $(printf '%s\n' "${!PARENT_OF[@]}" | sort); do
             if [[ "${PARENT_OF[$child]}" == "$parent" ]]; then
-                printf '%s- %s\n' "$indent" "${WHITE}${child}${NC}"
-                print_children "$child" "  $indent"
+                colour="$(colour_at_depth "$depth")"
+                printf '%s- %b%s\n' "$indent" "${colour}${child}${NC}"
+                print_children "$child" "  $indent" $((depth + 1))
             fi
         done
     }
@@ -111,8 +119,8 @@ if [[ "$mode" == "tree" ]]; then
     for node in $(printf '%s\n' "${!IS_NODE[@]}" | sort); do
         if is_root "$node" && has_children "$node"; then
             [[ $typed_roots -gt 0 ]] && echo
-            printf '%b\n' "${BOLD}${CYAN}${node}${NC}"
-            print_children "$node" "  "
+            printf '%b\n' "${BOLD}${MAGENTA}${node}${NC}"
+            print_children "$node" "  " 1
             typed_roots=$((typed_roots + 1))
         fi
     done
@@ -137,7 +145,7 @@ if [[ "$mode" == "tree" ]]; then
             t="${TRUNK_OF[$node]:-UNBUCKETED}"
             [[ "$t" == "$trunk" ]] || continue
             if [[ $first == 1 ]]; then echo; printf '%b\n' "${YELLOW}## ${trunk}${NC}"; first=0; fi
-            printf -- '- %s\n' "${WHITE}${node}${NC}"
+            printf -- '- %b%s\n' "${DIM}${WHITE}${node}${NC}"
             unordered=$((unordered + 1))
         done
     done
