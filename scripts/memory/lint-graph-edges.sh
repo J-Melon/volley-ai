@@ -19,12 +19,25 @@ set -euo pipefail
 BOLD=$'\033[1m'
 DIM=$'\033[2m'
 CYAN=$'\033[36m'
-BLUE=$'\033[34m'
-GREEN=$'\033[32m'
-YELLOW=$'\033[33m'
+BRIGHT_RED=$'\033[91m'
 RED=$'\033[31m'
+MAGENTA=$'\033[35m'
+BRIGHT_YELLOW=$'\033[93m'
+YELLOW=$'\033[33m'
+GREEN=$'\033[32m'
+BRIGHT_GREEN=$'\033[92m'
 WHITE=$'\033[37m'
 NC=$'\033[0m'
+
+DEPTH_COLOURS=(
+    "$BRIGHT_GREEN"
+    "$GREEN"
+    "$YELLOW"
+    "$BRIGHT_YELLOW"
+    "$MAGENTA"
+    "$RED"
+    "$BRIGHT_RED"
+)
 
 colour_at_depth() {
     local idx=$(($1-1))
