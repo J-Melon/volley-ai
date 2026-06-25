@@ -7,8 +7,8 @@
 #
 # Usage:
 #   lint-graph-edges.sh [MEMORY_DIR]            validate (default)
-#   lint-graph-edges.sh --tree [MEMORY_DIR]     render ordered trees, then validate
-#   lint-graph-edges.sh --all [MEMORY_DIR]      render full forest incl. unordered, then validate
+#   lint-graph-edges.sh --tree|tree [DIR]       render ordered trees
+#   lint-graph-edges.sh --all|all [DIR]         render full forest incl. unordered
 #
 # parent: may sit at the top level of the frontmatter or nested under
 # metadata: (any indentation); both are read. MEMORY_DIR defaults to
@@ -48,10 +48,10 @@ colour_at_depth() {
 
 
 mode="lint"
-while [[ "${1:-}" == --* ]]; do
+while [[ "${1:-}" == -* ]]; do
     case "$1" in
-        --tree) mode="tree" ;;
-        --all)  mode="all" ;;
+        --tree|-tree) mode="tree" ;;
+        --all|-all)   mode="all" ;;
         *) break ;;
     esac
     shift
