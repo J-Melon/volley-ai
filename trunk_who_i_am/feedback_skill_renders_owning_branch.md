@@ -1,6 +1,6 @@
 ---
-name: skill-renders-owning-branch
-description: "A skill backed by a SINGLE owning memory branch is a thin pointer: the shape in brief plus a link to descend, not the branch re-narrated. The memory owns the body; the skill is its surface."
+name: feedback_skill_renders_owning_branch
+description: "A skill is a short instructional summary of the action to take. It carries the actionable instructions itself; memory links supply depth and the reason why, but the skill must stand as a usable instruction set on its own."
 metadata: 
   node_type: memory
   type: feedback
@@ -8,10 +8,13 @@ metadata:
   originSessionId: bd0ca049-796f-41c8-a3e7-cb8a0a44ac81
 ---
 
-When a skill renders a single owning memory branch, the skill is a **thin pointer**: name the shape in brief and link the branch to descend into, do not re-narrate it. The branch owns the rule body and its leaves; the skill is the rendered surface, not a copy. This is [[feedback_skill_consolidates_not_restates]] for the one-source case: same single-source principle, different shape (one owner thinly rendered, not N sources indexed).
+# A skill is an instructional summary
 
-The tell: I read the owning branch and copy it into the skill instead of linking it. Building the skill from adjacent prose (another skill, a CLAUDE.md paragraph) is the same miss one step earlier: render from the OWNING memory, or point at it, never re-narrate.
+A skill is a short summary of the action to take when the task matches.
+It carries the actionable instructions in its own body. Memory links supply
+depth, the full process, and the reason why, but the skill itself must be
+usable as a standalone instruction set. It never defers the action to a
+link; it gives me the steps and links the depth.
 
-**Why:** the `battle` skill (2026-06-08), backed by [[feedback_battle_review_process]]. I drafted it twice as a full render of the branch (the six-step loop, the leaves, the "why" prose), first lifted from the dispatch skill, then a faithful render. Both wrong: Josh, "it should just read the memory if it needs more." The skill cut to the shape in brief plus a descend-link.
-
-**How to apply:** skill body = one paragraph of shape + the `[[branch]]` link + "read the memory for any of this in full." If the skill restates the branch's steps or leaves, trim to the brief. Read the owning branch first to know the shape; render it thin, do not transcribe it.
+This replaces the old thin-pointer rule: a skill that merely pointed at
+memory with no instructions of its own was not a usable skill.
