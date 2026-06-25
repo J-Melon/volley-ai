@@ -7,8 +7,7 @@
 #
 # Usage:
 #   lint-graph-edges.sh [MEMORY_DIR]            validate (default)
-#   lint-graph-edges.sh --tree|tree [DIR]       render ordered trees
-#   lint-graph-edges.sh --all|all [DIR]         render full forest incl. unordered
+#   lint-graph-edges.sh --tree|tree [DIR]       render the forest
 #
 # parent: may sit at the top level of the frontmatter or nested under
 # metadata: (any indentation); both are read. MEMORY_DIR defaults to
@@ -161,36 +160,7 @@ if [[ "$mode" == "tree" || "$mode" == "all" ]]; then
             typed_roots=$((typed_roots + 1))
         fi
     done
-    # Bridge: group the unordered nodes under their proposed trunk, so the render
-    # shows a navigable forest (trunks), not a flat dump. The bucketing map is a
-    # markdown file with "## <trunk> (N)" headers and "- <node>" lines.
-    BRIDGE="${BRIDGE_MAP:-$_SELF_DIR/memory-bucketing.md}"
-    declare -A TRUNK_OF
-    if [[ -f "$BRIDGE" ]]; then
-        cur=""
-        while IFS= read -r line; do
-            if [[ "$line" =~ ^##\ ([a-z-]+) ]]; then cur="${BASH_REMATCH[1]}"
-            elif [[ "$line" =~ ^-\ ([A-Za-z0-9_]+) ]]; then TRUNK_OF["${BASH_REMATCH[1]}"]="$cur"; fi
-        done < "$BRIDGE"
-    fi
-    if [[ "$mode" == "all" ]]; then
-    echo
-    echo "# bridge: unordered nodes grouped under their proposed trunk"
-    for trunk in dev-cycle who-i-am docs volley shuck UNBUCKETED; do
-        first=1
-        for node in $(printf '%s\n' "${!IS_NODE[@]}" | sort); do
-            is_root "$node" && ! has_children "$node" || continue
-            [[ "$node" == trunk_* ]] && continue
-            [[ "$node" == "MEMORY" ]] && continue
-            t="${TRUNK_OF[$node]:-UNBUCKETED}"
-            [[ "$t" == "$trunk" ]] || continue
-            if [[ $first == 1 ]]; then echo; printf '%b\n' "${YELLOW}## ${trunk}${NC}"; first=0; fi
-            printf -- '- %b%s\n' "${DIM}${WHITE}${node}${NC}"
-            unordered=$((unordered + 1))
-        done
-    done
-    fi
-    printf '%b\n' "${GREEN}--- ${typed_roots} ordered trees, ${unordered} unordered nodes across the trunks ---${NC}"
+    printf '%b\n' "${GREEN}--- ${typed_roots} ordered trees ---${NC}"
 fi
 
 echo "lint-graph-edges: $dangling dangling, $orphans root/untyped nodes"
