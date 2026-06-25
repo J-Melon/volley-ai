@@ -56,9 +56,17 @@ fi
 # Read a file's parent: slug from its frontmatter (top-level or nested under
 # metadata:, at any indent). Prints the slug, or nothing for a root.
 is_memory_node() {
+    local name="$(basename "$1" .md)"
+    local dir="$(dirname "$1")"
+    # Spine files and letters are always memory nodes.
+    [[ "$name" == "MEMORY" ]]         && return 0
+    [[ "$name" == "letters" ]]        && return 0
+    [[ "$name" == trunk_* ]]          && return 0
+    [[ "$dir" == */letters ]]         && return 0
+    # Otherwise require node_type: memory.
     awk '
         /^---[[:space:]]*$/ { fence++; next }
-        fence == 1 && /^[[:space:]]*node_type:[[:space:]]*memory[[:space:]]*$/ { found=1; exit }
+        fence == 1 && /^[[:space:]]*node_type:[[:space:]]*memory/ { found=1; exit }
         fence >= 2 { exit }
         END { exit found ? 0 : 1 }
     ' "$1"
