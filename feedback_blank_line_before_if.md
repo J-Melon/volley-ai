@@ -1,37 +1,49 @@
 ---
-name: blank-line-before-every-if-statement
-description: "GDScript style rule: every `if` statement gets a blank line above it. Exceptions: first statement of a function body, and `elif`/`else` continuations. Triggers when reading or writing GDScript with an `if` that has a code line directly above it. Lives in `ai/skills/minions/implementer-nits.md` so sub-agents inherit it."
-metadata: 
+name: blank-line-spacing-inside-function-bodies
+description: "GDScript style: blank line before every if, after every early-return guard, between logical clusters. Triggers when writing or reviewing GDScript. This is the single authority for function-body spacing; the implementer-nits skill points here."
+metadata:
   node_type: memory
   type: feedback
   originSessionId: 6816739f-74ae-4ab7-bf0c-de2832b60fb1
 ---
 
-## The rule
+## The rules
 
-In GDScript: blank line before every `if`. Two exceptions only.
+One blank line before every `if`. Exceptions: first statement of a function body, and `elif`/`else` continuations.
 
-- First statement of a function body: no preceding line, no rule to apply.
-- `elif` / `else` continuation of the same conditional: stays attached.
+One blank line after every early-return guard (`if cond: return`) before the main work begins. Applies to every function, not just setup functions.
 
-Applies regardless of whether the preceding statement is one line or many.
+One blank line between logical clusters: var decls, signal wiring, mutation, cleanup.
 
-## Pre-flight check before writing or accepting GDScript
+Break up large unbroken runs (6+ consecutive statements with no blank) into spaced steps by what each group is doing. Fires on run size, not on conditional presence.
 
-Scan the diff for the pattern:
+One blank line after a multi-statement `if`/`for` block before the next statement, when the next statement is a new logical step rather than a continuation.
 
+Heaviness is a different problem from spacing. A dense, deeply-nested, multi-job function wants extraction, not blank lines. Spacing is cosmetic; heaviness is semantic.
+
+gdformat preserves single blanks; it only collapses 2+ in a row.
+
+## Calibrating example
+
+```gdscript
+func _on_ball_removed(ball: Ball) -> void:
+    if not _rows.has(ball):
+        return
+
+    var row: Dictionary = _rows[ball]
+    var label: Label = row["label"]
+
+    if is_instance_valid(ball) and ball.play_state_changed.is_connected(row["callable"]):
+        ball.play_state_changed.disconnect(row["callable"])
+
+    if is_instance_valid(label):
+        label.queue_free()
+
+    _rows.erase(ball)
 ```
-<non-blank line>
-<if ...>:
-```
 
-If found, insert a blank line between them.
+Four clusters: guard, var decls, signal disconnect, label free, dict erase. Each blank-separated.
 
 ## Why
 
-gdformat does not enforce this; gdlint does not flag it. So it slips through every linter pass and lands as a reviewer nit on every implementer PR. Fictionising the rule in the implementer-nits skill stops the loop.
-
-## Where it lives
-
-- Skill: `ai/skills/minions/implementer-nits.md` (Blank-line spacing section).
-- Memory: this file, as a pointer for my own pre-action checks.
+gdformat does not enforce this; gdlint does not flag it. So it slips through every linter pass and lands as a reviewer nit on every implementer PR. Consolidating the rule here as the single authority stops the loop.
