@@ -7,7 +7,8 @@
 #
 # Usage:
 #   lint-graph-edges.sh [MEMORY_DIR]            validate (default)
-#   lint-graph-edges.sh --tree [MEMORY_DIR]     render the forest, then validate
+#   lint-graph-edges.sh --tree [MEMORY_DIR]     render ordered trees, then validate
+#   lint-graph-edges.sh --all [MEMORY_DIR]      render full forest incl. unordered, then validate
 #
 # parent: may sit at the top level of the frontmatter or nested under
 # metadata: (any indentation); both are read. MEMORY_DIR defaults to
@@ -49,6 +50,9 @@ colour_at_depth() {
 mode="lint"
 if [[ "${1:-}" == "--tree" ]]; then
     mode="tree"
+    shift
+elif [[ "${1:-}" == "--all" ]]; then
+    mode="all"
     shift
 fi
 
@@ -128,7 +132,7 @@ for child in "${!PARENT_OF[@]}"; do
     fi
 done
 
-if [[ "$mode" == "tree" ]]; then
+if [[ "$mode" == "tree" || "$mode" == "all" ]]; then
     # Render each root and descend its children. A node whose parent is empty,
     # or whose parent does not resolve to a known node, is treated as a root.
     print_children() {
@@ -168,6 +172,7 @@ if [[ "$mode" == "tree" ]]; then
             elif [[ "$line" =~ ^-\ ([A-Za-z0-9_]+) ]]; then TRUNK_OF["${BASH_REMATCH[1]}"]="$cur"; fi
         done < "$BRIDGE"
     fi
+    if [[ "$mode" == "all" ]]; then
     echo
     echo "# bridge: unordered nodes grouped under their proposed trunk"
     for trunk in dev-cycle who-i-am docs volley shuck UNBUCKETED; do
@@ -183,6 +188,7 @@ if [[ "$mode" == "tree" ]]; then
             unordered=$((unordered + 1))
         done
     done
+    fi
     printf '%b\n' "${GREEN}--- ${typed_roots} ordered trees, ${unordered} unordered nodes across the trunks ---${NC}"
 fi
 
