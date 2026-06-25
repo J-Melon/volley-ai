@@ -1,6 +1,6 @@
 ---
 name: battle
-description: Dispatcher-side entry to battling a challenge: the review loop, owned by the memory branch feedback_battle_review_process. Read when battling any PR. The challenge body shape is the `pr` skill; the per-reviewer contract is the `reviewers` skill.
+description: Dispatcher-side entry to battling a challenge, the review loop, owned by the memory branch feedback_battle_review_process. Read when battling any PR. The challenge body shape is the `pr` skill; the per-reviewer contract is the `reviewers` skill.
 ---
 
 # Battling a challenge
