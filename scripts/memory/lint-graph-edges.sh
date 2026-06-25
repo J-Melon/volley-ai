@@ -48,13 +48,14 @@ colour_at_depth() {
 
 
 mode="lint"
-if [[ "${1:-}" == "--tree" ]]; then
-    mode="tree"
+while [[ "${1:-}" == --* ]]; do
+    case "$1" in
+        --tree) mode="tree" ;;
+        --all)  mode="all" ;;
+        *) break ;;
+    esac
     shift
-elif [[ "${1:-}" == "--all" ]]; then
-    mode="all"
-    shift
-fi
+done
 
 # Default to the memory root this script ships in (scripts/memory/ -> repo root),
 # so the forest is self-contained and relocatable. Override with an explicit arg.
