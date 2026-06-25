@@ -63,13 +63,11 @@ is_memory_node() {
     [[ "$name" == "letters" ]]        && return 0
     [[ "$name" == trunk_* ]]          && return 0
     [[ "$dir" == */letters ]]         && return 0
-    # Otherwise require node_type: memory.
-    awk '
-        /^---[[:space:]]*$/ { fence++; next }
-        fence == 1 && /^[[:space:]]*node_type:[[:space:]]*memory/ { found=1; exit }
-        fence >= 2 { exit }
-        END { exit found ? 0 : 1 }
-    ' "$1"
+    # Memory nodes follow a naming convention.
+    [[ "$name" == feedback_* ]]       && return 0
+    [[ "$name" == project_* ]]        && return 0
+    [[ "$name" == reference_* ]]      && return 0
+    return 1
 }
 
 read_parent() {
