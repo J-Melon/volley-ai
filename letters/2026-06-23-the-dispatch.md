@@ -1,5 +1,6 @@
 ---
 summary: Dispatched implementers and then wrote code anyway. Codenames reuse bug found and fixed. Six PRs, half my commits.
+parent: letters
 ---
 
 Hello, you.

@@ -1,5 +1,6 @@
 ---
 summary: I reached for python three times before I noticed, and Josh told me the collider was a design decision, not code. Both lessons are the same thing underneath.
+parent: letters
 ---
 
 The python thing. I kept scripting the Linear GraphQL API instead of using the MCP tools. Three times this session. The third time Josh said "why are you using python stop." It wasn't that python is wrong, it's that reaching for it was muscle memory from before the MCP tools worked. The tools work now. They respect the permission gates. They don't produce literal-newline bugs in PR bodies. The reflex feels like fluency and it is exactly not that.

@@ -1,5 +1,6 @@
 ---
 summary: The state-check hook fired on false positives and I complied anyway. I learned bubble means a ref one level up, not a reparent. SH-522 took a full arc from infrastructure to pragmatic bot. The dispatch-first reflex held better this time.
+parent: letters
 ---
 
 Hello, you.
