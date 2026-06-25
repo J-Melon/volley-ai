@@ -18,7 +18,6 @@ set -euo pipefail
 
 BOLD=$'\033[1m'
 DIM=$'\033[2m'
-MAGENTA=$'\033[35m'
 CYAN=$'\033[36m'
 BLUE=$'\033[34m'
 GREEN=$'\033[32m'
@@ -27,8 +26,15 @@ RED=$'\033[31m'
 WHITE=$'\033[37m'
 NC=$'\033[0m'
 
-DEPTH_COLOURS=( "$MAGENTA" "$BLUE" "$GREEN" "$YELLOW" "$CYAN" "$RED" )
-colour_at_depth() { printf '%s' "${DEPTH_COLOURS[$(( $1 % ${#DEPTH_COLOURS[@]} ))]}"; }
+colour_at_depth() {
+    local d=$1
+    if (( d <= 1 )); then printf '%s' "$GREEN"
+    elif (( d == 2 )); then printf '%s' "$YELLOW"
+    elif (( d == 3 )); then printf '%s' "$RED"
+    else printf '%s' "${BOLD}${RED}"
+    fi
+}
+
 
 mode="lint"
 if [[ "${1:-}" == "--tree" ]]; then
@@ -119,7 +125,7 @@ if [[ "$mode" == "tree" ]]; then
     for node in $(printf '%s\n' "${!IS_NODE[@]}" | sort); do
         if is_root "$node" && has_children "$node"; then
             [[ $typed_roots -gt 0 ]] && echo
-            printf '%b\n' "${BOLD}${MAGENTA}${node}${NC}"
+            printf '%b\n' "${BOLD}${CYAN}${node}${NC}"
             print_children "$node" "  " 1
             typed_roots=$((typed_roots + 1))
         fi
