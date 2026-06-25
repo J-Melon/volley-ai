@@ -4,7 +4,7 @@ description: "FIRES WHEN naming a GUT test. Name it by what it tests, the same c
 metadata:
   node_type: memory
   type: feedback
-  parent: feedback_write_from_the_players_experience
+  parent: trunk_dev_cycle
   originSessionId: 8f4fd896-bb88-4628-ba4c-a8131cc0567b
 ---
 

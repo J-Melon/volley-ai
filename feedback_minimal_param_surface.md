@@ -20,4 +20,4 @@ Helper and predicate functions take the smallest surface they need. If a functio
 - For tests, the minimal signature is the goal: tests pass booleans / Vectors / floats; no fixture construction, no private pokes.
 - Sometimes the helper isn't worth existing once its signature shrinks. A function returning `not a and b` over two booleans is barely a function. Consider inlining at callsites; the rule's job is to centralise complexity, not to hide a single `and`.
 
-Cross-link: [[feedback_simplify]] (don't over-engineer), [[feedback_test_state_not_velocity]] (tests assert on what matters).
+Cross-link: [[feedback_simplify]] (don't over-engineer), [[feedback_test_assert_state]] (tests assert on what matters).

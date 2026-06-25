@@ -2,6 +2,7 @@
 name: test-efficiency-patterns
 description: "When writing or reviewing a GUT test, apply the three free wins from ai/skills/minions/test-efficiency.md before letting any await land."
 metadata: 
+  parent: trunk_dev_cycle
   node_type: memory
   type: feedback
   originSessionId: bd0ca049-796f-41c8-a3e7-cb8a0a44ac81

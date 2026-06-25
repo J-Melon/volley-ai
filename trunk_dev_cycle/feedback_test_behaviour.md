@@ -2,9 +2,17 @@
 name: Test behaviour, not implementation
 description: Every test case must justify its existence by naming the behaviour it protects; the default is CUT, not keep. Tests assert observable outcomes (signs, directions, visibility, relationships), never literal numeric outputs of production formulas. Triggers on `assert_eq` / `assert_almost_eq` with a hardcoded number, on test names that name the math, on helpers that re-derive a production formula, on a trim/review that keeps a test "because it passes", AND on accepting dispatched-implementer tests that match those patterns.
 metadata:
+  parent: trunk_dev_cycle
   type: feedback
 originSessionId: b5187a6b-d4ba-4dfa-b4e9-bc0726ceb9d1
 ---
+
+The testing rules: what a test asserts, how it earns its place, how it is named. The behavioural
+rule (this node) is the spine. Descend for state assertions ([[feedback_test_assert_state]]),
+existence justification ([[feedback_tests_are_antagonistic_to_themselves]]), efficiency patterns
+([[feedback_test_efficiency_patterns]]), naming ([[feedback_test_names_flat_condition_outcome]]),
+worktree isolation ([[feedback_test_run_on_main_tree]]), and subclass construction
+([[feedback_test_call_through_real_subclass]]).
 
 Tests assert what a player would notice. They do not assert the production formula's output. If the expected value in the assertion is the same computation the code runs, the test is duplicating the implementation, not verifying it.
 

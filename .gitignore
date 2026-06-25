@@ -1,3 +1,6 @@
 
 # Local bridge so plugins resolve @opencode-ai/plugin + zod (opencode subdir-resolution bug). Machine-specific.
 plugins/node_modules
+
+# Minion scratchpads, transient work notes, not durable memory
+scratchpads/

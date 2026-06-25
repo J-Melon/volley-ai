@@ -12,4 +12,5 @@ metadata:
 The software development cycle: how the work gets done. Planning, backlog, dispatch and minions,
 review and battle, PR/commit/git, testing, Linear/tickets/cycles, worktrees, swarm mechanics.
 Descend here for anything about doing the work. The review branch ([[feedback_battle_review_process]])
-is the built, ordered example; the rest fills in as-we-go.
+and the testing branch ([[feedback_test_behaviour]]) are the built, ordered examples; the rest
+fills in as-we-go.

@@ -2,6 +2,7 @@
 name: tests-answer-should-this-exist-and-does-this-test-the-ac
 description: "Test-coverage discipline is antagonistic about its own existence; every test passes two checks before staying, AC fit and existence justification"
 metadata: 
+  parent: trunk_dev_cycle
   node_type: memory
   type: feedback
   originSessionId: 61f585fd-3e13-4f8a-ad0a-30ff3fcd71af
@@ -21,4 +22,4 @@ Test coverage is not a target to chase. Every test passes two antagonistic check
 - Edge-case paths (drag started before rally, completed during rally; held item lost via a third party; non-default config) only get tests if Josh has named them as cases the player will hit.
 - When in doubt, kill the test. The AC test is enough.
 
-Cross-link: [[feedback_test_state_not_velocity]] (tests assert behaviour, not internals), [[feedback_long_loop_test_tautology_smell]] (N-iteration tests are tautology candidates), [[feedback_integration_tests_loop_completion_only]] (integration tests reserved for loop completions).
+Cross-link: [[feedback_test_assert_state]] (tests assert behaviour, not internals), [[feedback_long_loop_test_tautology_smell]] (N-iteration tests are tautology candidates), [[feedback_integration_tests_loop_completion_only]] (integration tests reserved for loop completions).
