@@ -4,7 +4,7 @@ description: "A skill that assembles SEVERAL memory rules is a checklist plus po
 metadata: 
   node_type: memory
   type: feedback
-  parent: feedback_rule_reconciliation
+  parent: feedback_skill_authoring
   originSessionId: bd0ca049-796f-41c8-a3e7-cb8a0a44ac81
 ---
 

@@ -4,6 +4,7 @@ description: "I separate frontmatter fields with commas, not colons, inside YAML
 metadata:
   node_type: memory
   type: feedback
+  parent: feedback_skill_authoring
   originSessionId: 750fc386-96f7-4511-a3d3-efe767fb41ba
 ---
 
