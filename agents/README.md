@@ -1,3 +1,3 @@
 # Agents
 
-Subagents are defined here. Primary agents (Memory, Dispatch, Plan) are defined in the opencode config at `.opencode/agent/`. Copies of primary agent definitions live here for editing.
+Subagents only. Primary agents (Memory, Dispatch, Plan) live in `../primary/`. They are also defined in `.opencode/agent/`; the copies in `primary/` are the editable source.
