@@ -1,6 +1,6 @@
 ---
 name: tickets
-description: How to shape a Linear ticket: the three story shapes, title, outcome-ACs, links over restatement. Read BEFORE drafting any ticket prose, including a chat proposal to Josh and any save_issue call. Load it before showing the draft, not before the save.
+description: How to shape a Linear ticket, the three story shapes, title, outcome-ACs, links over restatement. Read BEFORE drafting any ticket prose, including a chat proposal to Josh and any save_issue call. Load it before showing the draft, not before the save.
 ---
 
 # Writing a ticket
