@@ -16,12 +16,12 @@
 
 set -euo pipefail
 
-BOLD="\033[1m"
-CYAN="\033[36m"
-WHITE="\033[37m"
-YELLOW="\033[33m"
-GREEN="\033[32m"
-NC="\033[0m"
+BOLD=$'\033[1m'
+CYAN=$'\033[36m'
+WHITE=$'\033[37m'
+YELLOW=$'\033[33m'
+GREEN=$'\033[32m'
+NC=$'\033[0m'
 
 mode="lint"
 if [[ "${1:-}" == "--tree" ]]; then
