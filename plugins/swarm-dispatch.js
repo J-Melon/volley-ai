@@ -12,14 +12,22 @@ const z = tool.schema
 
 // Pool is canonical data in codenames.json (authority: feedback_sub_agent_codenames),
 // not hardcoded here, so it can't drift.
-const CODENAMES = (() => {
+const NAME_POOLS = (() => {
   try {
     const here = dirname(fileURLToPath(import.meta.url))
-    return Object.values(JSON.parse(readFileSync(join(here, "codenames.json"), "utf8")).pool).flat()
+    return JSON.parse(readFileSync(join(here, "codenames.json"), "utf8")).pool
   } catch {
-    return ["Dipper", "Zaphod", "Feldspar", "Bender", "Kevin", "Martha"]
+    return { fallback: ["Dipper", "Zaphod", "Feldspar", "Bender", "Kevin", "Martha"] }
   }
 })()
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[arr[i], arr[j]] = [arr[j], arr[i]]
+  }
+  return arr
+}
 
 const CONCURRENCY_DEFAULT = 5
 const MINION_TIMEOUT_MS = 10 * 60 * 1000
@@ -35,7 +43,9 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
   function getSwarm(id) {
     let s = swarms.get(id)
     if (!s) {
-      s = { dispatcherID: id, minions: new Map(), usedNames: new Set() }
+      const poolKeys = shuffle(Object.keys(NAME_POOLS))
+      const names = poolKeys.flatMap((k) => NAME_POOLS[k])
+      s = { dispatcherID: id, minions: new Map(), usedNames: new Set(), names }
       swarms.set(id, s)
     }
     return s
@@ -116,7 +126,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
   }
 
   function pickCodename(swarm) {
-    const free = CODENAMES.find((n) => !swarm.usedNames.has(n))
+    const free = swarm.names.find((n) => !swarm.usedNames.has(n))
     if (free) {
       swarm.usedNames.add(free)
       return free
