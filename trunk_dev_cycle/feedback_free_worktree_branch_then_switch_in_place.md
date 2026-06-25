@@ -12,4 +12,4 @@ When Josh says "switch" / "put me on" a branch that git reports is already check
 
 **Why:** Josh wants to work the branch from his current session, not juggle a second one. The worktree is just a lock to clear, not a place to go.
 
-**How to apply:** Confirm the worktree is clean / in sync with origin first (it usually is). Remove it, then check out in place. Guard still holds: never do this while an agent is running in that worktree ([[feedback_dont_switch_main_worktree_branch_during_agent_dispatch]]).
+**How to apply:** Confirm the worktree is clean / in sync with origin first (it usually is). Remove it, then check out in place. Guard still holds: keep the worktree branch fixed while an agent is running in it ([[feedback_stay_on_main_worktree_while_agent_runs]]).

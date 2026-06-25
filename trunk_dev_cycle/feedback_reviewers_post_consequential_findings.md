@@ -2,7 +2,7 @@
 metadata:
   node_type: memory
 name: Reviewers post only findings with named consequence
-description: "Post a finding only when you can name a concrete consequence in one clause (player bug, maintainer trap, save corruption, contract violation). Only `issue` blocks; nitpick/suggestion ride along, nitpick capped at 2. Review churn is the cost; err toward silence."
+description: "Post a finding only when you can name a concrete consequence in one clause (player bug, maintainer trap, save corruption, contract violation). Only `issue` blocks; nitpick/suggestion ride along, nitpick capped at 2. Review churn is the cost; hold findings to the named-consequence bar."
 parent: feedback_reviewer_output
 type: feedback
 originSessionId: deb199f4-304c-4a2c-8531-39e6504933fc

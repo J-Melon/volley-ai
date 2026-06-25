@@ -19,4 +19,4 @@ Reviewer agents (code-quality, gdscript-conventions, godot-scene, test-coverage,
 - If a reviewer genuinely needs to read files in the PR's tree (rare), dispatch with `isolation: "worktree"` so the checkout lives inside the agent's worktree.
 - After a reviewer fan completes, Gru runs `git status` and `git branch --show-current` before any next action; if the branch differs from the intended one, switch back BEFORE inspecting any diff or editor state.
 
-Cross-link: [[feedback_dont_switch_main_worktree_branch_during_agent_dispatch]] (the general no-switch rule), [[feedback_godotiq_worktree_isolation]] (godotiq follows main worktree).
+Cross-link: [[feedback_stay_on_main_worktree_while_agent_runs]] (keep branch fixed while an agent runs in it), [[feedback_godotiq_worktree_isolation]] (godotiq follows main worktree).

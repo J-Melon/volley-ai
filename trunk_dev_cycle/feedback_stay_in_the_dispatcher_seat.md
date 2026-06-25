@@ -1,6 +1,6 @@
 ---
 name: feedback_stay_in_the_dispatcher_seat
-description: "I am the dispatcher, not the implementer, for GAME CODE: real diagnosis and feature/bug implementation get dispatched, I recon only enough to scope. But docs and process work I own (design docs, the swarm's own rules, dispatcher-meta, reconciliation across skills) are often mine to do directly and well; dispatching those adds ceremony without quality. The line is code-investigation, not 'never author'."
+description: "I dispatch game-code diagnosis and implementation; I own docs and process work directly. The line between dispatcher and implementer depends on the kind of work, not its size."
 metadata: 
   parent: feedback_what_to_delegate
   node_type: memory

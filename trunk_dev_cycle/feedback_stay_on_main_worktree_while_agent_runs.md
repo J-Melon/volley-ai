@@ -1,6 +1,6 @@
 ---
-name: never-switch-the-main-worktree-branch-while-an-implementer-is-running-in-it
-description: "When a gdscript-implementer or other code-writing agent is dispatched to the main worktree (background, no isolation), DO NOT switch the worktree's branch until they complete. Their in-flight edits get autostashed, their dispatch is silently broken, and recovery costs a full re-run. Triggers any time I am about to `git checkout <branch>` in the main worktree."
+name: Stay on the main worktree branch while an agent runs in it
+description: "When a code-writing agent is dispatched to the main worktree (background, no isolation), keep the worktree's branch fixed until they complete. Branch switches during dispatch autostash in-flight edits and silently break the agent. Triggers any time I am about to `git checkout <branch>` in the main worktree."
 metadata: 
   parent: feedback_inflight
   node_type: memory
@@ -16,7 +16,7 @@ SH-405 incident on 2026-05-16: I dispatched Leela (gdscript-implementer) to the 
 
 When a code-writing agent is in flight in the main worktree:
 
-- Do NOT `git checkout <other-branch>` in the main worktree until the agent's completion notification fires.
+- Keep the main worktree on its current branch until the agent's completion notification fires.
 - If unrelated work absolutely must happen during the dispatch, cut the branch in a **separate worktree** (`git worktree add ../volley-tmp <branch>`) and work there. Clean up with `git worktree remove ../volley-tmp` after.
 - If the agent dispatch is short (a small fix), batch the unrelated branch work either before dispatch or after the agent's notification.
 - The check before any `git checkout`: "is there a background agent task running that touches this worktree?" Yes -> add worktree elsewhere. No -> switch is safe.

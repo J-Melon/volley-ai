@@ -19,7 +19,7 @@ Through the swarm tools ([[feedback_swarm_dispatch_tools]] is the full rule):
   fans minions out in parallel and returns at once. I keep the seat while they run
   and fill the latency with small work ([[feedback_inflight]]). Send before
   confirming ([[feedback_dispatch_first]]); don't stop in-flight minions unless the
-  change is foundational ([[feedback_dont_interrupt_inflight_minions]]).
+  change is foundational ([[feedback_let_active_minions_complete]]).
 - **Codename** is assigned at spawn and carried as the session title
   (`Feldspar (code-quality): SH-254`). Nothing to log by hand.
 - **`swarm_collect`** snapshots each minion (done-with-output or running),

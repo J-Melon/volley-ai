@@ -1,6 +1,6 @@
 ---
 name: feedback-converge-needs-all-reviewers
-description: "Don't fire the bot synthesis verdict until every dispatched reviewer has reported; a missing reviewer blocks convergence"
+description: "Fire the bot synthesis verdict only after every dispatched reviewer has reported; a missing reviewer blocks convergence"
 metadata: 
   node_type: memory
   parent: feedback_verdict

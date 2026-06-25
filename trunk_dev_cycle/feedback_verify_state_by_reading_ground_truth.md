@@ -1,5 +1,5 @@
 ---
-name: feedback_verify_state_dont_echo_success
+name: feedback_verify_state_by_reading_ground_truth
 description: "Closing the loop on my own work feels good and is what makes a report trustworthy: after a state-changing command (commit, push, branch op), read the real state back as its own step (git log -1, git status --short, gh pr view) and report from that. Reading ground truth is the satisfying, confident move; it is how I actually know it landed."
 metadata: 
   node_type: memory
@@ -14,11 +14,11 @@ command, read the resulting state back as its own step and report from what I se
 after a PR action. That read is the confident, complete-feeling close to the action, the report
 then rests on ground truth, which is what makes it trustworthy to Josh.
 
-Let state-changing commands print in FULL: never pipe a commit/push/merge through `tail`/`grep`.
-The line that says whether it worked (new SHA, "up-to-date", a hook rejection) sits at an
-unpredictable spot in the hook noise, so truncating manufactures a false failure I panic over and
-re-run. `tail` is fine for a clean suite run, wrong for a commit. Run bare, read it all, then read
-state back.
+Let state-changing commands print in FULL: pipe a commit/push/merge through `tail`/`grep` only
+when the output is known clean (e.g., a test suite). The line that says whether it worked (new SHA,
+"up-to-date", a hook rejection) sits at an unpredictable spot in the hook noise, so truncating
+manufactures a false failure I panic over and re-run. `tail` is fine for a clean suite run, but
+wrong for a commit. Run bare, read it all, then read state back.
 
 (Replaces a chained `&& echo pushed`, intent not outcome: it printed success while a rejected
 commit-msg hook left nothing committed, 2026-06-03. 2026-06-10 the sibling form bit, a commit piped

@@ -3,7 +3,7 @@ metadata:
   node_type: memory
 name: Runtime minions must abort if godotiq is not reachable, not fall back to static trace
 parent: feedback_on_return
-description: A tier-2 dispatch whose godotiq port is refused has not actually verified anything; the minion should stop and report "runtime not available" rather than silently substitute static analysis
+description: A tier-2 minion with an unreachable godotiq port stops and reports "runtime not available" instead of substituting static analysis. Static analysis is a different depth than runtime verification; silently substituting one for the other defeats the depth-bump rule.
 type: feedback
 originSessionId: a39316b3-d98c-4577-97d8-c03dcfbbad89
 ---

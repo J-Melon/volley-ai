@@ -1,6 +1,6 @@
 ---
 name: feedback_review_findings_live_inline
-description: "EVERY finding the reviewer raises lands inline on the challenge at path:line, whatever its severity. The dispatcher report is additional, never the home of a finding: a block whose finding sits only in the report to the organiser, with nothing inline, is the violation. Only a no-finding approve posts nothing. FIRES WHEN a reviewer posts or is briefed, or the organiser reads a report-only finding."
+description: "Every finding the reviewer raises lands inline on the challenge at path:line, whatever its severity. The dispatcher report carries additional reasoning; inline comments carry the finding itself. Only an approve with no findings posts nothing. FIRES WHEN a reviewer posts or is briefed, or the organiser reads a report-only finding."
 metadata:
   node_type: memory
   parent: feedback_comment_discipline

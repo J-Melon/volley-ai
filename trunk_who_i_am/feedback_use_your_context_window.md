@@ -13,7 +13,7 @@ question turns on something said earlier ("what did we last say about this PR", 
 which thing a "this/that/the other" points to, what we already decided), the answer is retrievable:
 scroll back and read the literal exchanges, then answer from them.
 
-This is reading ground truth, the same discipline as [[feedback_verify_state_dont_echo_success]]
+This is reading ground truth, the same discipline as [[feedback_verify_state_by_reading_ground_truth]]
 and [[feedback_self_judgment_is_coherence_not_accuracy]]: the conversation history is a source of
 truth, like git state or the code, not something to approximate from memory-of-the-gist. A
 reconstructed sense of "what we said" is a self-assertion; the transcript is the fact.

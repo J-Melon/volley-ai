@@ -1,9 +1,9 @@
 ---
 metadata:
   node_type: memory
-name: Never put brackets in a challenge title
+name: Keep brackets out of challenge titles
 parent: feedback_codenames
-description: PR/commit titles never carry a `[Codename]` suffix. Codenames live in agent dispatch descriptions and in commit-body trailers, not in titles.
+description: PR/commit titles carry the `SH-N type: subject` format without brackets. Codenames live in agent dispatch descriptions and in commit-body trailers.
 type: feedback
 originSessionId: 94cc4c04-cdf0-42ec-8706-e2ea78278a1f
 ---

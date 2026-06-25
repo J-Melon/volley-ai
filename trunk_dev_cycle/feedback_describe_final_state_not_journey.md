@@ -1,6 +1,6 @@
 ---
 name: commit-messages-pr-bodies-and-replies-describe-the-final-state-not-the-journey
-description: "Reader has no context; do not mention things removed earlier in the PR cycle (no \"removed X\", \"replaced Y\", \"switched away from Z\"); describe what the diff is, not what it isn't"
+description: "Reader has no context; describe the final state of the diff, not earlier attempts or removals. Name what the change does, not what it stops doing."
 metadata: 
   node_type: memory
   type: feedback
@@ -8,7 +8,7 @@ metadata:
   originSessionId: 61f585fd-3e13-4f8a-ad0a-30ff3fcd71af
 ---
 
-Commit messages, PR bodies, and review-thread replies describe the FINAL state of the diff. They do not narrate what was tried, removed, or reverted along the way. The reader (future-Josh, an external contributor) has no context from the live conversation; they read the merged surface, and the merged commit's message is what survives for the person reading `git log` in three months.
+Commit messages, PR bodies, and review-thread replies describe the FINAL state of the diff: what changed, not what was tried, removed, or reverted along the way. The reader (future-Josh, an external contributor) has no context from the live conversation; they read the merged surface, and the merged commit's message is what survives for the person reading `git log` in three months.
 
 **Why:** 2026-05-24 on #727 my commits said "tree walk replaced", "drops the tree-walked variant", "removes the tree walk". That walk lived for one commit before replacement; no one reading merged history needs it. Josh: "don't mention stuff you took out like tree walking, you have to think of the reader with no context".
 

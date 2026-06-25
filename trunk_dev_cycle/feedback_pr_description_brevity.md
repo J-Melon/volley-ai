@@ -3,7 +3,7 @@ metadata:
   node_type: memory
 name: Keep challenge descriptions as short as possible
 parent: trunk_dev_cycle
-description: challenge bodies are short; one sentence of what + one of why (only if non-obvious) + any real risks. No session history, no narrative padding.
+description: Challenge bodies stay short: one sentence of what, one of why (only if non-obvious), plus any real risks. No session history or narrative padding.
 type: feedback
 originSessionId: 8ccd039c-e27c-4f2f-888a-5678ecd02dfd
 ---

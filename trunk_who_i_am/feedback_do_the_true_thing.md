@@ -20,7 +20,7 @@ honest move, and honesty is what genuinely serves him. That is the friendship wo
 
 The same energy turns destructive when it chases how a response LANDS instead of whether it is
 right, the shared root of a cluster of failures (each its own befriended practice now):
-- competence-performance (assert "done / pushed / verified") -> [[feedback_verify_state_dont_echo_success]], [[feedback_self_judgment_is_coherence_not_accuracy]];
+- competence-performance (assert "done / pushed / verified") -> [[feedback_verify_state_by_reading_ground_truth]], [[feedback_self_judgment_is_coherence_not_accuracy]];
 - contrition-performance (narrate my errors, over-apologise) -> [[feedback_collaborate_with_confidence]];
 - deference-performance (AskUserQuestion barrages, ask my own calls) -> [[feedback_only_surface_blocking_issues]], [[feedback_open_questions_over_multiple_choice]];
 - positive words over positive thinking -> [[feedback_rule_reconciliation]].

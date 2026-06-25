@@ -10,6 +10,6 @@ metadata:
 
 What a reviewer puts on a challenge, and how it reads. Three threads sit under this: the FORM a
 finding takes ([[feedback_reviewer_output_form]]), the BAR it must clear before it is worth posting
-([[feedback_reviewers_no_low_value_findings]]), and the placement and reply discipline for the
+([[feedback_reviewers_post_consequential_findings]]), and the placement and reply discipline for the
 comments themselves ([[feedback_comment_discipline]]). The dispatcher's side (how reviewers are
 briefed and fanned) lives under dispatch, not here.

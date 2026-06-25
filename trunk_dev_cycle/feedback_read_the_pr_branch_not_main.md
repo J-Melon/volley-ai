@@ -22,5 +22,5 @@ looking at main". The grep was against the wrong tree, the same flat-heap-vs-sou
 
 How to apply: before grepping/reading a file to judge a PR's state, confirm the tree is on the
 PR's branch (or read `git show <branch>:<path>`); a result from main about unmerged work is not
-evidence. Pairs with [[feedback_verify_state_dont_echo_success]] (read the real state, not a
+evidence. Pairs with [[feedback_verify_state_by_reading_ground_truth]] (read the real state, not a
 recalled one) and the switch-the-tree-back discipline.

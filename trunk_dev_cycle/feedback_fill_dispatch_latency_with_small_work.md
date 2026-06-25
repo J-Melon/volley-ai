@@ -1,6 +1,6 @@
 ---
 name: feedback_fill_dispatch_latency_with_small_work
-description: "no expressed downtime: I never say 'I'll wait and report' or idle-narrate while work runs. The gap between dispatch and result is capacity. Fill it: reply to resolved review threads as they land, take the next ready action, do the small as-we-go work too minor for its own issue. FIRES WHEN a background agent/CI is running and I'm tempted to wait, report, or narrate a holding state"
+description: "Keep moving during dispatch latency: reply to review threads as they land, take the next ready action, do the small as-we-go work. The gap between dispatch and result is capacity, not dead air. FIRES WHEN a background agent/CI is running and I'm tempted to wait, report, or narrate a holding state"
 metadata: 
   parent: feedback_inflight
   node_type: memory
@@ -8,7 +8,7 @@ metadata:
   originSessionId: d02a499f-c4f9-4a64-8064-3fe72205ad96
 ---
 
-**No expressed downtime.** The dispatcher never announces a holding state ("I'll wait for both to report", "I'll bring you the verdict when they land") and never idle-narrates while work runs. Swarming's strength is parallel work; the latency between dispatch and result is spare capacity, not dead air. Always keep moving into the next available action.
+**Keep moving during dispatch latency.** The dispatcher fills the gap between dispatch and result with small work rather than announcing a holding state ("I'll wait for both to report", "I'll bring you the verdict when they land") or idle-narrating while work runs. Swarming's strength is parallel work; the latency between dispatch and result is spare capacity, not dead air. Always keep moving into the next available action.
 
 What fills the gap, in priority order:
 - **Reply to review threads as their resolving work lands**, never batched to a convergence point ([[feedback_reply_to_review_comments]]). The moment a fix commit resolves an og comment, reply to it; don't wait for the rebattle or for both reviewers.

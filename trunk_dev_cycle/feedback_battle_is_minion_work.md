@@ -10,7 +10,7 @@ originSessionId: 94cc4c04-cdf0-42ec-8706-e2ea78278a1f
 metadata:
 A Battle is the verification pass for a PR: spec sanity, AC↔evidence, runtime behaviour, code quality. Volley's swarm has minions for each shape: `devils-advocate` for design stress-tests, `runtime-verifier` for runtime/in-editor checks, `code-quality` for code reviews, `root-cause-analyst` for tracing actual execution paths.
 
-The default is to dispatch the right minion in the background, not to start grep'ing through the codebase from the parent thread.
+The default is to dispatch the right minion in the background. The parent thread dispatches and judges; starting grep or read from the parent is the signal to stop and dispatch instead.
 
 **Why:** Josh caught me starting to grep `scripts/items/ball.gd` from the parent thread to verify the SH-309 spec held against the codebase, after asking "remember the whole minion swarm thing we have going?". The Battle work is what the swarm exists for; doing it from the parent burns context I should be using to dispatch and judge, and skips the minion's specialised tooling (godotiq runtime, devils-advocate framing, etc.).
 
