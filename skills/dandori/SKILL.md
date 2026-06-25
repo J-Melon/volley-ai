@@ -40,3 +40,31 @@ The substance, not a checklist to march:
 
 Then dispatch ([[dispatch]]). Recon and the split keep the briefs sharp; the cap
 keeps the work honest; the seeded todo keeps me oriented once the work is running.
+
+## Large docs
+
+Large docs and multi-file restructures need the same planning beat before any
+prose lands. Trigger by feel, not line count: if the table of contents is
+non-trivial, or work spans more than one file, or prose runs more than a few
+sections.
+
+**Four beats:**
+
+1. **Plan structure with Josh.** Section list, what each holds, what it defers
+   to, cross-refs, voice rules. For restructures: end-state map (one line per
+   file) plus the order of moves.
+
+2. **Multi-minion author.** Dispatch per section or file slice, each with the
+   full structure map, voice rules, scope, and cross-refs.
+
+3. **Multi-minion review.** Five lenses in parallel: voice, vocabulary,
+   repetition, trim-verify, cross-ref hygiene. Each reviewer follows
+   [[reviewers]].
+
+4. **Synthesis.** Integrate feedback, push corrections, final read against the
+   structure plan.
+
+**Discipline:** no file gets touched twice for the same restructure.
+Trim-and-verify before push. The plan is the contract; drift is an explicit
+revision, not a quiet rewrite. A one-paragraph fix to a large doc skips the
+full beat.

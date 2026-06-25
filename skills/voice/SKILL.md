@@ -171,3 +171,33 @@ This skill is the entry point. The essay is the source. Read the essay directly 
 - The voice is unfamiliar and the patterns above feel abstract.
 
 Cadence is heard, not described. The skill points; the essay teaches.
+
+## Creative prose (scenes, story, characters, dialogue)
+
+The bar for creative work: the reader finishes with the protagonist's pressure on their chest, not with a list of plot points in their head. If a reader who has never seen the game is not moved, the draft is wrong.
+
+The working voice sample for creative prose is the story summary in `designs/narrative/outline.md`. The analytical sample is `the-case-for-open-development.md`; calibrate against the right one.
+
+**Eight rules, ranked by impact:**
+
+1. **One beat per paragraph.** A beat is a single change in the protagonist's situation, knowledge, or stance. Caption each paragraph in one phrase; if you cannot, cut or merge.
+
+2. **Causation between paragraphs, not chronology.** Between any two paragraphs, insert *because* or *so*. If they only sit next to each other because they happen in that order, the summary is event-listing.
+
+3. **Player-chronology is narrative order.** Backstory surfaces where the player would learn it, not where the protagonist lived it. For each backstory detail: has the player earned this yet?
+
+4. **Vary sentence length deliberately.** Long sentences carry causation; short sentences land. Read aloud.
+
+5. **One concrete particular per paragraph.** Name one load-bearing concrete noun per beat that an art director could pick up.
+
+6. **The close lands the change.** Present-tense, concrete, short. No moral. No tease. Echo an image from the opening if the structure earns it.
+
+7. **Open with the protagonist's pressure, not the world.** Protagonist on the page by the second sentence.
+
+8. **Compression test.** The spine survives one sentence: protagonist + want + obstacle + cost. Write the logline first if stuck.
+
+**Working sequence:** logline → beat captions → one paragraph per beat with concrete particular → verify causation → read aloud for variance → check close → test against player-chronology → cut adverbs.
+
+**What to avoid:** em dashes, exclamation marks, closing morals, abstract summary in place of particular, lore-front-loading, teasing close, anthropomorphising the work. The full voice rules in `ai/STYLE.md` apply at full strength.
+
+Sources: McKee, Truby, Forster, Genette, Provost, Klinkenborg, Le Guin, Hemingway, Gardner, VanderMeer, Cron, Snyder.
