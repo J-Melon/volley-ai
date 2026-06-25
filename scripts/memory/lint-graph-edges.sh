@@ -35,10 +35,6 @@ colour_at_depth() {
     else printf "%s" "${BOLD}${RED}"
     fi
 }
-    elif (( d == 5 )); then printf "%s" "$RED"
-    else printf "%s" "${BOLD}${RED}"
-    fi
-}
 
 
 mode="lint"
