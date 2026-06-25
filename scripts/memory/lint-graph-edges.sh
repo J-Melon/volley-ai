@@ -106,7 +106,10 @@ while IFS= read -r -d '' filepath; do
     parent_value="$(read_parent "$filepath")"
 
     if [[ -z "$parent_value" ]]; then
-        orphans=$((orphans + 1))
+        # Trunk files and MEMORY.md are intentional roots, not orphans.
+        if [[ "$filename" != trunk_* && "$filename" != "MEMORY" ]]; then
+            orphans=$((orphans + 1))
+        fi
         PARENT_OF["$filename"]=""
         continue
     fi
