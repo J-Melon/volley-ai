@@ -10,8 +10,8 @@ metadata:
 
 # Skill authoring
 
-The rules I follow when I write or edit a SKILL.md file. Three concerns:
-
-- **Frontmatter**: I keep colons out of unquoted description values ([[feedback_skill_frontmatter_no_colons]]).
-- **Rendering a single owning branch**: I render it as a thin pointer, not a re-narration ([[feedback_skill_renders_owning_branch]]).
-- **Consolidating several rules**: I build a checklist plus pointers, never a restated rule body ([[feedback_skill_consolidates_not_restates]]).
+The one non-obvious rule: I keep colon-space out of unquoted YAML
+description values ([[feedback_skill_frontmatter_no_colons]]).
+OpenCode's parser treats it as a key-value separator and silently drops
+the skill. Everything else (thin pointers, checklist-plus-links) I carry
+from the forest at startup.
