@@ -16,6 +16,13 @@
 
 set -euo pipefail
 
+BOLD="\033[1m"
+CYAN="\033[36m"
+WHITE="\033[37m"
+YELLOW="\033[33m"
+GREEN="\033[32m"
+NC="\033[0m"
+
 mode="lint"
 if [[ "${1:-}" == "--tree" ]]; then
     mode="tree"
@@ -89,7 +96,7 @@ if [[ "$mode" == "tree" ]]; then
         local parent="$1" indent="$2" child
         for child in $(printf '%s\n' "${!PARENT_OF[@]}" | sort); do
             if [[ "${PARENT_OF[$child]}" == "$parent" ]]; then
-                printf '%s- %s\n' "$indent" "$child"
+                printf '%s- %s\n' "$indent" "${WHITE}${child}${NC}"
                 print_children "$child" "  $indent"
             fi
         done
@@ -104,7 +111,7 @@ if [[ "$mode" == "tree" ]]; then
     for node in $(printf '%s\n' "${!IS_NODE[@]}" | sort); do
         if is_root "$node" && has_children "$node"; then
             [[ $typed_roots -gt 0 ]] && echo
-            printf '%s\n' "$node"
+            printf '%b\n' "${BOLD}${CYAN}${node}${NC}"
             print_children "$node" "  "
             typed_roots=$((typed_roots + 1))
         fi
@@ -129,12 +136,12 @@ if [[ "$mode" == "tree" ]]; then
             is_root "$node" && ! has_children "$node" || continue
             t="${TRUNK_OF[$node]:-UNBUCKETED}"
             [[ "$t" == "$trunk" ]] || continue
-            if [[ $first == 1 ]]; then echo; echo "## $trunk"; first=0; fi
-            printf -- '- %s\n' "$node"
+            if [[ $first == 1 ]]; then echo; printf '%b\n' "${YELLOW}## ${trunk}${NC}"; first=0; fi
+            printf -- '- %s\n' "${WHITE}${node}${NC}"
             unordered=$((unordered + 1))
         done
     done
-    echo "--- $typed_roots ordered trees, $unordered unordered nodes across the trunks ---"
+    printf '%b\n' "${GREEN}--- ${typed_roots} ordered trees, ${unordered} unordered nodes across the trunks ---${NC}"
 fi
 
 echo "lint-graph-edges: $dangling dangling, $orphans root/untyped nodes"
