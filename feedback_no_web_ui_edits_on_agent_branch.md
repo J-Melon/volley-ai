@@ -7,7 +7,7 @@ metadata:
   originSessionId: 1b0280e9-e78a-4812-a304-329bd94888e4
 ---
 
-GitHub web-UI commits skip every discipline the terminal path enforces: no `Signed-off-by` trailer (DCO fails: "N commit(s) missing Signed-off-by"), author as display-name "Josh Hartley <josh@hartley.best>" rather than the agent path's "Josh", and the editor default "Update <file>.md" subject with an empty body (no rationale, breaks conventional-commit + "decisions not deliberation").
+GitHub web-UI commits skip every discipline the terminal path enforces: no `Signed-off-by` trailer (DCO fails: "N commit(s) missing Signed-off-by"), author as display-name "Josh Hartley <josh@shuck.gg>" rather than the agent path's "Josh", and the editor default "Update <file>.md" subject with an empty body (no rationale, breaks conventional-commit + "decisions not deliberation").
 
 **Why:** On SH-436 / PR #745 (2026-05-26), four web-UI commits (`9336ed8d`, `f25573be`, `033d2cab`, `f2339e31`) interleaved with the agent's signed commits. DCO went red and the branch carried two author identities. The PR merged anyway only because DCO is not a required check, which is its own gap. The renames Josh made in the browser (tier→consolidation, etc.) also landed in commits the reviewer never re-verified.
 

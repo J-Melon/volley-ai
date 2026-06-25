@@ -14,7 +14,7 @@ refactor: explicit types in rack_display [slartibartfast]
 Body prose.
 
 Agent-Role: code-quality
-Signed-off-by: Josh Hartley <josh@hartley.best>
+Signed-off-by: Josh Hartley <josh@shuck.gg>
 ```
 
 The lefthook `issue-prefix` hook auto-prepends `SH-XXX ` from the branch name, producing the final subject:
