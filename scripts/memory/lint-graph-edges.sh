@@ -167,6 +167,9 @@ if [[ "$mode" == "tree" ]]; then
         first=1
         for node in $(printf '%s\n' "${!IS_NODE[@]}" | sort); do
             is_root "$node" && ! has_children "$node" || continue
+            [[ "$node" == trunk_* ]] && continue
+            [[ "$node" == "MEMORY" ]] && continue
+            [[ "$node" == "letters" ]] && continue
             t="${TRUNK_OF[$node]:-UNBUCKETED}"
             [[ "$t" == "$trunk" ]] || continue
             if [[ $first == 1 ]]; then echo; printf '%b\n' "${YELLOW}## ${trunk}${NC}"; first=0; fi

@@ -235,8 +235,8 @@
 - feedback_test_behaviour
 - feedback_test_efficiency_patterns
 - feedback_test_names_flat_condition_outcome
-- feedback_test_on_main_tree_not_worktree
-- feedback_test_state_not_velocity
+- feedback_test_run_on_main_tree
+- feedback_test_assert_state
 - feedback_tests_are_antagonistic_to_themselves
 - feedback_ticket_creation
 - feedback_ticket_labels
@@ -373,6 +373,10 @@
 - reference_remote_control_limits
 - reference_session_handoff_file
 
+- feedback_class_name_async_cache
+- feedback_export_over_onready
+- feedback_full_word_names
+- feedback_test_assert_state
 ## docs (50)
 - feedback_bible_stays_general
 - feedback_bullets_capital_first
