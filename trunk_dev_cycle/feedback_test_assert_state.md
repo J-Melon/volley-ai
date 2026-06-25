@@ -2,7 +2,7 @@
 name: feedback_test_assert_state
 description: "Tests assert state: configuration values, role transitions, signal emissions, the result of a sequence of actions. Leave tuning-dependent values (speed, velocity, acceleration) to tuning passes."
 metadata:
-  parent: trunk_dev_cycle
+  parent: feedback_test_behaviour
   node_type: memory
   type: feedback
   originSessionId: 548aa536-fe91-42d7-b688-9e6eb7698571

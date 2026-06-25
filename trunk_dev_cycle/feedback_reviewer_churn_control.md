@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: Review at author-signalled moments, scope-filter the diff
 description: Match review weight to the change AND to the PR's history. On a long single-PR build, not every increment warrants a fresh reviewer battle; a doc-only or mechanical follow-up on an already-core-approved PR usually needs none. Reviewers fire at explicit "ready for re-review" moments, not every push; when they do, the scope-filtered diff drives which run. FIRES WHEN about to dispatch reviewers on an increment of a PR already reviewed, or stacking review rounds within one big PR.
 parent: feedback_re_battle
 type: feedback
 originSessionId: 60225dfd-277e-4c4b-8ef4-5843bb535764
 ---
+metadata:
 Reviewer dispatch happens at declared review moments, not on every push. A review moment is the challenge first opening, or the author (agent or Josh) reporting "fixes addressed, ready for re-review" after a round of comments. Mid-flight WIP pushes strip the zaphod labels but do not trigger re-dispatch.
 
 ## Recognise churn on a long single-PR build

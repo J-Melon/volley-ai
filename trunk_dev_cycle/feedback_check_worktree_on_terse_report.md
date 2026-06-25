@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: Check the worktree when an agent's report is terse or signals incomplete work
 parent: feedback_on_return
 description: Agents sometimes run out of turns mid-task and return a fragment like "Looks good. Wait for ggut." without committing. Always inspect the worktree's `git status` before trusting that nothing's pending.
 type: feedback
 originSessionId: 7b8b3568-e541-47c8-a2e7-f5c2360fd8d3
 ---
+metadata:
 When an agent's return is unusually terse, ends mid-sentence, or signals "wait for X" / "verifying" / "almost done", treat the report as incomplete. The agent may have made changes that never got committed.
 
 **Why:** Gabbro on PR #506 round 6 returned `Looks good. Wait for ggut.` and the dispatch was logged complete. PR head was unchanged. The worktree had 10 modified files sitting uncommitted; half a refactor stranded. A fresh continuation had to be dispatched to actually commit and push. 2026-04-27.

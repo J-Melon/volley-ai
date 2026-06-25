@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: feedback_agent_prompt_economy
 parent: feedback_what_to_delegate
 description: Keep Agent-tool briefs tight to cut token and startup cost: shorten, pre-load the chosen path, batch related work, skip the agent for trivial edits. The distinct danger of restating skill-owned mechanics lives in [[feedback_brief_names_judgment_not_mechanics]].
 type: feedback
 originSessionId: 8ccd039c-e27c-4f2f-888a-5678ecd02dfd
 ---
+metadata:
 Agent dispatch has a fixed startup cost plus a token cost that scales with prompt length, paid twice: writing the prompt and the agent reading it. A focused ~100-word brief plus a pointer to the docs the agent already reads is faster and produces the same work. Josh flagged slow per-agent turnaround on 200-400 word prompts with exhaustive hard-rules blocks.
 
 **How to apply:**

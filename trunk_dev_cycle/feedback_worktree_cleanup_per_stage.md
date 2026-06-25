@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: Worktrees come down after each stage, not at merge
 parent: feedback_sending
 description: Per-stage cleanup rule for swarm worktrees; the branch on origin is the source of truth, worktrees are scratch space
 type: feedback
 originSessionId: 60225dfd-277e-4c4b-8ef4-5843bb535764
 ---
+metadata:
 Agent worktrees are scratch space, not long-lived checkouts. They come down at the end of each stage, not at challenge merge. The branch on origin carries every byte the worktree holds; a worktree hanging around after its agent pushes is pure clutter and drift risk.
 
 **Why:** before this rule, worktrees accumulated across sessions and sat locked indefinitely. At one point 13 `.claude/worktrees/agent-*` directories and half a dozen sibling `volley-*` trees persisted long past their challenge lifetimes. None of them held state the origin branch didn't; they just made `git worktree list` noisy and risked state drift if someone wandered into an old one. Rule given by Josh 2026-04-23.

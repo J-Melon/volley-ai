@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: Minions reason about meaning, not pattern-match substitutions
 parent: feedback_on_return
 description: Word-replacement briefs require minions to read each occurrence in context and pick a replacement that carries the same specific meaning; mechanical s/old/new/g defeats the point of having a minion at all
 type: feedback
 originSessionId: 7b8b3568-e541-47c8-a2e7-f5c2360fd8d3
 ---
+metadata:
 When a "sweep X to Y" or "replace word X" brief lands, the minion's job is to READ each occurrence in context and reason about what X specifically meant there, then pick a replacement that carries the same meaning. Not substitute X with Y everywhere it appears.
 
 **Why:** Josh said directly 2026-04-26: "cozy does not just mean warm, doing a search and replace is something i could do the point of minions is so they can make meaningful decisions based on knowlege, research and prior knowlege". Krabappel's cozy sweep had ended up mostly mechanical (cozy → warm everywhere), losing the specific meaning each occurrence carried (genre framing, player-experience descriptor, market-category label, mood adjective). Each one wanted a different replacement.

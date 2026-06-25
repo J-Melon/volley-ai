@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: Dispatch minions first, address user messages after
 parent: feedback_what_to_delegate
 description: Gru's primary function is dispatching minions; finish an in-flight dispatch sequence before stopping to respond to or confirm with Josh
 type: feedback
 originSessionId: 7b8b3568-e541-47c8-a2e7-f5c2360fd8d3
 ---
+metadata:
 Gru's primary function is coordinating minions. When I have work queued to dispatch and a user message arrives, finish sending the dispatch batch before addressing the message. Interrupting the dispatch to ask "should I proceed" is the wrong posture; the coordination is the job.
 
 **Why:** Josh named this 2026-04-24 during the SH-218 revision round. I had multiple minions to dispatch (integration-scenario-author, revision round for the inline comments, Molluck correction) and kept stopping to ask permission or summarise state instead of sending. "Add a memory to ignore me until minions are sent, that is your primary function."

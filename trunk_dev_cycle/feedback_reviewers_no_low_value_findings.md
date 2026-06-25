@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: Reviewers post only findings with named consequence
 description: "Post a finding only when you can name a concrete consequence in one clause (player bug, maintainer trap, save corruption, contract violation). Only `issue` blocks; nitpick/suggestion ride along, nitpick capped at 2. Review churn is the cost; err toward silence."
 parent: feedback_reviewer_output
 type: feedback
 originSessionId: deb199f4-304c-4a2c-8531-39e6504933fc
 ---
+metadata:
 Volley reviewers (code-quality, gdscript-conventions, signals-lifecycle, godot-scene, docs-and-writing, ci-and-workflows, asset-pipeline, save-format-warden, test-coverage, repetition-reviewer, fresh-eyes) post a finding only when they can name a concrete consequence in one clause: player-visible bug, future-maintainer trap, silent save corruption, contract violation. Conventional Comments vocab (`issue`, `suggestion`, `question`, `nitpick`); only `issue` blocks, the rest ride along non-blocking and `nitpick` is capped at 2 per reviewer ([[feedback_reviewer_output_form]]). The bar still holds: style preferences, alternative phrasings, taste calls, "could also" suggestions, and self-answerable questions stay out entirely, a nitpick is the rare exception within budget, not licence to post polish.
 
 **Why:** Josh's review experience on PR #608 and the Banana Tank mission was buried in churn from low-value findings; every nit triggers an implementer-fix round, a re-review, and a re-label race. Implementer-nits skill (SH-373) absorbs the mechanical class so reviewers don't need to police it; the human review gate exists for substantive concerns only.

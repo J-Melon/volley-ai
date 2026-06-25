@@ -2,7 +2,7 @@
 name: tests-answer-should-this-exist-and-does-this-test-the-ac
 description: "Test-coverage discipline is antagonistic about its own existence; every test passes two checks before staying, AC fit and existence justification"
 metadata: 
-  parent: trunk_dev_cycle
+  parent: feedback_test_behaviour
   node_type: memory
   type: feedback
   originSessionId: 61f585fd-3e13-4f8a-ad0a-30ff3fcd71af

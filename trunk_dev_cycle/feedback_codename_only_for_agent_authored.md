@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: Never put brackets in a challenge title
 parent: feedback_codenames
 description: PR/commit titles never carry a `[Codename]` suffix. Codenames live in agent dispatch descriptions and in commit-body trailers, not in titles.
 type: feedback
 originSessionId: 94cc4c04-cdf0-42ec-8706-e2ea78278a1f
 ---
+metadata:
 The format `SH-N type: subject [Codename]` from earlier feedback is wrong as a title rule. **Challenge titles never carry brackets.** Period.
 
 Examples from main: `SH-342 outline rework: structural index`, `SH-341 docs: spell out implementer's runtime omission as design`, `SH-332 Pickle Jar refine: post-Ride blockers`. Even when there is a mission name in the body of the work, it stays in prose ("Pickle Jar refine"), never in a bracketed suffix.

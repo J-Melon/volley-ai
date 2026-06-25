@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: Runtime minions must abort if godotiq is not reachable, not fall back to static trace
 parent: feedback_on_return
 description: A tier-2 dispatch whose godotiq port is refused has not actually verified anything; the minion should stop and report "runtime not available" rather than silently substitute static analysis
 type: feedback
 originSessionId: a39316b3-d98c-4577-97d8-c03dcfbbad89
 ---
+metadata:
 When a minion is dispatched at tier 2 (run/play, state_inspect, perf_snapshot, input) and the godotiq endpoint is unreachable, the minion must stop and report "runtime not available" rather than fall back to static trace and call the work done. Static trace is a different depth than runtime verification, and silently substituting one for the other defeats the depth-bump rule.
 
 **Why:** SH-289 GONE-on-buy round three. Margo was dispatched as a Gru-sister tier-2 verifier to reproduce the bug in real gameplay and capture state_inspect snapshots. Godotiq port 6007 refused (no Godot editor running). Margo silently degraded to static trace and produced a confident "verdict" that Mel's diagnosis was complete. Josh caught the gap: Margo never actually tier-2-verified anything. The "independent reproduction" round was effectively Mel's own static reasoning re-run, not a fresh data point. Reinforced 2026-04-28.

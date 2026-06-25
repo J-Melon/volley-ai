@@ -1,9 +1,12 @@
 ---
+metadata:
+  node_type: memory
 name: feedback_test_call_through_real_subclass
 parent: feedback_test_behaviour
 type: feedback
 originSessionId: current
 ---
+metadata:
 
 Construct test subjects with the real subclass when that subclass overrides
 behaviour the test depends on. A bare base class whose override is a no-op

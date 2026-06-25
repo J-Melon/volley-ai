@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: Battle is minion work; dispatch the matching specialist
 description: "A battle is a verification pass after a challenge ships, and it is what the swarm exists for: dispatch the matching minion (devils-advocate for design, runtime-verifier for gameplay, code-quality for code, root-cause-analyst for tracing). The parent thread dispatches and judges; reaching for grep/Read myself is the tell to stop and dispatch."
 parent: feedback_battle_nature
 type: feedback
 originSessionId: 94cc4c04-cdf0-42ec-8706-e2ea78278a1f
 ---
+metadata:
 A Battle is the verification pass for a PR: spec sanity, AC↔evidence, runtime behaviour, code quality. Volley's swarm has minions for each shape: `devils-advocate` for design stress-tests, `runtime-verifier` for runtime/in-editor checks, `code-quality` for code reviews, `root-cause-analyst` for tracing actual execution paths.
 
 The default is to dispatch the right minion in the background, not to start grep'ing through the codebase from the parent thread.

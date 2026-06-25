@@ -20,6 +20,7 @@
 - feedback_auto_sweep_on_voice_rule
 - feedback_background_subagents
 - feedback_bash_timeout_flag
+- feedback_batch_independent_calls
 - feedback_battle_review_process
 - feedback_big_items_own_project
 - feedback_blank_line_before_if
@@ -269,6 +270,7 @@
 - reference_git_aliases
 - reference_github_actions_gotchas
 - reference_github_review_edit
+- reference_linear_cycle_archive_one_way
 - reference_linear_cycle_tuesday_quirk
 - reference_linear_icons
 - reference_linear_issue_body_cap
@@ -306,6 +308,7 @@
 - project_items_are_gameplay_changers
 - project_no_peak_in_code
 - project_only_powerful_items_get_names
+- project_overlay_reserved_for_dev_ui
 - project_page_one_mission
 - project_people_channel_soul
 - project_rest_damping_is_ball_state_not_court

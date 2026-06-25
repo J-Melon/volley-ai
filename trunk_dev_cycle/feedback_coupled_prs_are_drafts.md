@@ -1,4 +1,6 @@
 ---
+metadata:
+  node_type: memory
 name: A PR coupled to other PRs is a draft, not a review-ready PR
 description: "Every PR opens draft and stays draft; only Josh flips it ready (when he's choosing to merge), never the dispatcher, not even on a clean battle. Coupling is one reason a draft stays draft longer. A synthesis APPROVE means verified, not ready."
 type: feedback
@@ -6,6 +8,7 @@ metadata:
   parent: trunk_dev_cycle
 originSessionId: b1489a97-03c8-47b5-a015-d6527748dc96
 ---
+metadata:
 
 **Every challenge opens as a draft (`gh pr create --draft`) and stays draft. Josh flips it ready, never the dispatcher**, not even after a clean battle: a synthesis APPROVE means the work is verified, the ready-flip is Josh choosing to merge. Authority: `.claude/skills/commits/SKILL.md` (Push and merge) and `dispatch/SKILL.md` step 5. Josh, 2026-06-09: "i flip ready."
 

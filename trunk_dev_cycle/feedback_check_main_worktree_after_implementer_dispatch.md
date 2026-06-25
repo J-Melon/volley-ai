@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: After implementer dispatch, sweep the main worktree for resource damage
 parent: feedback_on_return
 description: gdscript-implementer minions in worktrees can trigger Godot import side-effects that re-write `.tres` / `.import` / `.uid` files in the main worktree with default values. Always `git status` the main worktree and revert any unintended resource changes before the next dispatch or report.
 type: feedback
 originSessionId: 8cc342c4-0faf-4b52-b150-75abb72d8fcd
 ---
+metadata:
 `gdscript-implementer` minions work in `.claude/worktrees/...` checkouts, but Godot's resource cache is shared at the project level. Opening Godot in any worktree can re-import / re-save `.tres` files and stamp default-valued shape into the main worktree's working tree. Real example: `resources/ball/rest.tres` had its UID swapped and the `friction = 1.0` + `bounce = 0.0` body stripped after a step-5 dispatch.
 
 **Why this is dangerous:** the damaged file is unstaged in the main worktree. If a later commit picks it up via `git add -A` or `git commit -a`, broken physics ships into the next PR. Refactor-stack PRs especially: a damaged `.tres` in the main worktree gets carried forward each time you `git add` near the working set.

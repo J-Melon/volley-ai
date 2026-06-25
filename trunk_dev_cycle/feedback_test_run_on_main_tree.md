@@ -2,7 +2,7 @@
 name: feedback_test_run_on_main_tree
 description: "When Josh tests or Rides a PR, the branch runs in his main tree at /home/josh/gamedev/volley. Free worktrees, checkout in place, preflight imports and tests, then hand over."
 metadata:
-  parent: trunk_dev_cycle
+  parent: feedback_test_behaviour
   node_type: memory
   type: feedback
   originSessionId: 9411911b-5a8f-49cf-b403-486f789e4da3

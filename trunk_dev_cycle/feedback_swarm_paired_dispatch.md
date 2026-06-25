@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: Swarm pairs specialists whose work must land together
 parent: feedback_what_to_delegate
 description: when a repo policy (pre-commit hook, required review, docs-with-code gate) forces two agents' outputs into the same commit or challenge, dispatch them as a pair instead of independently; lose the parallelism for that pair, keep it for everyone else
 type: feedback
 originSessionId: 608651d3-3b61-4b71-9a83-894f4e86b346
 ---
+metadata:
 Some specialists have to ship together. Failing-first tests cannot land as a standalone commit because the pre-commit hook runs GUT and blocks red tests; test-author and implementer therefore have to produce one commit between them. The general pattern is: when a repo policy couples two outputs, the swarm couples the specialists.
 
 **Paired dispatch shapes:**

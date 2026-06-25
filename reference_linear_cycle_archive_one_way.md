@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: reference
   originSessionId: 6e68bffd-7c3f-4cda-81d4-9afc186a3d07
+  parent: trunk_dev_cycle
 ---
 
 A Linear cycle archive is a **one-way door**, unlike an issue ([[reference_linear_unarchive_via_api]]

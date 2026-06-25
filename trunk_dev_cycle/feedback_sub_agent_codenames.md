@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: Sub-agent codenames: roles stable, names rotate per work unit, personality-matched
 parent: feedback_codenames
 description: swarm agent roles are fixed (issue-writer, pr-describer, etc.) but codenames rotate every work unit and are picked to fit the specific case's personality; on-demand research agents topic-sticky
 type: feedback
 originSessionId: 63a922cb-9834-46c0-b48d-fd28a7512bb9
 ---
+metadata:
 Every sub-agent dispatched via the `Agent` tool gets a human-readable codename prefixed in the description. Two tiers, both rotating.
 
 **Tier 1; first-class roster** (roles listed in `ai/swarm/README.md`; 12 slots like issue-writer, pr-describer, refactor-planner, save-format-warden, etc.):

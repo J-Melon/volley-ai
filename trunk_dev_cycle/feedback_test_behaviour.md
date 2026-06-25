@@ -1,4 +1,6 @@
 ---
+metadata:
+  node_type: memory
 name: Test behaviour, not implementation
 description: Every test case must justify its existence by naming the behaviour it protects; the default is CUT, not keep. Tests assert observable outcomes (signs, directions, visibility, relationships), never literal numeric outputs of production formulas. Triggers on `assert_eq` / `assert_almost_eq` with a hardcoded number, on test names that name the math, on helpers that re-derive a production formula, on a trim/review that keeps a test "because it passes", AND on accepting dispatched-implementer tests that match those patterns.
 metadata:
@@ -6,6 +8,7 @@ metadata:
   type: feedback
 originSessionId: b5187a6b-d4ba-4dfa-b4e9-bc0726ceb9d1
 ---
+metadata:
 
 The testing rules: what a test asserts, how it earns its place, how it is named. The behavioural
 rule (this node) is the spine. Descend for state assertions ([[feedback_test_assert_state]]),

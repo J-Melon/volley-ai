@@ -1,10 +1,13 @@
 ---
+metadata:
+  node_type: memory
 name: Don't interrupt in-flight minions for non-foundational changes
 parent: feedback_inflight
 description: Stop and re-dispatch only when the work's core direction needs to change; let active minions finish on their current brief and land additive content as follow-up commits
 type: feedback
 originSessionId: 7b8b3568-e541-47c8-a2e7-f5c2360fd8d3
 ---
+metadata:
 When a minion is mid-task and Josh raises a new point, the default is to LET THE MINION FINISH and address the new point as a follow-up. Stop and re-dispatch only when what Josh has surfaced changes the foundational direction of the work in flight (the scope, the spec, the design call). Additive details, sharpenings, framings, and "also include X" notes land as follow-up commits or follow-up minions, not as interruptions.
 
 **Why:** 2026-04-25, Josh: "in general current minions should be allowed to do their thing unless we need a foundational change." Reinforced after Phil was stopped + redispatched mid-task to absorb the Oddworld addition, when a follow-up commit would have been cheaper. The pattern of stopping minions to fold in additive content has happened repeatedly in this session (Riebeck three times on the SH-251 round, Phil once on the calibration round). Each stop costs setup + context-loading time that the minion has to redo. Most of those interruptions were not foundational; they were sharpenings.
