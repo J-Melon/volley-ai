@@ -55,6 +55,15 @@ fi
 
 # Read a file's parent: slug from its frontmatter (top-level or nested under
 # metadata:, at any indent). Prints the slug, or nothing for a root.
+is_memory_node() {
+    awk '
+        /^---[[:space:]]*$/ { fence++; next }
+        fence == 1 && /^[[:space:]]*node_type:[[:space:]]*memory[[:space:]]*$/ { found=1; exit }
+        fence >= 2 { exit }
+        END { exit found ? 0 : 1 }
+    ' "$1"
+}
+
 read_parent() {
     awk '
         /^---[[:space:]]*$/ { fence++; next }
@@ -72,6 +81,7 @@ declare -A PARENT_OF
 declare -A IS_NODE
 
 while IFS= read -r -d '' filepath; do
+    is_memory_node "$filepath" || continue
     filename="$(basename "$filepath" .md)"
     IS_NODE["$filename"]=1
     parent_value="$(read_parent "$filepath")"
