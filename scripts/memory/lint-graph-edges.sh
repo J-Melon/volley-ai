@@ -27,13 +27,9 @@ WHITE=$'\033[37m'
 NC=$'\033[0m'
 
 colour_at_depth() {
-    local d=$1
-    if (( d <= 2 )); then printf "%s" "$GREEN"
-    elif (( d == 3 )); then printf "%s" "$YELLOW"
-    elif (( d <= 4 )); then printf "%s" "${BOLD}${YELLOW}"
-    elif (( d == 5 )); then printf "%s" "$RED"
-    else printf "%s" "${BOLD}${RED}"
-    fi
+    local idx=$(($1-1))
+    local last=$((${#DEPTH_COLOURS[@]}-1))
+    printf '%s' "${DEPTH_COLOURS[$(( idx < last ? idx : last ))]}"
 }
 
 
