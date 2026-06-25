@@ -1,12 +1,13 @@
 // Output-length caps, ported from the four *-body-cap hooks. Each denies when
 // THIS call sets a field longer than its cap; state-only saves (field absent)
-// pass. Fail open on anything unparseable.
+// pass. Fail closed on anything unparseable.
 //
 //   linear-issue-body-cap     : mcp linear save_issue, description > 600
 //   linear-comment-body-cap   : mcp linear save_comment, body > 300
 //   synthesis-body-cap        : bash, gh ... bot-review.yml, -f body= > 300
-//   reviewer-inline-comment-cap: bash, gh api pulls/.../{reviews,comments} POST,
-//                                any "body":"..." > 300
+//   reviewer-inline-comment-cap: bash, gh api pulls/.../{reviews,comments} POST
+//                                + gh pr review --body / --body-file / heredoc
+//                                any body > 300
 //
 // MCP tool names are matched loosely (/linear/ + save_issue/save_comment) since
 // the exact namespaced name depends on the configured server id.
@@ -15,6 +16,35 @@ const ISSUE_CAP = 600
 const COMMENT_CAP = 300
 const SYNTH_CAP = 300
 const INLINE_CAP = 300
+
+/**
+ * Extract the review body from a gh pr review command.
+ * Returns the body string, null (unparseable -- fail closed), or undefined (no body flag).
+ */
+function _extractReviewBody(cmd) {
+  // --body-file or -F: cannot read file content, signal fail-closed.
+  if (/--body-file\b/.test(cmd) || /(?:^|\s)-F\s/.test(cmd)) {
+    return null
+  }
+
+  // --body "$(cat <<'MARKER' ...)" heredoc form. Check before simple quoted
+  // string: the $(cat ...) value sits inside quotes and may itself contain
+  // embedded quotes, which would truncate the simple match early.
+  const heredoc = cmd.match(
+    /--body\s*\$\(cat <<'?(\w+)'?[\s\S]*?\n([\s\S]*?)\n\s*\1\s*\)/
+  )
+  if (heredoc) {
+    return heredoc[2].trim()
+  }
+
+  // --body "..." or --body '...' with optional escape sequences.
+  const simple = cmd.match(/--body\s+(['"])((?:\\\1|(?!\1)[\s\S])*?)\1/)
+  if (simple) {
+    return simple[2].replace(/\\(['"\\])/g, "$1")
+  }
+
+  return undefined
+}
 
 /** @type {import("@opencode-ai/plugin").Plugin} */
 export const Caps = async () => {
@@ -75,6 +105,22 @@ export const Caps = async () => {
           if (worst > INLINE_CAP) {
             throw new Error(
               `An inline review comment is ${worst} chars; the cap is ${INLINE_CAP}. A finding is one clause: name the concern and the fix, anchored to the line. Push the reasoning into the dispatcher report, not the PR thread.`
+            )
+          }
+        }
+
+        // reviewer-inline-comment-cap: gh pr review form (--body, --body-file,
+        // heredoc). Exists alongside the REST API form above.
+        if (/\bgh pr review\b/.test(cmd)) {
+          const body = _extractReviewBody(cmd)
+          if (body === null) {
+            throw new Error(
+              `Review body provided via --body-file or -F; the cap validator cannot inspect file content. Use --body "..." with inline text so the ${INLINE_CAP}-char cap can be checked.`
+            )
+          }
+          if (typeof body === "string" && body.length > INLINE_CAP) {
+            throw new Error(
+              `A gh pr review body is ${body.length} chars; the cap is ${INLINE_CAP}. A finding is one clause: name the concern and the fix, anchored to the line. Push the reasoning into the dispatcher report, not the PR thread.`
             )
           }
         }
