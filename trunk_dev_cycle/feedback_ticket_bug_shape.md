@@ -22,6 +22,11 @@ Actual: <what happens instead>
 Environment: <Godot version, build type>
 ```
 
-Then the AC checklist. Punctuate as full sentences. Keep the body under twelve lines.
+Then the AC checklist. Each AC is a checkable outcome the player observes after the fix. Phrase each AC as the result, in fresh words, underscored with `- [ ]`:
 
-Each AC is a checkable outcome the player observes after the fix. Phrase each AC as the result, in fresh words. Remove internal assertions from ACs.
+```
+Acceptance Criteria:
+- [ ] <outcome the player observes>
+```
+
+Keep the body under twelve lines. Remove internal assertions from ACs.
