@@ -9,9 +9,9 @@ parent: feedback_ticket_shape
 A user-story ticket frames the work from a human user's experience:
 
 ```
-As a player,
-I want <capability>.
-So that <payoff>.
+**As a** player,
+**I want** <capability>.
+**So that** <payoff>.
 ```
 
 Then the AC checklist. The actor is usually the player, but it can be any human user (a designer, the team working its own board).

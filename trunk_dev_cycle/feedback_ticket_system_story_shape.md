@@ -6,10 +6,10 @@ type: feedback
 parent: feedback_ticket_shape
 ---
 
-A system-story ticket frames work whose subject is genuinely the system with no human user to name. It opens with a bare action verb:
+A system-story ticket frames work whose subject is genuinely the system with no human user to name. It opens with a bare action verb in bold:
 
 ```
-<VERB> <statement>
+**<VERB>** <statement>
 So that <reason>.
 ```
 
