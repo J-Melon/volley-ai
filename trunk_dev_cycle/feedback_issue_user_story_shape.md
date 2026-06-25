@@ -1,12 +1,12 @@
 ---
-name: ticket-user-story-shape
-description: The user-story ticket shape: actor, want, so-that, ACs. FIRES WHEN I draft a user-facing feature ticket.
+name: issue-user-story-shape
+description: The user-story issue shape: actor, want, so-that, ACs. FIRES WHEN I draft a user-facing feature issue.
 node_type: memory
 type: feedback
-parent: feedback_ticket_shape
+parent: feedback_issue_shape
 ---
 
-A user-story ticket frames the work from a human user's experience:
+A user-story issue frames the work from a human user's experience:
 
 ```
 **As a** player,

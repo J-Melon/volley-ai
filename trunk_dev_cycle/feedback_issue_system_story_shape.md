@@ -1,12 +1,12 @@
 ---
-name: ticket-system-story-shape
-description: The system-story ticket shape: bare verb, statement, so-that, ACs. FIRES WHEN I draft a refactor, extraction, or infrastructure ticket with no human actor.
+name: issue-system-story-shape
+description: The system-story issue shape: bare verb, statement, so-that, ACs. FIRES WHEN I draft a refactor, extraction, or infrastructure issue with no human actor.
 node_type: memory
 type: feedback
-parent: feedback_ticket_shape
+parent: feedback_issue_shape
 ---
 
-A system-story ticket frames work whose subject is genuinely the system with no human user to name. It opens with a bare action verb in bold:
+A system-story issue frames work whose subject is genuinely the system with no human user to name. It opens with a bare action verb in bold:
 
 ```
 **<VERB>** <statement>

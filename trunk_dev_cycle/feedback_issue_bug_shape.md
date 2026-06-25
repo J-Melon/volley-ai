@@ -1,12 +1,12 @@
 ---
-name: ticket-bug-shape
-description: The bug-report ticket shape: Summary, Steps to Reproduce, Expected, Actual, Environment, then ACs. FIRES WHEN I file a defect.
+name: issue-bug-shape
+description: The bug-report issue shape: Summary, Steps to Reproduce, Expected, Actual, Environment, then ACs. FIRES WHEN I file a defect.
 node_type: memory
 type: feedback
-parent: feedback_ticket_shape
+parent: feedback_issue_shape
 ---
 
-A bug-report ticket frames a defect:
+A bug-report issue frames a defect:
 
 ```
 Summary: <one line>

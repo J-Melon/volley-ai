@@ -1,15 +1,15 @@
 ---
-name: tickets
-description: How to shape a Linear ticket: user story, system story, or bug report. The title, outcome-ACs, and links for each shape. Read BEFORE drafting any ticket prose, including a chat proposal to Josh and any save_issue call. Load it before showing the draft, not before the save.
+name: file-issue
+description: How to file a Linear issue: user story, system story, or bug report. The title, outcome-ACs, and links for each shape. Read BEFORE drafting any issue prose, including a chat proposal to Josh and any save_issue call. Load it before showing the draft, not before the save.
 ---
 
-# Writing a ticket
+# Filing an issue
 
-A ticket is its so-that: a reason to do work, written from the user's experience. Name the outcome the user gets. The user is usually the player, but it can be any human user (a designer, the team working its own board), so write from whoever's experience the work serves.
+An issue is its so-that: a reason to do work, written from the user's experience. Name the outcome the user gets. The user is usually the player, but it can be any human user (a designer, the team working its own board), so write from whoever's experience the work serves.
 
 ## The three shapes
 
-A ticket is a **user story**, a **system story**, or a **bug report**. The user story is the default; the others are for narrower cases below.
+An issue is a **user story**, a **system story**, or a **bug report**. The user story is the default; the others are for narrower cases below.
 
 ### User story
 
@@ -69,8 +69,8 @@ The body is the so-that and its ACs. Everything else lives elsewhere: design det
 
 ## Links over restatement
 
-Attach design docs, scratchpads, PRs, and commits as `links`; relate sibling and parent tickets via `relatedTo` and `parentId`; record blocking via `blockedBy`. If a fact only matters to the file-time reader, it belongs in a link.
+Attach design docs, scratchpads, PRs, and commits as `links`; relate sibling and parent issues via `relatedTo` and `parentId`; record blocking via `blockedBy`. If a fact only matters to the file-time reader, it belongs in a link.
 
 ## Self check before save
 
-A finished ticket is one story shape inside twelve lines, a title that names the subject and reads alone, a human user as the actor, and ACs that each name an outcome the user observes, with every supporting fact attached as a link.
+A finished issue is one story shape inside twelve lines, a title that names the subject and reads alone, a human user as the actor, and ACs that each name an outcome the user observes, with every supporting fact attached as a link.
