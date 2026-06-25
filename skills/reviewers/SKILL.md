@@ -1,6 +1,6 @@
 ---
 name: reviewers
-description: Shared mental model for every swarm reviewer. Posture, scope, verdict shape, runtime checks, inline-finding discipline, labels. Read before reviewing.
+description: Sub-agent only. Shared mental model for every swarm reviewer. Posture, scope, verdict shape, runtime checks, inline-finding discipline, labels. Read before reviewing.
 ---
 
 # Reviewers
