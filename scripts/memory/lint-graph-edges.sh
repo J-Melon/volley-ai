@@ -28,10 +28,17 @@ NC=$'\033[0m'
 
 colour_at_depth() {
     local d=$1
-    if (( d <= 1 )); then printf '%s' "$GREEN"
-    elif (( d == 2 )); then printf '%s' "$YELLOW"
-    elif (( d == 3 )); then printf '%s' "$RED"
-    else printf '%s' "${BOLD}${RED}"
+    if (( d <= 1 )); then printf "%s" "$GREEN"
+    elif (( d == 2 )); then printf "%s" "$YELLOW"
+    elif (( d <= 4 )); then printf "%s" "${BOLD}${YELLOW}"
+    elif (( d == 5 )); then printf "%s" "$RED"
+    else printf "%s" "${BOLD}${RED}"
+    fi
+}
+    elif (( d == 4 )); then printf "%s" "$RED"
+    else printf "%s" "${BOLD}${RED}"
+    fi
+}
     fi
 }
 
