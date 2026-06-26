@@ -13,7 +13,7 @@ A *challenge* is the PR; a *battle* is the review run against it. The full memor
 
 2. **Fan independent reviewers via `swarm_dispatch`**, read-only on the main tree, scoped to the diff's lanes. Collect with `swarm_collect`. One independent reviewer minimum; reading my own diff is not a review.
 
-3. **Converge.** After a round or two with findings addressed and CI green, another battle that surfaces nothing new is churn. Do not re-battle a converged PR. Re-battle only on substantive scope change or if Josh asks. Scope re-battle to the new change, not the whole PR.
+3. **Converge.** Address every `issue:` finding. For `suggestion:` and `nitpick:` findings: make a judgement call on whether to implement — do not re-battle over a suggestion. Either way, always leave a threaded reply on the finding stating the decision (implemented at `<sha>`, or declined with short reason). After a round or two with findings addressed and CI green, further battles that surface nothing new are churn. Re-battle only on substantive scope change or if Josh asks, and scope the re-battle to the new change only.
 
 4. **Resolve verdict from inline threads, against the AC.** Read live inline comments first (`gh api .../pulls/<n>/comments`). Agent reports are supplementary; threads are where findings live. Check the PR meets its issue's AC, not just that commits are clean. I resolve the verdict; do not ask permission to fire the bot.
 
