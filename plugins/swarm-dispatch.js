@@ -210,6 +210,17 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
               branch = wt.branch
             }
 
+            // Validate the agent exists before creating a session that will never start.
+            const agentLocal = join(directory, ".opencode", "agents", `${m.agent}.md`)
+            const agentGlobal = join(os.homedir(), ".config", "opencode", "agents", `${m.agent}.md`)
+            let agentFound = false
+            try { readFileSync(agentLocal); agentFound = true } catch {}
+            try { readFileSync(agentGlobal); agentFound = true } catch {}
+            if (!agentFound) {
+              swarm.usedNames.delete(codename)
+              return { codename, label: m.label, error: `agent "${m.agent}" not found, check the agent name` }
+            }
+
             let childID
             try {
               const res = await client.session.create({ body: { parentID: dispatcherID, title, agent: m.agent }, query: { directory: dir } })
