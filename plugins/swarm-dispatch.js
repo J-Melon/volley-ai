@@ -78,7 +78,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
         writeFileSync(logPath, entry, { flag: "a" })
       } catch {}
     }
-    const status = rec.timedOut ? "timed out before finishing" : rec.error ? `errored: ${rec.error}` : rec.truncated ? "truncated (token limit)" : "reporting"
+    const status = rec.killed ? "killed" : rec.timedOut ? "timed out before finishing" : rec.error ? `errored: ${rec.error}` : rec.truncated ? "truncated (token limit)" : "reporting"
     const head = `${rec.codename} (${rec.agent}) ${status} on ${rec.label}:\n\n`
     let report = body || "(no output)"
     // Long reports spill to a file: push the head plus a pointer so the dispatcher
@@ -212,7 +212,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
 
             let childID
             try {
-              const res = await client.session.create({ body: { parentID: dispatcherID, title }, query: { directory: dir } })
+              const res = await client.session.create({ body: { parentID: dispatcherID, title, agent: m.agent }, query: { directory: dir } })
               childID = (res?.data ?? res)?.id
             } catch (e) {
               return { codename, label: m.label, error: `session.create failed: ${e}` }
@@ -397,7 +397,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             }
           }
           if (found) {
-            found.error = "killed by dispatcher"
+            found.killed = true
             try { await client.session.abort({ path: { id: found.childID } }) } catch {}
             try { await client.session.delete({ path: { id: found.childID } }) } catch {}
             if (found.worktreePath) {
