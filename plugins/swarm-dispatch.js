@@ -269,19 +269,54 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
         description:
           "Remove the git worktrees created for isolate:true minions, after their " +
           "branches are landed or abandoned. Never removes a worktree with " +
-          "uncommitted or unmerged work.",
+          "uncommitted or unmerged work. Falls back to DB scan when the in-memory " +
+          "state is stale (e.g. after a session restart).",
         args: {},
         async execute(_args, ctx) {
-          const swarm = swarms.get(ctx.sessionID)
-          if (!swarm) return "No swarm state for this session."
-          const removed = []
-          for (const m of swarm.minions.values()) {
-            if (!m.worktreePath) continue
-            const r = await removeWorktree($, worktree, m.worktreePath)
-            removed.push(`  ${m.codename}: ${r}`)
-            if (r.startsWith("removed")) swarm.minions.delete(m.childID)
+          const cleaned = []
+          const dispID = ctx.sessionID
+
+          // In-memory pass: clean tracked worktrees.
+          const swarm = swarms.get(dispID)
+          if (swarm) {
+            for (const m of swarm.minions.values()) {
+              if (!m.worktreePath) continue
+              const r = await removeWorktree($, worktree, m.worktreePath)
+              cleaned.push(`  ${m.codename}: ${r}`)
+              if (r.startsWith("removed")) swarm.minions.delete(m.childID)
+            }
           }
-          return removed.length ? "Worktree cleanup:\n" + removed.join("\n") : "No worktrees to clean."
+
+          // DB fallback: scan for orphaned child sessions and their worktrees.
+          try {
+            const res = await client.session.list()
+            const sessions = res?.data ?? res ?? []
+            let dbCleaned = 0
+            for (const s of sessions) {
+              if (s.parentID !== dispID) continue
+              try { await client.session.delete({ path: { id: s.id } }) } catch {}
+              dbCleaned++
+            }
+            if (dbCleaned) cleaned.push(`  db: deleted ${dbCleaned} orphaned child session(s)`)
+
+            // Scan for worktrees on disk that belong to now-dead children.
+            const known = new Set()
+            if (swarm) for (const m of swarm.minions.values()) {
+              if (m.worktreePath) known.add(m.worktreePath)
+            }
+            for (const s of sessions) {
+              if (s.parentID !== dispID) continue
+              const name = s.title?.replace(/\s*\([^)]+\)\s*$/, "").toLowerCase().replace(/[^a-z0-9]+/g, "-")
+              const wtPath = `${directory}/../volley-${name}`
+              if (known.has(wtPath)) continue
+              try {
+                const r = await removeWorktree($, worktree, wtPath)
+                if (r.startsWith("removed")) cleaned.push(`  worktree: ${r}`)
+              } catch {}
+            }
+          } catch {}
+
+          return cleaned.length ? "Cleanup:\n" + cleaned.join("\n") : "Nothing to clean."
         },
       }),
 
