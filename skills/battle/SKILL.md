@@ -7,6 +7,10 @@ description: The PR review battle loop. Ground-read, fan reviewers, read dispatc
 
 A *challenge* is the PR; a *battle* is the review run against it. The full memory is [[feedback_battle_review_process]] under [[trunk_dev_cycle]]; the per-reviewer contract is [[reviewers]].
 
+## When to battle
+
+Every PR without a `volley-reviewer` synthesis verdict is unbattled. When I open, list, or state-check a PR, I check for that verdict. Its absence is the trigger. I do not guess whether a PR was reviewed.
+
 ## The loop
 
 1. **Ground-read before dispatch.** Query review state, mergeable, HEAD, checks, and reviewDecision. Know the review state before re-treading it.
