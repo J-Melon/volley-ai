@@ -9,7 +9,8 @@ metadata:
 ---
 
 The full loop for battling and approving a PR. Sub-rules on reviewer output live in
-[[feedback_reviewer_output]]; battle depth in [[feedback_battle_is_a_confidence_pass]].
+[[feedback_reviewer_output]]; battle depth in [[feedback_battle_is_a_confidence_pass]];
+the trigger that fires a battle is [[feedback_missing_synthesis_means_battle_needed]].
 This file is the spine that ties them into a process.
 
 ## The loop
