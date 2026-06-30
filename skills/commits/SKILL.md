@@ -35,7 +35,7 @@ For breaking changes (save wipes, API renames, workflow-input shifts), use `feat
 
 **The GitHub issue number lives in the branch name only.** The repo is open source; readers follow GitHub links, not Linear. The branch is `feature/<gh-number>-<slug>` (the GitHub issue number, no `sh-` prefix, no `gh-` prefix). When a branch covers two issues, chain the numbers: `feature/691-692-slug`. Linear IDs (`SH-N`) are private and appear on no open surface: not the branch, not the title, not the body, not commits, not comments.
 
-**Each surface carries one thing.** The branch name carries the issue number and drives Linear movement. The PR body and commits describe the change. The Linear attachment link is made by hand after the PR opens (see below). With the number living in the branch, the body stays a clean description and the issue link stays deliberate.
+**Each surface carries one thing.** The branch name carries the GitHub issue number. The PR body and commits describe the change. With the number living in the branch, the body stays a clean description.
 
 Why the branch is the number's only home: a closing verb in a body (`closes`/`fixes`/`resolves #N`) hands GitHub the issue-close on merge, which carries the linked Linear issue to Closed against the manual-merge intent. Keeping every number in the branch makes that form one nobody reaches for. See [`designs/ai/lane-semantics.md`](../../../designs/ai/lane-semantics.md).
 
