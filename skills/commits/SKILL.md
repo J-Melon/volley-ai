@@ -1,6 +1,6 @@
 ---
 name: commits
-description: Commit shape every code-writing minion follows. Bare conventional commit subject, DCO sign-off, Agent-Role trailer, no Co-Authored-By, no codename in subject. Read before your first commit on a worktree.
+description: Commit shape every code-writing minion follows. Bare conventional commit subject, DCO sign-off, Agent-Role trailer, no Co-Authored-By, no codename in subject. Also covers git ground rules (never rebase, no amend, no force-push). Read before any git operation: commit, push, rebase, merge, PR create.
 ---
 
 # Agent commit shape
