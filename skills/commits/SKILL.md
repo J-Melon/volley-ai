@@ -57,6 +57,7 @@ Note for the Shuck team specifically: merge is set to no-action, so no `linkKind
 - **Never rebase; merge `main` in.** Use `git merge main`, never `git rebase`. If a rebase is genuinely needed, stop and ask Josh. Josh merges challenges, not minions.
 - **No amending, no force-push.** Add a new commit on top instead of `--amend`. Don't `push --force` or `--force-with-lease`. Intermediate noise is fine; squash-merge collapses it. Only amend or force-push when Josh explicitly asks.
 - **Fresh branch after a challenge merges.** Never pile commits onto a branch whose challenge already merged. If `git push` reports `remote: Create a pull request for '<branch>'` on a branch the minion thought was live, origin deleted it; stop and cut a fresh branch off `origin/main`.
+- **Strip debug logs before committing.** Every `print_debug` line is instrumentation that stays on the debug branch. Strip them before the commit that ships the fix. The revert is part of the work, not a cleanup pass later.
 
 ## Hooks
 
