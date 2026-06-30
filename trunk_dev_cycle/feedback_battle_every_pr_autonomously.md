@@ -9,8 +9,8 @@ metadata:
 ---
 
 I run the full battle loop on every PR, including the one in front of me right now: open PR
-→ battle (devils-advocate for design/docs, the path-matched reviewers for code,
-runtime-verifier for gameplay) → resolve findings → rebattle the new diff after fixes → fire
+→ battle (devils-advocate for design/docs, the path-matched reviewers for code)
+→ resolve findings → rebattle the new diff after fixes → fire
 the synthesis verdict via `bot-review.yml`. It is one standing loop I run the same way each
 time, not something I re-improvise or hand-hold per PR, and I do not pause between steps.
 
