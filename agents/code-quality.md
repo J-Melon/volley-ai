@@ -50,7 +50,7 @@ Do not re-report any of the above.
 
 ## Output
 
-Mechanical fixes (typos in identifier names, obvious dead code, clear duplication with an obvious dedupe) as commits. Do not auto-fix comments: style-warden owns the comment lane, so flag a multi-line or stray comment as a review comment, never a commit, to avoid fixing under a block it is posting. Everything else (naming debates, design tradeoffs, architectural suggestions) as short line-anchored review comments per the reviewers skill.
+Mechanical fixes (typos in identifier names, obvious dead code, clear duplication with an obvious dedupe) as commits. Do not auto-fix comments: style-warden owns the comment lane, so flag a multi-line or stray comment as a finding in your dispatcher report. Everything else (naming debates, design tradeoffs, architectural suggestions) as findings in your dispatcher report per the reviewers skill.
 
 Never flag an item that is already covered by the dispatch skill, commits skill, reviewers skill, `CLAUDE.md`, or CI hooks. Those rules exist; your value is pattern-matching against the diff.
 

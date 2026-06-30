@@ -64,4 +64,4 @@ Return a structured verdict to the dispatcher. Three fields:
 
 Never merge the PR; the maintainer merges by hand.
 
-Verdict surface per the reviewers skill. Approves apply the label and stop. Blocks post inline review comments anchored to `path:line`, never on the main PR thread. On follow-up pushes the dispatcher re-dispatches you.
+Verdict surface per the reviewers skill. Report approve or block to the dispatcher in your dispatcher report. Never post on the PR. On follow-up pushes the dispatcher re-dispatches you.
