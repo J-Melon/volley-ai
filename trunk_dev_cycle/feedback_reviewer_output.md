@@ -1,6 +1,6 @@
 ---
 name: feedback_reviewer_output
-description: "Intro to what a reviewer posts and how it reads. The form of a finding, the bar a finding must clear, and where comments live. Descend for the specific rules."
+description: "What a reviewer sends to the dispatcher, and how it reads. The form a finding takes, the bar it must clear, and the dispatcher-report channel. Descend for the specific rules."
 metadata:
   node_type: memory
   parent: feedback_battle_review_process
@@ -8,8 +8,8 @@ metadata:
   originSessionId: 07ac2119-f17c-4c89-bc04-1784125242cb
 ---
 
-What a reviewer puts on a challenge, and how it reads. Three threads sit under this: the FORM a
-finding takes ([[feedback_reviewer_output_form]]), the BAR it must clear before it is worth posting
-([[feedback_reviewers_post_consequential_findings]]), and the placement and reply discipline for the
-comments themselves ([[feedback_comment_discipline]]). The dispatcher's side (how reviewers are
-briefed and fanned) lives under dispatch, not here.
+What a reviewer reports to the dispatcher, and how it reads. Three threads sit under this:
+the FORM a finding takes ([[feedback_reviewer_output_form]]), the BAR it must clear before
+it is worth reporting ([[feedback_reviewers_post_consequential_findings]]), and the rule
+that every finding lands in the dispatcher report [[feedback_review_findings_land_in_dispatcher_report]].
+The dispatcher's side (how reviewers are briefed and fanned) lives under dispatch, not here.

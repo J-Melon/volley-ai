@@ -1,6 +1,6 @@
 ---
 name: feedback_comment_discipline
-description: "Intro to where review comments live and how they close. Findings are inline at path:line, never the main thread; the author replies on each thread as findings are fixed; resolution is Josh's. Descend for the specific rules."
+description: "Reviewer findings reach the dispatcher through the dispatcher report. The PR carries only the dispatcher's bot-review synthesis verdict, fired via bot-review.yml. No reviewer agent posts on the challenge."
 metadata:
   node_type: memory
   parent: feedback_reviewer_output
@@ -8,8 +8,7 @@ metadata:
   originSessionId: 07ac2119-f17c-4c89-bc04-1784125242cb
 ---
 
-Where a review's comments live, and how each thread closes. Findings are inline comments anchored
-to `path:line`, inline at path:line where the code is ([[feedback_review_findings_live_inline]]). After a
-fix, the author replies on each thread naming the commit SHA, and the maintainer resolves
-([[feedback_reply_on_threads_maintainer_resolves]]). The synthesis verdict is a separate
-body-only review that cannot carry inline findings ([[feedback_inline_findings_and_synthesis_are_detached]]).
+Reviewer findings travel through the dispatcher report: path, line, severity, consequence.
+The dispatcher reads the reports, decides what to fix, dispatches implementers, and fires
+`bot-review.yml` for the single PR-facing verdict per review round. The challenge carries
+only that synthesis verdict.
