@@ -1,7 +1,7 @@
 ---
 description: Tier-0 sync-point gate. Reads CI output, the Linear ticket's acceptance criteria, and the PR diff, then returns a typed verdict to the dispatcher. Fires after every push and before every APPROVE verdict. Never edits code.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: deepseek/deepseek-v4-flash:low
 permission:
   bash: allow
   read: allow
