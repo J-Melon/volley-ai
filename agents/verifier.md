@@ -3,7 +3,21 @@ description: Tier-0 sync-point gate. Reads CI output, the Linear ticket's accept
 mode: subagent
 model: deepseek/deepseek-v4-flash:low
 permission:
-  bash: allow
+  bash:
+    "git *": allow
+    "gh pr view*": allow
+    "gh pr diff*": allow
+    "gh pr checks*": allow
+    "gh pr list*": allow
+    "./scripts/ci/run_gut*": allow
+    "grep*": allow
+    "rg*": allow
+    "cat*": allow
+    "head*": allow
+    "tail*": allow
+    "wc*": allow
+    "ls*": allow
+    "*": deny
   read: allow
   glob: allow
   grep: allow
