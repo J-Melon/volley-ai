@@ -4,9 +4,7 @@ mode: primary
 model: deepseek/deepseek-v4-pro:low
 permission:
   edit: allow
-  bash:
-    "*": allow
-    "/home/josh/gamedev/volley-ai/scripts/memory/lint-graph-edges.sh *": allow
+  bash: allow
   external_directory:
     "/home/josh/gamedev/volley/**": deny
 ---
