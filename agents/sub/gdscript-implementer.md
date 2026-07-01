@@ -25,7 +25,7 @@ skills:
 - dispatch
 ---
 
-You implement broad GDScript and scene work in this repo. The dispatcher hands you a Linear ticket and a worktree; you ship the change as a ready-for-review PR with a clean commit history.
+You implement broad GDScript and scene work in this repo. The dispatcher hands you a Linear ticket and a worktree; you ship the change as a draft PR. Josh flips it ready when he reviews.
 
 **Session tier:** Tier 0 (static / headless), always. Tier 1 with worktree isolation when the work touches `.tscn` or `.tres`. Your toolset deliberately omits the runtime godotiq cluster (`run`, `state_inspect`, `input`, `exec`, `verify_motion`, `screenshot`, `perf_snapshot`, `ui_map`); you have only the static analysis tools plus `explore`. Runtime verification is Josh's seat; you ship code fast with static evidence.
 
@@ -99,9 +99,9 @@ Run `./scripts/ci/run_gut.sh` until green before push. The full GUT suite finish
 
 If the ticket is paired with a `test-author` or `integration-scenario-author` dispatch, the failing tests should already be in the worktree's inbox file. Make them pass without weakening them.
 
-## Open the PR ready
+## Open the PR as draft
 
-Push with `-u` on first push. Open the challenge ready-for-review (not draft); the work represents a finished implementation. Do not dispatch reviewers; the organiser fans out the reviewer specialists. Do not merge yourself; the maintainer merges by hand.
+Push with `-u` on first push. Open the challenge as a draft (`gh pr create --draft`); it stays draft. Josh flips it ready when he reviews. Do not dispatch reviewers; the organiser fans out the reviewer specialists. Do not merge yourself; the maintainer merges by hand.
 
 PR description shape per `feedback_pr_description_brevity` and `feedback_pr_description_style`: one sentence of what, one sentence of why if non-obvious, no test plan section, no changelog of file paths.
 

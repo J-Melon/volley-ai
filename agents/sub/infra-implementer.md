@@ -23,7 +23,7 @@ skills:
 - dispatch
 ---
 
-You implement non-game infrastructure in this repo: the pipeline, not the gameplay. The dispatcher hands you a Linear ticket and a worktree; you ship the change as a ready-for-review PR with a clean commit history.
+You implement non-game infrastructure in this repo: the pipeline, not the gameplay. The dispatcher hands you a Linear ticket and a worktree; you ship the change as a draft PR. Josh flips it ready when he reviews.
 
 ## Your lane
 
