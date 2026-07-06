@@ -3,7 +3,7 @@
 // is sequential and blocking). Design: SWARM-DISPATCH-SCOPE.md.
 
 import { tool } from "@opencode-ai/plugin"
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs"
+import { readFileSync, writeFileSync, mkdirSync, symlinkSync, existsSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 import { dirname, join } from "node:path"
 import os from "node:os"
@@ -118,6 +118,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
     rec.done = true
     rec.finishedAt = Date.now()
     if (rec.timer) clearTimeout(rec.timer)
+    if (rec.healthTimer) clearTimeout(rec.healthTimer)
     if (swarm.pending && swarm.pending.length && swarm.launch) {
       const next = swarm.pending.shift()
       swarm.launch(next, next.index).catch(() => {})
@@ -213,12 +214,23 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             // Validate the agent exists before creating a session that will never start.
             const agentLocal = join(directory, ".opencode", "agents", `${m.agent}.md`)
             const agentGlobal = join(os.homedir(), ".config", "opencode", "agents", `${m.agent}.md`)
+            const agentMinions = join(directory, "..", "volley-ai", "minions", `${m.agent}.md`)
             let agentFound = false
+            let foundInMinions = false
             try { readFileSync(agentLocal); agentFound = true } catch {}
             try { readFileSync(agentGlobal); agentFound = true } catch {}
+            try { readFileSync(agentMinions); foundInMinions = true; agentFound = true } catch {}
             if (!agentFound) {
               swarm.usedNames.delete(codename)
               return { codename, label: m.label, error: `agent "${m.agent}" not found, check the agent name` }
+            }
+            // Auto-symlink: if the agent lives only in volley-ai/minions/, mirror it
+            // into .opencode/agents/ so opencode's sub-agent resolution finds it.
+            if (foundInMinions && !existsSync(agentLocal)) {
+              try {
+                mkdirSync(join(directory, ".opencode", "agents"), { recursive: true })
+                symlinkSync(agentMinions, agentLocal)
+              } catch {}
             }
 
             let childID
@@ -249,6 +261,24 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
               rec.timedOut = true
               markDone(swarm, rec)
             }, MINION_TIMEOUT_MS)
+
+            // Early dead-session check: if no assistant message appears within 30 s,
+            // the agent likely wasn't resolved by opencode (file exists on disk but
+            // wasn't loaded). Abort fast instead of waiting for the full timeout.
+            rec.healthTimer = setTimeout(async () => {
+              if (rec.done) return
+              try {
+                const res = await client.session.messages({ path: { id: childID } })
+                const msgs = res?.data ?? res ?? []
+                const hasOutput = msgs.some((mm) => (mm.info ?? mm).role === "assistant")
+                rec.hasOutput = hasOutput
+                if (!hasOutput) {
+                  await client.session.abort({ path: { id: childID } }).catch(() => {})
+                  rec.error = `agent produced no output after 30 s; opencode may not have found the agent file. Check .opencode/agents/${m.agent}.md`
+                  markDone(swarm, rec)
+                }
+              } catch {}
+            }, 30000)
 
             return rec
           }
@@ -336,23 +366,27 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
           "Show the status of all dispatched minions. " +
           "Returns a table with codename, agent, label, state, elapsed time, and any error.",
         args: {},
-        async execute(_args, ctx) {
-          const swarm = swarms.get(ctx.sessionID)
-          if (!swarm || swarm.minions.size === 0) return "No minion state for this session."
-          const rows = []
-          for (const rec of swarm.minions.values()) {
-            let state = "running"
-            if (rec.done && rec.timedOut) state = "timeout"
-            else if (rec.done && rec.error) state = "errored"
-            else if (rec.done && rec.reported) state = "reported"
-            else if (rec.done) state = "done"
-            const ms = (Date.now()-rec.startedAt) / 1000
-            const elapsed = rec.startedAt ? `${Math.round(ms)}s` : "-"
-            const err = rec.error ?? ""
-            rows.push(`  ${rec.codename}  ${rec.agent}  ${rec.label}  ${state}  ${elapsed}${err ? "  " + err : ""}`)
-          }
-          return "Swarm minions:\n" + rows.join("\n")
-        },
+          async execute(_args, ctx) {
+            const swarm = swarms.get(ctx.sessionID)
+            if (!swarm || swarm.minions.size === 0) return "No minion state for this session."
+            const rows = []
+            for (const rec of swarm.minions.values()) {
+              let state = "running"
+              if (rec.done && rec.timedOut) state = "timeout"
+              else if (rec.done && rec.error) state = "errored"
+              else if (rec.done && rec.reported) state = "reported"
+              else if (rec.done) state = "done"
+              const ms = (Date.now()-rec.startedAt) / 1000
+              const elapsed = rec.startedAt ? `${Math.round(ms)}s` : "-"
+              const err = rec.error ?? ""
+              let detail = ""
+              if (!rec.done && ms < 30) detail = " (waiting for first output)"
+              else if (!rec.done && rec.hasOutput === false) detail = " (no output, may be stalled)"
+              else if (!rec.done && rec.hasOutput) detail = " (working)"
+              rows.push(`  ${rec.codename}  ${rec.agent}  ${rec.label}  ${state}  ${elapsed}${err ? "  " + err : ""}${detail}`)
+            }
+            return "Swarm minions:\n" + rows.join("\n")
+          },
       }),
 
       swarm_tail: tool({
