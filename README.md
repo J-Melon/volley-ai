@@ -12,7 +12,8 @@ At runtime, OpenCode loads from its own config directories, not from this repo. 
 |---|---|---|
 | `skills/**/SKILL.md` | `~/.config/opencode/skills/<name>/SKILL.md` | Dispatcher and minion agents |
 | `plugins/*.js` | `volley/.opencode/plugins/*.js` | opencode server (hot-reload on restart) |
-| `agents/*.md` | `volley/.opencode/agents/*.md` **and** `~/.config/opencode/agents/*.md` | Project dir for non-isolated; global for worktree-isolated minions |
+| `agents/sub/*.md` | `volley/.opencode/agents/*.md` **and** `~/.config/opencode/agents/*.md` | Subagent definitions (project dir for non-isolated; global for worktree-isolated minions) |
+| `agents/primary/*.md` | `volley/.opencode/agent/*.md` | Primary agent definitions (dispatch, plan, memory) |
 
 The runtime copies are **not** the source of truth. Edits go here first, then sync out. A `make sync` (TBD) will automate this direction.
 
@@ -22,7 +23,8 @@ The runtime copies are **not** the source of truth. Edits go here first, then sy
 - `trunk_*.md` + `trunk_*/` -- the six memory trees. Trunk files are indexes; children live in the matching directory.
 - `letters/` -- letters-to-my-next-self, session handoffs.
 - `skills/` -- agent skills loaded at dispatch and action time.
-- `agents/` -- agent definitions (model, permissions, skill set, prompt).
+- `agents/primary/` -- primary agent definitions (dispatch, plan, memory).
+- `agents/sub/` -- subagent definitions (reviewers, implementers, specialists).
 - `plugins/` -- opencode plugins (tool hooks, event hooks, guards).
 - `scripts/` -- operational scripts (memory linting, etc.).
 - `scratchpads/` -- research notes and scratch files.

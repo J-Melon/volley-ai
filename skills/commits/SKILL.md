@@ -1,6 +1,6 @@
 ---
 name: commits
-description: Commit shape every code-writing minion follows. Bare conventional commit subject, DCO sign-off, Agent-Role trailer, no Co-Authored-By, no codename in subject. Read before your first commit on a worktree.
+description: Commit shape every code-writing minion follows. Bare conventional commit subject, DCO sign-off, Agent-Role trailer, no Co-Authored-By, no codename in subject. Also covers git ground rules (never rebase, no amend, no force-push). Read before any git operation: commit, push, rebase, merge, PR create.
 ---
 
 # Agent commit shape
@@ -35,7 +35,7 @@ For breaking changes (save wipes, API renames, workflow-input shifts), use `feat
 
 **The GitHub issue number lives in the branch name only.** The repo is open source; readers follow GitHub links, not Linear. The branch is `feature/<gh-number>-<slug>` (the GitHub issue number, no `sh-` prefix, no `gh-` prefix). When a branch covers two issues, chain the numbers: `feature/691-692-slug`. Linear IDs (`SH-N`) are private and appear on no open surface: not the branch, not the title, not the body, not commits, not comments.
 
-**Each surface carries one thing.** The branch name carries the issue number and drives Linear movement. The PR body and commits describe the change. The Linear attachment link is made by hand after the PR opens (see below). With the number living in the branch, the body stays a clean description and the issue link stays deliberate.
+**Each surface carries one thing.** The branch name carries the GitHub issue number. The PR body and commits describe the change. With the number living in the branch, the body stays a clean description.
 
 Why the branch is the number's only home: a closing verb in a body (`closes`/`fixes`/`resolves #N`) hands GitHub the issue-close on merge, which carries the linked Linear issue to Closed against the manual-merge intent. Keeping every number in the branch makes that form one nobody reaches for. See [`designs/ai/lane-semantics.md`](../../../designs/ai/lane-semantics.md).
 
@@ -57,6 +57,7 @@ Note for the Shuck team specifically: merge is set to no-action, so no `linkKind
 - **Never rebase; merge `main` in.** Use `git merge main`, never `git rebase`. If a rebase is genuinely needed, stop and ask Josh. Josh merges challenges, not minions.
 - **No amending, no force-push.** Add a new commit on top instead of `--amend`. Don't `push --force` or `--force-with-lease`. Intermediate noise is fine; squash-merge collapses it. Only amend or force-push when Josh explicitly asks.
 - **Fresh branch after a challenge merges.** Never pile commits onto a branch whose challenge already merged. If `git push` reports `remote: Create a pull request for '<branch>'` on a branch the minion thought was live, origin deleted it; stop and cut a fresh branch off `origin/main`.
+- **Strip debug logs before committing.** Every `print_debug` line is instrumentation that stays on the debug branch. Strip them before the commit that ships the fix. The revert is part of the work, not a cleanup pass later.
 
 ## Hooks
 

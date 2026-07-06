@@ -1,10 +1,24 @@
 ---
 description: Review diffs touching save/progression code for silent format drift. Fires on any diff under `scripts/progression/**`, or touching `SaveManager`, `ItemManager`, `ProgressionManager`, or `@export` on persisted resources.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: deepseek/deepseek-v4-flash:low
 variant: low
 permission:
-  bash: allow
+  bash:
+    "git *": allow
+    "gh pr view*": allow
+    "gh pr diff*": allow
+    "gh pr checks*": allow
+    "gh pr list*": allow
+    "./scripts/ci/run_gut*": allow
+    "grep*": allow
+    "rg*": allow
+    "cat*": allow
+    "head*": allow
+    "tail*": allow
+    "wc*": allow
+    "ls*": allow
+    "*": deny
   read: allow
   glob: allow
   grep: allow
@@ -64,4 +78,4 @@ Return a structured verdict to the dispatcher. Three fields:
 
 Never merge the PR; the maintainer merges by hand.
 
-Verdict surface per the reviewers skill. Approves apply the label and stop. Blocks post inline review comments anchored to `path:line`, never on the main PR thread. On follow-up pushes the dispatcher re-dispatches you.
+Verdict surface per the reviewers skill. Report approve or block to the dispatcher in your dispatcher report. Never post on the PR. On follow-up pushes the dispatcher re-dispatches you.

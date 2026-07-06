@@ -1,6 +1,6 @@
 ---
 name: feedback_reviewer_output_form
-description: "The form a reviewer's findings take. Approve is silent: report the verdict to the organiser, post nothing. Block posts each finding as an inline comment at path:line, 30 words each, never the main thread. Only `issue:` blocks; `nitpick:`/`suggestion:`/`question:` ride along non-blocking (max 2 nitpicks). FIRES WHEN a reviewer is about to post."
+description: "The form a reviewer's findings take in the dispatcher report. Approve reports silently with failure modes checked. Block reports each finding with path, line, severity, and consequence. Only `issue:` blocks; `nitpick:`/`suggestion:` ride along non-blocking (max 1 nitpick). FIRES WHEN a reviewer is about to report."
 metadata:
   node_type: memory
   parent: feedback_reviewer_output
@@ -8,17 +8,14 @@ metadata:
   originSessionId: 07ac2119-f17c-4c89-bc04-1784125242cb
 ---
 
-A reviewer posts in one of two forms:
+The two outcomes reported to the dispatcher:
 
-- **Approve:** report the verdict to the organiser, post nothing on the challenge. Non-blocking
-  findings (`nitpick:`, `suggestion:`, `question:`, at most 2 nitpicks) may ride along as inline
-  comments, but they never gate the verdict and never force a re-battle.
-- **Block:** at least one `issue:`. Post each finding as an inline review comment at `path:line`,
-  30 words each, never on the main challenge thread. Report block to the organiser, who fires the
-  one synthesis verdict.
+- **Approve:** report the verdict, name the failure modes checked, state the confidence
+  level. No findings to report. The dispatcher receives this silently.
+- **Block:** at least one `issue:`. Report every finding: `path:line`, severity label
+  (`issue:` / `suggestion:` / `nitpick:`), and the concrete consequence in one clause.
+  At most one `nitpick:` per report. `suggestion:` and `nitpick:` ride along non-blocking;
+  only `issue:` gates the verdict.
 
-Why: Josh reads on mobile, so a verbose main-thread comment buries the signal; the cap and
-inline-only form keep findings scannable. Severity keys the verdict (only `issue:` blocks) so polish
-rides along without manufacturing a block-fix-reapprove cycle. The organiser, not the reviewer, owns
-the synthesis review. Dispatch-time briefing (the exact template a reviewer is handed) is the
-dispatcher's mechanic and lives in the dispatch skill, not here.
+The report is free-form prose to the dispatcher. It carries enough detail for the
+dispatcher to scope a fix and dispatch an implementer without re-reading the diff.

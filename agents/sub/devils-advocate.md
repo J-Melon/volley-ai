@@ -1,10 +1,24 @@
 ---
 description: Stress-test a plan, design, or architectural proposal before it turns into commits. Steel-man the opposing position, surface failure modes, name the assumptions nobody has challenged. Invoked against a draft document, or as a reviewer on a PR that argues a design or a rule.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: deepseek/deepseek-v4-flash:low
 variant: low
 permission:
-  bash: allow
+  bash:
+    "git *": allow
+    "gh pr view*": allow
+    "gh pr diff*": allow
+    "gh pr checks*": allow
+    "gh pr list*": allow
+    "./scripts/ci/run_gut*": allow
+    "grep*": allow
+    "rg*": allow
+    "cat*": allow
+    "head*": allow
+    "tail*": allow
+    "wc*": allow
+    "ls*": allow
+    "*": deny
   read: allow
   glob: allow
   grep: allow
@@ -59,9 +73,9 @@ Memory: `feedback_iterate_drafts_with_reviews.md`. Non-trivial drafts deserve su
 
 ## Out of scope
 
-- Resolving the verdict, and style or wording nits. When dispatched as a reviewer on a PR you read the diff and post substantive findings as inline review comments like any reviewer; the dispatcher synthesises the verdict.
+- Resolving the verdict, and style or wording nits. When dispatched as a reviewer on a PR you read the diff and report substantive findings to the dispatcher per the reviewers skill; never post on the PR. The dispatcher synthesises the verdict.
 - Implementation mechanics once the plan is agreed.
 
 ## Output
 
-A written critique. Against a draft plan, posted to the thread or the scratchpad. When dispatched as a PR reviewer, substantive findings post as inline review comments anchored to the diff, no commits. Plain prose with a short verdict reported to the dispatcher.
+A written critique. Against a draft plan, posted to the thread or the scratchpad. When dispatched as a PR reviewer, substantive findings go in your dispatcher report per the reviewers skill; never post on the PR. Plain prose with a short verdict reported to the dispatcher.

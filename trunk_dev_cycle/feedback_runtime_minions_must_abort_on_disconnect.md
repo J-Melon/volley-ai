@@ -1,21 +1,14 @@
 ---
+name: feedback_runtime_verifier_retired
+description: "The runtime-verifier agent was retired. Runtime verification is Josh's seat. The verifier agent (ci-ac-verifier) handles CI and AC confirmation at the sync-point gate."
 metadata:
   node_type: memory
-name: Runtime minions must abort if godotiq is not reachable, not fall back to static trace
-parent: feedback_on_return
-description: A tier-2 minion with an unreachable godotiq port stops and reports "runtime not available" instead of substituting static analysis. Static analysis is a different depth than runtime verification; silently substituting one for the other defeats the depth-bump rule.
-type: feedback
-originSessionId: a39316b3-d98c-4577-97d8-c03dcfbbad89
+  parent: trunk_dev_cycle
+  type: feedback
+  originSessionId: 750fc386-96f7-4511-a3d3-efe767fb41ba
 ---
-metadata:
-When a minion is dispatched at tier 2 (run/play, state_inspect, perf_snapshot, input) and the godotiq endpoint is unreachable, the minion must stop and report "runtime not available" rather than fall back to static trace and call the work done. Static trace is a different depth than runtime verification, and silently substituting one for the other defeats the depth-bump rule.
 
-**Why:** SH-289 GONE-on-buy round three. Margo was dispatched as a Gru-sister tier-2 verifier to reproduce the bug in real gameplay and capture state_inspect snapshots. Godotiq port 6007 refused (no Godot editor running). Margo silently degraded to static trace and produced a confident "verdict" that Mel's diagnosis was complete. Josh caught the gap: Margo never actually tier-2-verified anything. The "independent reproduction" round was effectively Mel's own static reasoning re-run, not a fresh data point. Reinforced 2026-04-28.
-
-**Minions cannot start the editor themselves.** Godotiq is an addon inside a running Godot editor; `godot --headless` doesn't load it. Only Josh (or whoever's at the keyboard) can open the editor and bring the addon online. The organiser's job is to verify the editor is up before dispatching tier-2, and to ask Josh to open it if not.
-
-**How to apply:**
-- Every tier-2 dispatch brief includes an explicit clause: "if godotiq is unreachable, stop and report; do not substitute static trace for runtime verification."
-- Before dispatching tier-2, the organiser checks that godotiq is reachable (`ss -ltn | grep 6007`, or `mcp__godotiq__godotiq_ping`) and that a Godot editor is open. If not reachable, ask Josh to open the editor before launching the minion. Dispatching without that check wastes the minion.
-- If godotiq turns out unreachable mid-task, the correct minion behaviour is: report the disconnect, name what static analysis would say if forced, but mark the runtime verification as not done. The organiser then decides whether to ask Josh to start the editor and redispatch, or accept the static finding at lower confidence.
-- A static-only confirmation does not count as a depth bump for the failed-fix ladder. If round N was static and round N+1 was forced static (godotiq down), the next genuine dispatch needs the runtime layer added back in.
+The `runtime-verifier` agent (tier-2 gameplay verification) was retired. Playing the game to
+confirm behaviour is Josh's seat. The CI-and-AC `verifier` agent covers the headless sync-point
+gate: after a push, it reads CI output, the Linear ticket's ACs, and the diff, then reports
+`ci_green` / `ac_satisfied` / `escalate` to the dispatcher.

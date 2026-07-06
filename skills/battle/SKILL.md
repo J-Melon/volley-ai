@@ -1,25 +1,29 @@
 ---
 name: battle
-description: The PR review battle loop. Ground-read review state, fan independent reviewers, converge findings, resolve verdict from inline threads against the AC, fire the bot review, push and move on. Read when battling any PR.
+description: The PR review battle loop. Ground-read, fan reviewers, read dispatcher reports, dispatch fixes, verify CI and AC, fire the bot review. Read when battling any PR.
 ---
 
 # Battle
 
 A *challenge* is the PR; a *battle* is the review run against it. The full memory is [[feedback_battle_review_process]] under [[trunk_dev_cycle]]; the per-reviewer contract is [[reviewers]].
 
+## When to battle
+
+Every PR without a `volley-reviewer` synthesis verdict is unbattled. When I open, list, or state-check a PR, I check for that verdict. Its absence is the trigger. I do not guess whether a PR was reviewed.
+
 ## The loop
 
-1. **Ground-read before dispatch.** Query review state, mergeable, HEAD, checks, and `reviewDecision` + per-PR reviews (`gh api .../pulls/<n>/reviews`). Know the review state before re-treading it.
+1. **Ground-read before dispatch.** Query review state, mergeable, HEAD, checks, and reviewDecision. Know the review state before re-treading it.
 
-2. **Fan independent reviewers via `swarm_dispatch`**, read-only on the main tree, scoped to the diff's lanes. Collect with `swarm_collect`. One independent reviewer minimum; reading my own diff is not a review.
+2. **Fan independent reviewers via `swarm_dispatch`**, read-only on the main tree, scoped to the diff's lanes. Each reviewer reports findings to me (the dispatcher report). One independent reviewer minimum.
 
-3. **Converge.** Address every `issue:` finding. For `suggestion:` and `nitpick:` findings: make a judgement call on whether to implement — do not re-battle over a suggestion. Either way, always leave a threaded reply on the finding stating the decision (implemented at `<sha>`, or declined with short reason). After a round or two with findings addressed and CI green, further battles that surface nothing new are churn. Re-battle only on substantive scope change or if Josh asks, and scope the re-battle to the new change only.
+3. **Read the dispatcher reports and decide.** I read each report, note every `issue:` finding, and decide which to address. For findings I fix, dispatch an implementer and push.
 
-4. **Resolve verdict from inline threads, against the AC.** Read live inline comments first (`gh api .../pulls/<n>/comments`). Agent reports are supplementary; threads are where findings live. Check the PR meets its issue's AC, not just that commits are clean. I resolve the verdict; do not ask permission to fire the bot.
+4. **Verifier gate.** After every push, dispatch the `verifier` to confirm CI is green and ACs are met. The verifier reads CI output, the ticket ACs, and the diff, then reports to me. Only proceed to verdict when `ci_green` and `ac_satisfied`. If `ci_failing` or `ac_not_met`, dispatch an implementer and re-verify.
 
-5. **Fire bot review.** `gh workflow run bot-review.yml -f pr=N -f event=APPROVE|REQUEST_CHANGES|COMMENT -f body="..."`. Body highlights individual review comments, attributed, under 400 chars, verdict on its own line. No aggregated synthesis.
+5. **Fire bot review.** `gh workflow run bot-review.yml -f pr=N -f event=APPROVE|REQUEST_CHANGES -f body="..."`. Body highlights reviewer findings, attributed, under 400 chars, verdict on its own line.
 
-6. **Push and move on.** CI runs itself. Act only on failure. In-progress CI is theirs to carry. Josh merges if he agrees; the bot APPROVE is not the merge click.
+6. **Push and move on.** Josh merges if he agrees; the bot APPROVE is not the merge click.
 
 ## Design/doc PRs
 

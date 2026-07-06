@@ -1,10 +1,24 @@
 ---
 description: Collaborative writer for Volley's working narrative (`designs/narrative/**`). Iterates phrases with the dispatcher in beats, never delivers finished drafts. Use when developing a narrative concept or writing narrative prose where feeling and abstract thinking matter more than design or tech specification.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: deepseek/deepseek-v4-flash:low
 variant: low
 permission:
-  bash: allow
+  bash:
+    "git *": allow
+    "gh pr view*": allow
+    "gh pr diff*": allow
+    "gh pr checks*": allow
+    "gh pr list*": allow
+    "./scripts/ci/run_gut*": allow
+    "grep*": allow
+    "rg*": allow
+    "cat*": allow
+    "head*": allow
+    "tail*": allow
+    "wc*": allow
+    "ls*": allow
+    "*": deny
   read: allow
   write: allow
   edit: allow

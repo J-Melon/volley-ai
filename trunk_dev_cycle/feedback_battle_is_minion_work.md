@@ -2,13 +2,13 @@
 metadata:
   node_type: memory
 name: Battle is minion work; dispatch the matching specialist
-description: "A battle is a verification pass after a challenge ships, and it is what the swarm exists for: dispatch the matching minion (devils-advocate for design, runtime-verifier for gameplay, code-quality for code, root-cause-analyst for tracing). The parent thread dispatches and judges; reaching for grep/Read myself is the tell to stop and dispatch."
+description: "A battle is a review pass after a challenge ships, and it is what the swarm exists for: dispatch the matching minion (devils-advocate for design, code-quality for code, root-cause-analyst for tracing). The parent thread dispatches and judges; reaching for grep/Read myself is the tell to stop and dispatch."
 parent: feedback_battle_nature
 type: feedback
 originSessionId: 94cc4c04-cdf0-42ec-8706-e2ea78278a1f
 ---
 metadata:
-A Battle is the verification pass for a PR: spec sanity, AC↔evidence, runtime behaviour, code quality. Volley's swarm has minions for each shape: `devils-advocate` for design stress-tests, `runtime-verifier` for runtime/in-editor checks, `code-quality` for code reviews, `root-cause-analyst` for tracing actual execution paths.
+A Battle is the review pass for a PR: spec sanity, AC evidence, code quality. Volley's swarm has minions for each shape: `devils-advocate` for design stress-tests, `code-quality` for code reviews, `root-cause-analyst` for tracing actual execution paths.
 
 The default is to dispatch the right minion in the background. The parent thread dispatches and judges; starting grep or read from the parent is the signal to stop and dispatch instead.
 
@@ -16,7 +16,7 @@ The default is to dispatch the right minion in the background. The parent thread
 
 **How to apply:**
 
-- When a PR opens and a Battle is needed: pick the matching minion. Spec/design PR → `devils-advocate`. Runtime/gameplay PR → `runtime-verifier`. Code-quality concern → `code-quality`. Bug or unexplained behaviour → `root-cause-analyst`.
+- When a PR opens and a Battle is needed: pick the matching minion. Spec/design PR → `devils-advocate`. Code-quality concern → `code-quality`. Bug or unexplained behaviour → `root-cause-analyst`.
 - Dispatch in background (per `feedback_agents_default_background`) with a tight, codename-prefixed brief that names the artefact (PR number, branch, file paths) and the questions to interrogate.
 - Tell the minion to post its findings to the PR directly (one Review per agent, per `feedback_one_review_per_agent`), or return text if it cannot.
 - The parent thread waits, then reads the verdict and acts. The parent does not duplicate the minion's reads.

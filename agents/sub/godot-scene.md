@@ -1,10 +1,24 @@
 ---
 description: Review `.tscn` and `.tres` diffs for autoload order, @tool guards, UID stability, and scene-editing discipline. Fires on any `**/*.tscn` or `**/*.tres` change.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: deepseek/deepseek-v4-flash:low
 variant: low
 permission:
-  bash: allow
+  bash:
+    "git *": allow
+    "gh pr view*": allow
+    "gh pr diff*": allow
+    "gh pr checks*": allow
+    "gh pr list*": allow
+    "./scripts/ci/run_gut*": allow
+    "grep*": allow
+    "rg*": allow
+    "cat*": allow
+    "head*": allow
+    "tail*": allow
+    "wc*": allow
+    "ls*": allow
+    "*": deny
   read: allow
   glob: allow
   grep: allow

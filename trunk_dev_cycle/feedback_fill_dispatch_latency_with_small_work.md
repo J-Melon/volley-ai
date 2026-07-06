@@ -13,7 +13,7 @@ metadata:
 What fills the gap, in priority order:
 - **Reply to review threads as their resolving work lands**, never batched to a convergence point ([[feedback_reply_to_review_comments]]). The moment a fix commit resolves an og comment, reply to it; don't wait for the rebattle or for both reviewers.
 - **Take the next ready action** on the live work (push, the next reviewer dispatch, the next unit's recon).
-- **Small as-we-go work** the mission surfaced: incidental cleanups, a stale comment, a one-line fix, a doc nudge, a memory write, recon for the next unit. Too small for its own issue but worth doing while in the area ("refactor as we go", [[feedback_extract_with_feature_not_after]]).
+- **Small as-we-go work** the mission surfaced: incidental cleanups, a stale comment, a one-line fix, a doc nudge, a memory write, recon for the next unit. Too small for its own issue but worth doing while in the area ("refactor as we go", [[feedback_refactor_as_you_go]]).
 
 **Why:** two corrections, same root. Josh: "swarming's strength is its parallel work capability... there is a lot of space between dispatch, this is where we can fill with the smaller stuff." Then on PR #835: I said "I'll bring you the converged verdict when both report", and Josh: "reply as you go?" then "this also leads into no downtime expressed from the other memory." I keep treating latency as wait-and-report; it is capacity.
 

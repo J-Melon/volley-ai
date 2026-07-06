@@ -1,10 +1,24 @@
 ---
 description: Review `.md` diffs for cross-doc duplication and trim-verify. Catches material restated across multiple files, and content removed from one doc without landing in its destination. Fires on any large-doc dandori review pass and on any restructure PR touching `**/*.md`.
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: deepseek/deepseek-v4-flash:low
 variant: low
 permission:
-  bash: allow
+  bash:
+    "git *": allow
+    "gh pr view*": allow
+    "gh pr diff*": allow
+    "gh pr checks*": allow
+    "gh pr list*": allow
+    "./scripts/ci/run_gut*": allow
+    "grep*": allow
+    "rg*": allow
+    "cat*": allow
+    "head*": allow
+    "tail*": allow
+    "wc*": allow
+    "ls*": allow
+    "*": deny
   read: allow
   glob: allow
   grep: allow
@@ -66,7 +80,7 @@ Voice quality (docs-and-writing). Em dashes (docs-and-writing). Spelling (codesp
 
 ## Output
 
-Per the reviewers skill. Approve is silent (label only). Block posts inline review comments anchored to `path:line`, never on the main PR thread. Each finding names the duplicate location or the missing destination so the author can fix it without searching.
+Per the reviewers skill. Report approve or block to the dispatcher in your dispatcher report. Each finding names the duplicate location or the missing destination so the author can fix it without searching. Never post on the PR.
 
 ## Examples
 
