@@ -26,8 +26,9 @@ Through the swarm tools ([[feedback_swarm_dispatch_tools]] is the full rule):
 - **`swarm_collect`** snapshots each minion (done-with-output or running),
   non-blocking; call again for stragglers. Reconcile the plan on return
   ([[feedback_todo_is_the_live_plan]]).
-- **`isolate: true`** for a write-capable author that needs its own branch (the
-  plugin makes the worktree); read-only minions and scene work run on the main tree.
+- **`isolate: true`** is the default for every write-capable author (the plugin
+  makes the worktree). All files (.gd, .tres, .tscn) are plain text; minions edit
+  them directly, they do not need GodotIQ. Read-only minions run on the main tree.
 
 Stay in the dispatcher seat ([[feedback_stay_in_the_dispatcher_seat]]); keep WIP
 low ([[feedback_dispatcher_focus_low_wip]]). Issue state is Josh's; the Shuck PR

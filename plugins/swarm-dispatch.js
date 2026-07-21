@@ -161,9 +161,9 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
           "immediately (non-blocking; you stay reachable while they run). Each " +
           "minion gets a themed codename shown in its session title. Read-only " +
           "minions (reviewers/analysts) run on the main tree; set isolate:true " +
-          "for write-capable authors to get a git worktree (NOT for .tscn/scene " +
-          "work, GodotIQ is pinned to the main tree). Each minion reports back to " +
-          "you automatically when it finishes, in its own voice, no need to poll.",
+          "for write-capable authors to get a git worktree (default for writers). " +
+          "Minions edit files directly, no GodotIQ needed. Each minion reports " +
+          "back to you automatically when it finishes, in its own voice.",
         args: {
           minions: z
             .array(
@@ -171,7 +171,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
                 agent: z.string().describe("agent id, e.g. code-quality, gdscript-implementer"),
                 task: z.string().describe("the brief for this minion"),
                 label: z.string().describe("short task label for the session title, e.g. SH-254"),
-                isolate: z.boolean().optional().describe("true = give this WRITER its own git worktree. Never for scene work."),
+                isolate: z.boolean().optional().describe("true = give this WRITER its own git worktree. Default for writers."),
               })
             )
             .describe("the minions to dispatch in parallel"),
@@ -506,19 +506,10 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
   }
 }
 
-// Scene work is never isolated: GodotIQ is pinned to the main tree, so a worktree
-// write to a scene lands in main anyway. The risk is in the task, not just the label.
-function isSceneWork(label, task) {
-  return /\.tscn|\.tres|scene|node_ops|build_scene/i.test(`${label}\n${task}`)
-}
-
 function safeToken(s) {
   return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
 }
 
-// Spill an over-long minion report to disk. childID makes the name unique without
-// a clock (Date.now is unavailable here). Returns the path, or null on failure so
-// the caller can degrade to a plain truncation notice.
 function spillReport(rec, body) {
   try {
     mkdirSync(SPILL_DIR, { recursive: true })
@@ -532,9 +523,6 @@ function spillReport(rec, body) {
 }
 
 async function makeWorktree($, mainTree, codename, label, task) {
-  if (isSceneWork(label, task)) {
-    return { error: "isolate:true refused for scene work; GodotIQ is bound to the main tree. Run scene minions serial on main." }
-  }
   const slug = safeToken(label)
   const name = safeToken(codename) || "minion"
   const path = `${mainTree}/../volley-${name}`
