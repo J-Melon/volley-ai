@@ -250,7 +250,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             // Fire and don't await; the result comes back via reportToDispatcher.
             // If the prompt itself fails the minion never starts, so auto-report the error.
             client.session
-              .prompt({ path: { id: childID }, query: { directory: dir }, body: { agent: m.agent, parts: [{ type: "text", text: m.task }] } })
+              .prompt({ path: { id: childID }, body: { agent: m.agent, parts: [{ type: "text", text: m.task }] } })
               .catch((e) => {
                 rec.error = `prompt failed: ${e}`
                 markDone(swarm, rec)
