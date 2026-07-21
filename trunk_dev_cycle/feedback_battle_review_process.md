@@ -20,10 +20,11 @@ This file is the spine that ties them into a process.
    diff's lanes. Each reviewer reports findings to me (the dispatcher report), not to the PR.
    A direct "battle X" from Josh is the trigger.
 
-2. **Read the dispatcher reports and decide.** Every reviewer reports their findings
-   through the dispatcher-report channel. I read each report, note every `issue:` finding,
-   and decide which to address. `suggestion:` and `nitpick:` findings are a judgement call:
-   I may fold them or ignore them without a re-battle.
+2. **Surface findings and dispatch fixes.** Every reviewer reports their findings
+   through the dispatcher-report channel. I read each report and surface every finding --
+   `issue:`, `suggestion:`, `nitpick:`, and `question:` -- to the user with reviewer
+   attribution. The user decides which to address. I dispatch implementers for the
+   chosen fixes and push.
 
 3. **Dispatch fixes, not re-battles.** For findings I decide to fix, I dispatch an
    implementer. Push the fix, then re-battle only the fixed diff with the blocked
