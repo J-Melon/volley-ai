@@ -209,10 +209,12 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
               dir = wt.path
               worktreePath = wt.path
               branch = wt.branch
+              // Mirror .opencode/ and AGENTS.md so the worktree has agent defs and skills.
+              mirrorOpenCode($, directory, dir)
             }
 
             // Validate the agent exists before creating a session that will never start.
-            const agentLocal = join(directory, ".opencode", "agents", `${m.agent}.md`)
+            const agentLocal = join(dir, ".opencode", "agents", `${m.agent}.md`)
             const agentGlobal = join(os.homedir(), ".config", "opencode", "agents", `${m.agent}.md`)
             const agentMinions = join(directory, "..", "volley-ai", "minions", `${m.agent}.md`)
             let agentFound = false
@@ -228,7 +230,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             // into .opencode/agents/ so opencode's sub-agent resolution finds it.
             if (foundInMinions && !existsSync(agentLocal)) {
               try {
-                mkdirSync(join(directory, ".opencode", "agents"), { recursive: true })
+                mkdirSync(join(dir, ".opencode", "agents"), { recursive: true })
                 symlinkSync(agentMinions, agentLocal)
               } catch {}
             }
@@ -532,6 +534,22 @@ async function makeWorktree($, mainTree, codename, label, task) {
     return { path, branch }
   } catch (e) {
     return { error: `git worktree add failed: ${e}` }
+  }
+}
+
+// Mirror .opencode/ (agents + skills) and AGENTS.md from the main tree into the
+// worktree so isolated minions find their agent definitions and skill files.
+function mirrorOpenCode($, mainTree, worktreePath) {
+  const sources = [
+    { from: join(mainTree, ".opencode"), to: join(worktreePath, ".opencode") },
+    { from: join(mainTree, "AGENTS.md"), to: join(worktreePath, "AGENTS.md") },
+  ]
+  for (const { from, to } of sources) {
+    try {
+      if (existsSync(from) && !existsSync(to)) {
+        symlinkSync(from, to)
+      }
+    } catch {}
   }
 }
 
