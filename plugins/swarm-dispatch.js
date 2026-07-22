@@ -509,7 +509,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
 }
 
 function safeToken(s) {
-  return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
+  return String(s).toLowerCase().replace(/^sh-/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
 }
 
 function spillReport(rec, body) {
