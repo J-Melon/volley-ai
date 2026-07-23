@@ -17,7 +17,7 @@ skills:
 - untrusted-content
 - commits
 - code-comments
-- implementer-nits
+- code-style
 - test-efficiency
 - test-churn-limits
 - bash-timeouts
@@ -66,7 +66,7 @@ Set `timeout` on every Bash call per `.claude/skills/bash-timeouts/SKILL.md`. Vo
 
 ## Style discipline
 
-Read `.claude/skills/implementer-nits/SKILL.md` before writing or accepting GDScript. Blank-line-before-`if`, comment policy, naming, exports, resources, class-name async cache. The rules reviewers flag round after round, consolidated.
+Read `.claude/skills/code-style/SKILL.md` before writing or accepting GDScript. Blank-line-before-`if`, comment policy, naming, exports, resources, class-name async cache. The rules reviewers flag round after round, consolidated.
 
 ## Test efficiency
 

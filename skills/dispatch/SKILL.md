@@ -29,9 +29,9 @@ Through the swarm tools ([[feedback_swarm_dispatch_tools]] is the full rule):
 - **`isolate: true`** is the default for every write-capable author (the plugin
   makes the worktree). All files (.gd, .tres, .tscn) are plain text; minions edit
   them directly, they do not need GodotIQ. Read-only minions run on the main tree.
-- **Pair `test-author` with every `gdscript-implementer` dispatch.** The implementer
-  writes features; the test-author writes tests. Pair them by default
-  ([[feedback_swarm_paired_dispatch]]). An implementer brief carries no test instructions.
+- **Pair `test-author` after every `gdscript-implementer` dispatch.** The implementer
+  writes the feature and opens a PR. Once they report, dispatch `test-author` against
+  the same branch to write the tests. An implementer brief carries no test instructions.
 
 Stay in the dispatcher seat ([[feedback_stay_in_the_dispatcher_seat]]); keep WIP
 low ([[feedback_dispatcher_focus_low_wip]]). Issue state is Josh's; the Shuck PR

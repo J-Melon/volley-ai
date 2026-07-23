@@ -18,7 +18,7 @@ skills:
 - untrusted-content
 - commits
 - code-comments
-- implementer-nits
+- code-style
 - bash-timeouts
 - dispatch
 ---

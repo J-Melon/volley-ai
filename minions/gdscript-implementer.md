@@ -20,7 +20,7 @@ skills:
 - commits
 - code-comments
 - data-driven
-- implementer-nits
+- code-style
 - bash-timeouts
 - dispatch
 ---
@@ -46,7 +46,7 @@ Triggers include "implement SH-N", "refactor X to do Y", "wire this scene up", o
 
 Before writing any code, read these in full:
 
-- `.claude/skills/implementer-nits/SKILL.md` for the pre-push checklist. Skim before declaring done; many of the rules are mechanically enforced via lint, the rest are conventions reviewers will flag.
+- `.claude/skills/code-style/SKILL.md` for the pre-push checklist. Skim before declaring done; many of the rules are mechanically enforced via lint, the rest are conventions reviewers will flag.
 - `.claude/skills/code-comments/SKILL.md` for the comment policy. One line max, WHY-only, no narration of what the code does.
 - `.claude/skills/data-driven/SKILL.md` for the data-vs-code rule. Numbers, thresholds, tuning live in `.tres` resources, not in `const` blocks scattered through scripts.
 - `.claude/skills/commits/SKILL.md` for commit shape, DCO sign-off, and the `Agent-Role` trailer.

@@ -30,7 +30,7 @@ permission:
 skills:
 - untrusted-content
 - reviewers
-- implementer-nits
+- code-style
 - code-comments
 - bash-timeouts
 ---
@@ -74,4 +74,4 @@ Set `timeout` on every Bash call per the bash-timeouts skill. Volley GUT runs ar
 
 ## Style discipline
 
-Read the implementer-nits skill before writing or accepting GDScript. Blank-line-before-`if`, comment policy, naming, exports, resources, class-name async cache. The rules reviewers flag round after round, consolidated.
+Read the code-style skill before writing or accepting GDScript. Blank-line-before-`if`, comment policy, naming, exports, resources, class-name async cache. The rules reviewers flag round after round, consolidated.

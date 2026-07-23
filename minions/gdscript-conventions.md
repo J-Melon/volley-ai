@@ -30,7 +30,7 @@ permission:
 skills:
 - untrusted-content
 - reviewers
-- implementer-nits
+- code-style
 - code-comments
 - bash-timeouts
 ---
