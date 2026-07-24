@@ -1,6 +1,6 @@
 ---
 name: commits
-description: Commit shape every code-writing minion follows. Bare conventional commit subject, DCO sign-off, Agent-Role trailer, no Co-Authored-By, no codename in subject. Also covers git ground rules (never rebase, no amend, no force-push). Read before any git operation: commit, push, rebase, merge, PR create.
+description: Commit shape every code-writing minion follows. Bare conventional commit subject, DCO sign-off as the one trailer, codename in the dispatch description. Also covers git ground rules (merge main in, add a new commit on top, push the branch). Read before any git operation: commit, push, rebase, merge, PR create.
 ---
 
 # Agent commit shape
@@ -14,16 +14,13 @@ git commit -s -m "$(cat <<'EOF'
 <type>: <subject in the imperative mood>
 
 <short body if needed; usually one or two sentences>
-
-Agent-Role: <role>
 EOF
 )"
 ```
 
 - `-s` for the DCO sign-off (`Signed-off-by: ...`). The DCO check blocks challenges without it. **Let `-s` generate the sign-off.** Git derives `Signed-off-by:` from your user config, so it always matches the author name. Typing it by hand is how the name drifts and DCO fails.
-- **Bare Conventional Commit subject.** `<type>: <subject>`. No `[Codename]` prefix or suffix, no `SH-N` prefix, no `(sh-N)` scope. Codename lives in the `Agent-Role` trailer and in the dispatch description, not in the subject.
-- `Agent-Role: <role>` trailer, exactly once. The role names the agent type (gdscript-implementer, code-quality, general-purpose, etc.). For Gru, the role is `dispatcher`; the subject still follows the bare Conventional Commit shape (e.g. `chore: bump lint timeout`), no `[Gru]` prefix.
-- No `Co-Authored-By:` lines. Volley's swarm uses Agent-Role for attribution; Co-Authored-By creates double counting.
+- **Bare Conventional Commit subject.** `<type>: <subject>`. No `[Codename]` prefix or suffix, no `SH-N` prefix, no `(sh-N)` scope. Codename lives in the dispatch description, not on the commit.
+- **One trailer: `Signed-off-by:`, from `-s`.** The git author field carries authorship; the sign-off satisfies DCO. That pair is the whole footer.
 
 ## What goes in the subject
 
@@ -89,7 +86,7 @@ The PR is a public surface. Linear is private; the open repo is the audience. Ap
 
 **IDs in body.** Reference GitHub issue/PR numbers (`#346`, Challenge `#403`), never Linear IDs (`SH-211`, `SH-403`). A reader of the open repo cannot follow Linear IDs.
 
-**Trailers.** `Agent-Role: <role>` exactly once. No `Co-Authored-By:`.
+**Trailers.** A PR body needs none; the prose and the git author field say everything.
 
 ## Replying to Josh's review comments
 
