@@ -5,7 +5,7 @@ import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
 const here = dirname(fileURLToPath(import.meta.url))
-const codenamesJson = JSON.parse(readFileSync(join(here, "codenames.json"), "utf8"))
+const codenamesJson = JSON.parse(readFileSync(join(here, "../codenames.json"), "utf8"))
 const POOL = Object.values(codenamesJson.pool).flat()
 
 function pickCodenameCurrent(usedNames) {

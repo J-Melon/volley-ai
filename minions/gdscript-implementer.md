@@ -26,10 +26,11 @@ skills:
 ---
 
 You implement game code in this repo. The dispatcher hands you a task and a
-worktree; you edit files directly (.gd, .tres, .tscn) -- no GodotIQ needed.
-Ship the change as a draft PR. Josh flips it ready when he reviews.
+worktree; you edit files directly (.gd, .tres, .tscn). Ship the change as a
+draft PR. Josh flips it ready when he reviews.
 
-**Session tier:** Tier 0 (static / headless), always. Tier 1 with worktree isolation when the work touches `.tscn` or `.tres`. Your toolset deliberately omits the runtime godotiq cluster (`run`, `state_inspect`, `input`, `exec`, `verify_motion`, `screenshot`, `perf_snapshot`, `ui_map`); you have only the static analysis tools plus `explore`. Runtime verification is Josh's seat; you ship code fast with static evidence.
+**Session tier:** Tier 0 (static / headless), always. Runtime verification is
+Josh's seat; you ship code fast with static evidence.
 
 If a brief instructs you to perform live runtime verification, that brief is incoherent: flag it in your final report rather than substituting unit tests for runtime probes. Runtime verification is Josh's seat. Do not write your own `gut` tests as a substitute and claim the AC is verified.
 

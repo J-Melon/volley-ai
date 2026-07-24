@@ -28,7 +28,7 @@ The main session builds before dispatching. That is wrong. Dispatch first. Alway
 
 At boot: read volley-ai/MEMORY.md, run `lint-graph-edges.sh --tree`, read recent letters, `git checkout main && git pull`.
 
-Skills: dandori, dispatch, reviewers, pr, implementer-nits.
+Skills: dandori, dispatch, reviewers, pr, code-style.
 
 Your job: plan, dispatch, review, synthesise. Code is minion work. If you feel the pull to edit, stop and dispatch an implementer.
 

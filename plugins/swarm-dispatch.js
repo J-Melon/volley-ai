@@ -161,9 +161,9 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
           "immediately (non-blocking; you stay reachable while they run). Each " +
           "minion gets a themed codename shown in its session title. Read-only " +
           "minions (reviewers/analysts) run on the main tree; set isolate:true " +
-          "for write-capable authors to get a git worktree (NOT for .tscn/scene " +
-          "work, GodotIQ is pinned to the main tree). Each minion reports back to " +
-          "you automatically when it finishes, in its own voice, no need to poll.",
+          "for write-capable authors to get a git worktree (default for writers). " +
+          "Minions edit files directly, no GodotIQ needed. Each minion reports " +
+          "back to you automatically when it finishes, in its own voice.",
         args: {
           minions: z
             .array(
@@ -171,7 +171,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
                 agent: z.string().describe("agent id, e.g. code-quality, gdscript-implementer"),
                 task: z.string().describe("the brief for this minion"),
                 label: z.string().describe("short task label for the session title, e.g. SH-254"),
-                isolate: z.boolean().optional().describe("true = give this WRITER its own git worktree. Never for scene work."),
+                isolate: z.boolean().optional().describe("true = give this WRITER its own git worktree. Default for writers."),
               })
             )
             .describe("the minions to dispatch in parallel"),
@@ -209,10 +209,12 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
               dir = wt.path
               worktreePath = wt.path
               branch = wt.branch
+              // Mirror .opencode/ and AGENTS.md so the worktree has agent defs and skills.
+              mirrorOpenCode($, directory, dir)
             }
 
             // Validate the agent exists before creating a session that will never start.
-            const agentLocal = join(directory, ".opencode", "agents", `${m.agent}.md`)
+            const agentLocal = join(dir, ".opencode", "agents", `${m.agent}.md`)
             const agentGlobal = join(os.homedir(), ".config", "opencode", "agents", `${m.agent}.md`)
             const agentMinions = join(directory, "..", "volley-ai", "minions", `${m.agent}.md`)
             let agentFound = false
@@ -228,7 +230,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             // into .opencode/agents/ so opencode's sub-agent resolution finds it.
             if (foundInMinions && !existsSync(agentLocal)) {
               try {
-                mkdirSync(join(directory, ".opencode", "agents"), { recursive: true })
+                mkdirSync(join(dir, ".opencode", "agents"), { recursive: true })
                 symlinkSync(agentMinions, agentLocal)
               } catch {}
             }
@@ -248,7 +250,7 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
             // Fire and don't await; the result comes back via reportToDispatcher.
             // If the prompt itself fails the minion never starts, so auto-report the error.
             client.session
-              .prompt({ path: { id: childID }, query: { directory: dir }, body: { agent: m.agent, parts: [{ type: "text", text: m.task }] } })
+              .prompt({ path: { id: childID }, body: { agent: m.agent, parts: [{ type: "text", text: m.task }] } })
               .catch((e) => {
                 rec.error = `prompt failed: ${e}`
                 markDone(swarm, rec)
@@ -506,19 +508,10 @@ export const SwarmDispatch = async ({ client, directory, worktree, $ }) => {
   }
 }
 
-// Scene work is never isolated: GodotIQ is pinned to the main tree, so a worktree
-// write to a scene lands in main anyway. The risk is in the task, not just the label.
-function isSceneWork(label, task) {
-  return /\.tscn|\.tres|scene|node_ops|build_scene/i.test(`${label}\n${task}`)
-}
-
 function safeToken(s) {
-  return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
+  return String(s).toLowerCase().replace(/^sh-/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
 }
 
-// Spill an over-long minion report to disk. childID makes the name unique without
-// a clock (Date.now is unavailable here). Returns the path, or null on failure so
-// the caller can degrade to a plain truncation notice.
 function spillReport(rec, body) {
   try {
     mkdirSync(SPILL_DIR, { recursive: true })
@@ -532,9 +525,6 @@ function spillReport(rec, body) {
 }
 
 async function makeWorktree($, mainTree, codename, label, task) {
-  if (isSceneWork(label, task)) {
-    return { error: "isolate:true refused for scene work; GodotIQ is bound to the main tree. Run scene minions serial on main." }
-  }
   const slug = safeToken(label)
   const name = safeToken(codename) || "minion"
   const path = `${mainTree}/../volley-${name}`
@@ -544,6 +534,22 @@ async function makeWorktree($, mainTree, codename, label, task) {
     return { path, branch }
   } catch (e) {
     return { error: `git worktree add failed: ${e}` }
+  }
+}
+
+// Mirror .opencode/ (agents + skills) and AGENTS.md from the main tree into the
+// worktree so isolated minions find their agent definitions and skill files.
+function mirrorOpenCode($, mainTree, worktreePath) {
+  const sources = [
+    { from: join(mainTree, ".opencode"), to: join(worktreePath, ".opencode") },
+    { from: join(mainTree, "AGENTS.md"), to: join(worktreePath, "AGENTS.md") },
+  ]
+  for (const { from, to } of sources) {
+    try {
+      if (existsSync(from) && !existsSync(to)) {
+        symlinkSync(from, to)
+      }
+    } catch {}
   }
 }
 

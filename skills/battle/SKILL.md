@@ -17,7 +17,7 @@ Every PR without a `volley-reviewer` synthesis verdict is unbattled. When I open
 
 2. **Fan independent reviewers via `swarm_dispatch`**, read-only on the main tree, scoped to the diff's lanes. Each reviewer reports findings to me (the dispatcher report). One independent reviewer minimum.
 
-3. **Read the dispatcher reports and decide.** I read each report, note every `issue:` finding, and decide which to address. For findings I fix, dispatch an implementer and push.
+3. **Surface findings and dispatch fixes.** I read each report and surface every finding -- `issue:`, `suggestion:`, `nitpick:`, and `question:` -- to the user with reviewer attribution. The user decides which to address. For findings the user wants fixed, I dispatch an implementer and push.
 
 4. **Verifier gate.** After every push, dispatch the `verifier` to confirm CI is green and ACs are met. The verifier reads CI output, the ticket ACs, and the diff, then reports to me. Only proceed to verdict when `ci_green` and `ac_satisfied`. If `ci_failing` or `ac_not_met`, dispatch an implementer and re-verify.
 

@@ -1,6 +1,6 @@
 ---
 name: feedback_swarm_dispatch_tools
-description: "How dispatch is issued: the swarm_dispatch / swarm_collect tools. swarm_dispatch fans out N minions {agent, task, label, isolate?} as parallel child sessions and returns at once, so I keep the seat while they run. Codename is assigned at spawn and carried as the child session title. swarm_collect snapshots each minion (done-with-output or running), non-blocking, call again for stragglers. isolate:true gives a WRITER its own worktree; read-only minions and scene work run on the main tree."
+description: "How dispatch is issued: the swarm_dispatch / swarm_collect tools. swarm_dispatch fans out N minions {agent, task, label, isolate?} as parallel child sessions and returns at once, so I keep the seat while they run. Codename is assigned at spawn and carried as the child session title. swarm_collect snapshots each minion (done-with-output or running), non-blocking, call again for stragglers. isolate:true gives every WRITER its own worktree; I default to it."
 metadata:
   node_type: memory
   type: feedback
@@ -30,19 +30,14 @@ woken as they finish. Collecting a done minion consumes its session (it is delet
 so the session list stays clean), so I take what I need from the output. On every
 return from a collect I reconcile the plan first ([[feedback_todo_is_the_live_plan]]).
 
-**Isolation is per-minion and writer-scoped.** A write-capable author that needs
-its own branch gets `isolate: true`: swarm_dispatch creates a git worktree and a
-`feature/<slug>` branch off-root and pins the minion there, so parallel writers
-never collide. Read-only minions (reviewers, analysts) run on the main tree, fast
-and shared; isolation is pure cost for them. Scene work stays on the main tree too,
-GodotIQ is bound to one editor on the main path, so an isolated worktree write to a
-`.tscn`/`.tres` would land in main anyway; swarm_dispatch refuses isolate on scene
-work and says so. Land a writer's branch as a PR (Josh merges), then swarm_cleanup
-removes the worktree once its commits are landed.
+**Isolate is the default for writers.** Every write-capable author gets its own
+worktree via `isolate: true`, so parallel writers never collide. All project files
+(.gd, .tres, .tscn) are plain text; minions edit them directly, they do not need
+GodotIQ. Read-only minions (reviewers, analysts) run on the main tree where
+isolation is pure cost. Land a writer's branch as a PR (Josh merges), then
+swarm_cleanup removes the worktree once its commits are landed.
 
 **Why:** established 2026-06-13 porting the swarm to OpenCode. The tools give true
-parallel fan-out with the dispatcher reachable, the capability the seat needs, and
-the plugin-managed worktree fixes the old worktree-inside-main-tree collision risk
-by keeping isolation off-root and writer-only. The Claude-era worktree mechanics
-(baseRef, .claude/worktrees, the manual branch-naming) are the historical regime
-under [[feedback_sending]]; this is the current path.
+parallel fan-out with the dispatcher reachable, the capability the seat needs. The
+plugin-managed worktree keeps isolation off-root and prevents writer collisions.
+All project files are plain text; minions edit them directly in their worktree.

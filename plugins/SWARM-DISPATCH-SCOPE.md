@@ -101,17 +101,10 @@ Per write-capable minion dispatched with `isolate: true`:
    worktree with uncommitted work.
 
 HARD RULES:
-- DEFAULT is NO isolation. Read-only minions (reviewers, analysts) NEVER get a
-  worktree , it is pure cost for them. Only `isolate: true` writers do.
-- GODOTIQ SCENE WORK IS EXCLUDED. Per feedback_godotiq_single_worktree: GodotIQ
-  is bound to ONE editor instance on the main project path. A minion in a side
-  worktree that calls node_ops / save_scene / build_scene writes to the MAIN
-  tree regardless of its worktree , isolation is a LIE for scene work. So:
-  worktree-isolated minions may touch .gd and plain files ONLY. Any minion whose
-  task involves .tscn/.tres/scene authoring must run SERIAL on the main tree
-  (one at a time, GodotIQ pinned there). The plugin refuses isolate:true for an
-  agent in the godotiq/scene lane (gdscript-implementer doing scene work),
-  surfacing the reason.
+- DEFAULT is `isolate: true` for all write-capable authors. Every writer gets a
+  worktree so parallel writers never collide. Minions edit .gd, .tres, and .tscn
+  files directly; they do not need GodotIQ. Read-only minions (reviewers,
+  analysts) NEVER get a worktree -- it is pure cost for them.
 - LFS: worktrees share .git/lfs; verify LFS-tracked asset writes behave before
   relying on isolated minions touching assets/. Until verified, isolated minions
   stay off LFS paths.
