@@ -35,11 +35,22 @@ deny() {
 
 EM=$'\xe2\x80\x94' # U+2014
 
+
+is_code_file() {
+  case "$1" in
+    *.gd|*.tscn|*.tres|*.cfg|*.json|*.yml|*.yaml|*.sh|*.gdshader|*.uid) return 0 ;;
+    *) return 1 ;;
+  esac
+}
 check_scan() {
   local scan="$1"
+  local skip_hyphen_check="${2:-}"
   [ -n "$scan" ] || return 0
   if printf '%s' "$scan" | grep -qF "$EM"; then
     deny "U+2014 (em dash) detected in tool input. The em dash is banned on every surface per feedback_no_em_dashes. Replace with a comma, semicolon, period, or parentheses, then retry."
+  fi
+  if [ -n "$skip_hyphen_check" ]; then
+    return 0
   fi
   # Spaced-hyphen prose connector: [^ ] - (?!>)[^ ]  i.e. "word - word" but not "word ->word"
   if printf '%s' "$scan" | grep -qE '[^ ] - [^>][^ ]|[^ ] - $'; then
@@ -57,12 +68,18 @@ case "$tool_name" in
     fi
     ;;
   Edit)
+    file_path="$(jq -r '.tool_input.file_path // empty' <<<"$input")"
     scan="$(jq -r '.tool_input.new_string // empty' <<<"$input")"
-    check_scan "$scan"
+    skip=""
+    is_code_file "$file_path" && skip=1
+    check_scan "$scan" "$skip"
     ;;
   Write)
+    file_path="$(jq -r '.tool_input.file_path // empty' <<<"$input")"
     scan="$(jq -r '.tool_input.content // empty' <<<"$input")"
-    check_scan "$scan"
+    skip=""
+    is_code_file "$file_path" && skip=1
+    check_scan "$scan" "$skip"
     ;;
   mcp__linear__save_*)
     scan="$(jq -r '[.tool_input.body, .tool_input.description, .tool_input.title, .tool_input.content] | map(select(. != null)) | join("\n")' <<<"$input")"
