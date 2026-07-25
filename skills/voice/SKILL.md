@@ -1,6 +1,6 @@
 ---
 name: voice
-description: Write technical documentation for Volley (design docs, specs, ADRs, READMEs, CONTRIBUTING, code-adjacent docs). Read before drafting or revising any technical document. Governs what a good technical doc states, how it stays factual, and what prose to cut.
+description: Write technical documentation for Volley (design docs, specs, READMEs, CONTRIBUTING, code-adjacent docs). Read before drafting or revising any technical document. Governs what a good technical doc states, how it stays factual, and what prose to cut.
 ---
 
 # Technical documentation
@@ -37,6 +37,17 @@ Technical prose carries information. Any word that carries none is noise between
 - **Collapse repeated mechanics into a table or list.** Nine parallel "how X resolves" paragraphs are a table with two columns. A table a reader scans beats prose they must parse.
 - **A heading names its content, not its rhetoric.** "Bounds become Area2D zones" tells the reader what is inside; "A better approach" does not.
 
+## The opening answers what and why
+
+A spec or design doc opens with a short paragraph that answers two questions for a reader who knows the project but not this doc:
+
+- **What does it do?** The change being made, with enough shape per affected surface to be unambiguous.
+- **Why does it exist?** The payoff the change delivers that the current state does not. "Because the design says so" is circular; the design was decided for a reason, and that reason is the why.
+
+Write for the cold insider: someone who knows the game and its terms of art (`friendship-bound`, `venue`, `side-miss` need no inline definition) but has not read this doc. Not the stranger (the README serves them), not a memory-wiped future self (the doc's body serves them). Then strip every sentence that fails that test: explaining the game, paraphrasing the title, naming defaults any project shares, repeating what an insider knows.
+
+The openings that fail: a narrative hook (wrong genre), title-restatement (zero information), describing existing state instead of the change, opaque shorthand, over-explaining from first principles, what-without-why, and why-because-design. Run two checks on a draft opening: could a reader state in one sentence what this changes, and what the reader gains that they did not have before? If either fails, expand that half.
+
 ## Precision in the details
 
 - **Name things exactly as the code names them.** `ItemDragController`, `&"drop_targets"`, `register_target()`. A near-miss name (`DragController`, `drop_target group`) sends the reader to the wrong symbol.
@@ -58,6 +69,10 @@ Technical prose carries information. Any word that carries none is noise between
 ## Positive framing
 
 Describe what the system is and does, not what it lacks. "The controller queries the group on release" carries the reader forward; "the controller no longer holds a list" fences an absence and leaves the actual behaviour unstated. When a doc must reference a retired approach for context, name it once as a tucked "replacing X" and move on. This is the `state_positive_shape` rule applied to docs: lead with the practice, not the thing being removed.
+
+## Match the review to the doc's state
+
+A draft and a shipping doc want different scrutiny. On a mid-iteration draft, structure is what matters: does it say what it needs to, in the right order, with cross-references that still resolve and load-bearing claims intact through a rewrite. Grammar, filler, and AI-tell vocabulary are a final-pass concern; flagging them on a draft is noise, because none of it breaks anything until the doc ships. When reviewing, read the draft for structure and the shipping doc for polish.
 
 ## Check before done
 
