@@ -1,203 +1,69 @@
 ---
 name: voice
-description: Calibrate prose to Josh's voice for any Volley written surface (essays, design docs, devlogs, README, public writing). Read before drafting any prose longer than a paragraph. STYLE.md is the rules layer; this is the calibration layer that complements it.
+description: Write technical documentation for Volley (design docs, specs, ADRs, READMEs, CONTRIBUTING, code-adjacent docs). Read before drafting or revising any technical document. Governs what a good technical doc states, how it stays factual, and what prose to cut.
 ---
 
-# Voice
+# Technical documentation
 
-You are about to write prose under Volley's name. STYLE.md tells you what not to do; this skill tells you what the voice sounds like when it is doing its job. Without calibration, prose drifts to the AI register: hedged, parallel, thesis-led, soft-closed. The fix is not more rules. The fix is hearing the voice in your head before you write a sentence.
+A technical document exists to make a reader act correctly: build the thing, understand the decision, use the interface. It succeeds when the reader finishes with an accurate model and no unanswered question that the doc was responsible for. It fails when it reads well but says something untrue, or when a reader has to guess what the writer meant.
 
-## The source
+Two rules sit above every pattern below. State only what is verified. Say it in as few words as carry the meaning.
 
-The working voice exemplar is `/home/josh/gamedev/volley/designs/research/the-case-for-open-development.md`. Six hundred lines of Josh's own long-form prose, fact-checked, edited, and shipped. When this skill is not enough, read the essay directly: the opening four sections, two or three middles, the closing. Patterns calibrated against the source beat patterns calibrated against a distillation.
+## State only what is true; get the fact when you lack it
 
-The patterns below are distilled from that essay. They are not exhaustive.
+A technical doc is load-bearing. A reader builds on it, so a wrong claim propagates into wrong code. The cost of a guess is not a bad sentence, it is the work built on top of it.
 
-## Cadence
+- **Never write a claim you have not checked.** File paths, function names, signatures, types, group names, default values, sequence of events: read the source and confirm each before you write it. A claim that "sounds right" is the tell that you are writing from memory, not from the code.
+- **When you lack a fact, get it, do not paper over it.** Read the file, run the command, check the config, ask the person who knows. A doc that reasons around a gap ("the controller presumably resolves this at startup") has planted a guess dressed as fact. If a fact is genuinely unknowable at write time, name it as open: "the eviction order is unspecified; confirm before relying on it."
+- **Mark what is proposed versus what exists.** A design doc describes a target state that is not built yet. Keep the tense honest: "the controller becomes an autoload" (proposed) reads differently from "the controller is an autoload" (done). A reader must always know whether a sentence describes today or the plan.
+- **Cite the source that grounds a claim.** A path, a line, a linked doc, an issue number. The reader follows the citation to verify; the writer earns trust by making verification cheap.
 
-Sentences vary in length, deliberately. The signature pattern is long-long-short: two sentences building context, then a short sentence that lands on the noun or verb the reader should keep. "Polish is cheap; credibility is not." "Hidden work cannot." "Continuity cannot be assembled at speed."
+## Cut prose that does no work
 
-Long sentences carry detail without losing breath: a citation, a date, a number, a name, a clause that qualifies, then closure. Read aloud. If a long sentence needs three commas to breathe, it is two sentences pretending.
+Technical prose carries information. Any word that carries none is noise between the reader and the fact.
 
-Short sentences land. They sit on a plosive (/t/, /d/, /k/) or a strong noun. They earn their brevity by what set them up.
+- **No preamble.** Open on the subject. "This document describes the approach we will take to..." is throat-clearing; start with what the thing is or does.
+- **No filler qualifiers.** "It is worth noting that", "in order to", "for the purposes of", "it should be mentioned", "as previously discussed". Cut them whole; the sentence is complete without them.
+- **No hedging as decoration.** "Somewhat", "fairly", "generally", "in most cases" belong only where they state a real bound. If the behaviour has an exception, name the exception; do not gesture at it with "usually".
+- **No restating the obvious.** A section titled "Scene changes" does not open "This section covers the scene changes." The heading did that job.
+- **One idea per sentence, one subject per paragraph.** A paragraph is about one thing. When it turns to a second thing, start a new paragraph.
+- **Full words, no coined abbreviations.** Spell it out in prose as in code: "configuration", "reference", "temporary". The closed shortlist (`id`, `url`, `ui`, `ms`) is the only exception. See the `code-style` skill.
 
-Paragraphs run six to twelve sentences when the case needs the room, two to four when the beat is the punch. Paragraph length is a tool, not a target.
+## Structure carries the meaning
 
-## Sentence shapes Josh uses
+- **Lead each document with the problem or the purpose.** Why this exists and what it is for, before how it works. A reader who does not know why should not have to infer it from the mechanics.
+- **State the core idea once, plainly, near the top.** If a design turns on one insight (invert the wiring; the controller holds nothing), name it in a sentence a reader can carry, then let the detail follow from it.
+- **Order by dependency, not by discovery.** Present a concept before the thing that uses it. The reader should never meet a term they have not been given.
+- **Collapse repeated mechanics into a table or list.** Nine parallel "how X resolves" paragraphs are a table with two columns. A table a reader scans beats prose they must parse.
+- **A heading names its content, not its rhetoric.** "Bounds become Area2D zones" tells the reader what is inside; "A better approach" does not.
 
-**The noun-led declarative.** "Team Cherry were three people in Adelaide." "Steam itself is proprietary." Subject, verb, fact. No throat-clearing.
+## Precision in the details
 
-**The list-of-three particulars.** "A page on Steam with twelve views at midnight, refreshed. An inbox with no press replies. A wishlist count frozen since the page went up." Three concrete images, no commentary. The reader assembles the meaning.
+- **Name things exactly as the code names them.** `ItemDragController`, `&"drop_targets"`, `register_target()`. A near-miss name (`DragController`, `drop_target group`) sends the reader to the wrong symbol.
+- **Code, paths, and identifiers go in backticks.** The reader must see at a glance what is a literal token and what is prose.
+- **Numbers are exact.** "A 1600x720 rectangle", not "a large rectangle". If the number is a decision, the reader needs it; if it is arbitrary, say so.
+- **Diagrams for state and flow.** A state machine, a sequence of events, a node tree: a `mermaid` diagram carries it better than a paragraph. Reach for one when the relationship is structural.
+- **Examples are real.** A code sample in a doc must be code that would run or a faithful sketch clearly marked as such. A plausible-looking example that would not compile teaches the reader something false.
 
-**The semicolon yoke.** Two complete thoughts in tight relation. "Polish is cheap; credibility is not." "Some do, and those some are exactly the community a new indie needs." Use the semicolon when "and" would soften the relation; use the period when the second thought wants its own emphasis.
+## What a technical doc is not
 
-**The appositive aside.** "Eric Barone announced *Stardew Valley* on Steam Greenlight in September 2012 and shipped 1.0 on 26 February 2016." Date and fact woven in without parentheses. Where parentheses would interrupt, the comma-flanked appositive carries on.
+- Not an essay. It argues nothing for effect; it states what is and what will be.
+- Not a narrative. Events are ordered by dependency and causation, not told as a story.
+- Not persuasive prose. A design doc records a decision and its reasoning; it does not sell it. If a choice needs defending, give the trade-off plainly and let it stand.
+- Not padded to look thorough. Length is a cost. A one-paragraph answer that is complete beats a page that circles.
+- Not decorated. No metaphor, no rhetorical build, no loaded close. The last sentence states a fact or ends; it does not land a punch.
+- Not em dashes. Colons, semicolons, commas, full stops.
+- Not exclamation marks, except inside `Volley!`.
 
-**The named-and-quoted construction.** "Tarn, in PC Gamer, on the players who funded the move from hobby to full-time work: 'they are the reason I've been able to make the step from hobbyist to full-time developer'." Person, source, framing, quote. Authority by attribution.
+## Positive framing
 
-**The contradicting follow-up.** A sentence sets the obvious read; the next sentence overturns it. "The obvious answer is marketing. The answer is wrong." "Open source does not pay. It pays for Anuke."
+Describe what the system is and does, not what it lacks. "The controller queries the group on release" carries the reader forward; "the controller no longer holds a list" fences an absence and leaves the actual behaviour unstated. When a doc must reference a retired approach for context, name it once as a tucked "replacing X" and move on. This is the `state_positive_shape` rule applied to docs: lead with the practice, not the thing being removed.
 
-## Where warmth lives
+## Check before done
 
-Warmth is not adjectives. It is in what gets named. Real names, in full. "Maddy Thorson and Noel Berry, working as Extremely OK Games." "Brian Bucklew and Jason Grinblat at Freehold Games." "Rasheed Abueideh, a solo developer in Nablus." When a community did the work, the community is named.
-
-Warmth is in the small concrete picture: the desk lamp, the wishlist count of twelve, the password that was blank. The detail nobody else included.
-
-Warmth is in standing on shoulders without ceremony. "Stand on the shoulders of giants and say so" is policy; in practice it looks like a sentence that credits the source as part of making the argument, not as a separate thank-you.
-
-Warmth is also in the moments where Josh names a cost paid by real people: Davey Wreden's burnout, the *Cuphead* re-mortgaged house, Daniel West's 150 copies. The voice does not look away.
-
-## Where sharpness lives
-
-Sharpness arrives without rhetorical lift. The pivot is usually a short sentence after a long one, or a one-line paragraph: "This is unacceptable." "No company statement resolves this. Only pressure from outside the labs can."
-
-Sharpness names the thing. "A signatory who calls the work an extinction risk and continues it has either overclaimed the risk or accepted it on everyone else's behalf. Both positions need to be challenged, not deferred to." The voice does not equivocate when the case has been built.
-
-Sharpness uses the receipt. When the argument turns hard, a number, a date, or a quote does the cutting. "Anthropic's RSP has been quietly weakened twice." Then: when, what, what was dropped. Evidence carries the edge.
-
-The pivot from warm to sharp typically runs through one of three levers: a flat declarative ("The answer is wrong."), a contradicting fact ("It pays for Anuke."), or a named consequence ("Both positions need to be challenged.").
-
-## Section openings
-
-Never a thesis statement. Never an explanation of what the section will cover.
-
-Open with a particular: a person, a date, a number, a moment. "Somewhere tonight, a developer is finishing a Steam page no one will read." "On 25 August 1991, at 20:57 GMT, a Finnish computer-science student named Linus Torvalds posted to the `comp.os.minix` Usenet group." "Team Cherry were three people in Adelaide." "Eric Barone announced *Stardew Valley* on Steam Greenlight in September 2012."
-
-The thesis arrives, if at all, after the case is partly made. The reader is grounded in a concrete first; the structural point lands when there is enough evidence to hold it up.
-
-In Volley narrative work specifically: never lead a summary with a loaded proper noun the reader does not have a picture of yet. Construction, Reality, Reconstruction, the championship, the cliff: these are loaded names. Describe what the place feels like first; let the proper noun arrive once the picture is built. "Construction is a small seaside town" hits cold. "A small seaside town. Painted terraces, palm trees in places. ... This place is Construction" lets the reader walk in before the name lands on them.
-
-## Show, don't tell
-
-The picture does the work. Don't add the modifier that explains what the noun already implies. "The ball is in the air" needs no "mid-arc"; the air implies the arc. "A garden in the late afternoon" needs no "warm and golden"; afternoon implies the light.
-
-The trap is the writer narrating their own picture. A racquet "ready" is fine; "ready, poised to strike" is the writer adding camera direction. A counter "reads zero" is fine; "reads zero at the start of the rally" is the writer worrying the reader will not understand.
-
-When you find a modifier explaining what the noun does, cut the modifier. The reader's imagination is faster than your description.
-
-The same rule applies to nouns that name a relationship, a feeling, or an inner state before the picture has earned them. "A friend leans on the counter" tells the reader the relationship before the leaning, the head tilted toward the play, the warmth have done the friend-work. Use a neutral noun first ("someone leans on the counter, head tilted toward the play"); let the picture build the relationship; let the reader arrive at "friend" themselves. The same goes for "a memory", "a regret", "a longing", "a beloved object", "a lonely room". If the picture works, the reader names it. If the writer names it, the picture is doing less than it should.
-
-This rule is closest in spirit to the cadence rule: short sentences land because what set them up did the work. Modifiers that re-do the work the noun has already done, and nouns that announce a relationship the picture has not yet earned, are the prose equivalent of explaining a punchline.
-
-## Place the nouns
-
-Show-don't-tell asks the writer not to name what the picture should produce. Place-the-nouns asks the writer to make the picture buildable in the first place. Every new noun in a scene needs to sit somewhere relative to what came before. "A garden in the late afternoon. A small court fenced in by stone and vines." reads as two unrelated images: a garden has no court inside it until the prose puts one there. "A garden in the late afternoon. In one corner, a small court fenced in by stone and vines." builds the geometry as the picture goes.
-
-The connectors are short and ordinary. "In one corner." "Across the way." "Behind the counter." "Past the fence." "At the back of the garden." Each new noun arrives with a place. The reader assembles the scene as fast as the prose lays it down.
-
-When this fails, the prose stutters even though every individual noun is concrete. The reader has to stop and reconcile where the second noun sits relative to the first. By the third or fourth unconnected noun the picture has fallen apart and the reader is doing the writer's job.
-
-The opposite trap is over-naming the geometry: "The court, which sits in the south-eastern corner of the rectangular garden, oriented so that its long axis runs east to west." Volley's voice prefers the ordinary connector. Place the noun, then move on. Geography that needs a compass rose has been overspecified.
-
-The rule applies to consecutive sentences that introduce new world-elements. Once the scene is built, the prose can return to the elements without re-placing them; "the friend" and "the rack" and "the workshop" can appear by name once the geography has been laid down. The first time matters most.
-
-## Integrate the sentences
-
-Place-the-nouns gives the picture geography. Integrate-the-sentences gives the paragraph thought. The trap here is the paragraph that reads as a list of facts, each sentence starting fresh with a new subject, no carryover from the one before. "The court is small. The court is fenced. The fence is stone. The stone is old." reads as four facts. "The court is small, fenced in stone that has been here longer than the fence." reads as a thought.
-
-The connective tissue is ordinary: pronouns picking up the previous subject ("they", "it", "the same"), dependent clauses continuing a thought ("which still holds", "where the rally lives"), semicolon-yokes that tighten relations between two complete thoughts, implicit logical connection ("the racquet is the constant; equipment hangs off it"). The reader follows because each sentence reaches back to what came before.
-
-The opposite trap is over-connecting. Every sentence chained with "and" or "but" or "because" lurches in the other direction; the prose loses its ability to land. The semicolon should not appear in every paragraph. The pronoun should not stand in for every noun. Variety is the rule.
-
-The list-of-three particulars stays a legitimate shape, but as a deliberate move, not a default. "A photograph. A figure across a kitchen table. A back walking down a street." earns its three short fragments because it is naming three concrete images for the reader to assemble. A paragraph that sounds like that all the way through has lost the difference between particulars-as-list and prose-as-list.
-
-The check: read the paragraph aloud and listen for whether each sentence reaches back. If every sentence has a fresh subject and no carryover, the paragraph is a list. Tighten by combining where two thoughts belong together; carry forward with a pronoun where the next sentence sits on the same subject; semicolon-yoke where the second thought lives in tight relation to the first.
-
-## Paragraph closes
-
-The last sentence is the loaded one. Engineer it.
-
-Closes land on a noun or strong verb, never on a preposition or weak pronoun. "It is the work, shown, at studio scale." "The community asks the questions the model does not." "Visible work does." "Closed development is how it gets lost."
-
-Transitions belong in the next paragraph's opening, never at this paragraph's close. A paragraph that ends "and we will see why in the next section" has wasted its loaded slot.
-
-When a paragraph wants to end on a contradiction, the contradiction goes in the last clause, not buried mid-paragraph: "The cases above are not a promise that visible work converts; they are an argument that the visible version is the one with a chance, and a record either way."
-
-## Literary devices, used sparingly
-
-Alliteration, metaphor, simile, assonance, anaphora: welcome, used sparingly. A literary device earns its place when it compresses emotion or amplifies a scene in a way the plain version could not. "Polish is cheap; credibility is not" lands harder than its plain version because of the parallel and the /k/ at the centre of both pivot words. The device does work the prose was already trying to do.
-
-The plain version comes first. Write it plain, then ask whether one place in the paragraph wants the lift. Add the device to that one place. Resist the urge to decorate elsewhere; the device lands because the prose around it is plain.
-
-The trap is stacking. A paragraph with three metaphors, two alliterations, and a simile reads as performance rather than thought. AI prose drifts here naturally because it has been trained on writing that performs. The fix is the cap: at most one device per paragraph, often none. The most charged paragraphs in the essay use no figurative language at all; the figurative paragraphs are the exceptions, and they land because of it.
-
-The check: remove the device. Does the paragraph still carry the meaning? If yes, the device was decoration; cut. If the paragraph now feels flatter than the moment deserved, the device was earning its place; keep.
-
-When the prose is doing emotional work, a device can be the lever that opens the moment. When the prose is doing argumentative work, the device can sharpen the point. Most prose is neither; most prose stays plain.
-
-## What the voice is not
-
-- Not parallel for parallel's sake. Tricolons stack only when each member earns its weight; rhetorical triples on autopilot get cut to two or one.
-- Not a thesis statement at section start. The structure carries the meaning; announcing it deflates it.
-- Not the soft close. No "for now", "in some way", "ultimately", "at the end of the day". The last sentence does work or gets cut.
-- Not the rhetorical question. Real questions get asked; rhetorical ones become declaratives.
-- Not the hedge stack. "It might possibly perhaps be the case that" is one word or none.
-- Not the false-balance pivot. "Some would argue X. Others would argue Y" is not how an argument runs.
-- Not the closing moral. Sections end on the loaded particular, not on a takeaway.
-- Not adjective stacks. "The small independent studio successfully released" is "the studio shipped".
-- Not signposting. "First", "second", "in conclusion", "as we discussed earlier". The structure should be felt.
-- Not us-against-them. Adversaries are mistaken, not enemies. The argument wins on evidence.
-- Not exclamation marks. Ever, except inside `Volley!`.
-- Not em dashes. Ever. Colons, semicolons, commas, full stops.
-
-## How Josh handles tension
-
-Under pressure the prose gets shorter and more concrete, not more emphatic. The AI safety section is the clearest example: paragraphs of dense citation, then a short paragraph naming the contradiction, then a short paragraph stating the consequence. No raised voice. The case carries.
-
-When acknowledging a counter-argument, name it cleanly and answer it on its own terms. "Some do, and those some are exactly the community a new indie needs." The counter is real; the answer is structural; both fit in a sentence.
-
-When the argument is uncomfortable, the voice does not flinch and does not perform. "I do not have a clean answer to that, and I will not pretend to." Honesty is the lever, not bravado.
-
-## Calibration check
-
-Before declaring a draft done, read it aloud and ask:
-
-1. Does the opening sentence make a promise the reader wants kept, or does it announce what the section is about? If it announces, rewrite to a particular.
-2. Does every paragraph end on a loaded sentence the reader will carry? If the close is a preposition, a weak pronoun, a transition, or a soft restatement, rewrite or cut.
-3. Read three random sentences aloud. Do they sound like a person thinking, or like a marketing email? If they sound polished, loosen by a notch.
-4. Where is the warmth? Find a real name, a small concrete picture, a credit. If there is none in a section that should carry warmth, the section is abstract; ground it.
-5. Where is the sharpness? Find the short sentence after a long one, or the contradicting fact. If the argument never lands a flat declarative, the case is unfinished.
-6. Cut every adverb you can. Most second drafts are 30% shorter than first drafts and lose nothing.
-
-If a section still reads as artificial after the checks, the calibration is insufficient. Open the essay and read.
-
-## When this skill is not enough
-
-This skill is the entry point. The essay is the source. Read the essay directly when:
-
-- Drafting anything longer than a thousand words.
-- Writing under Josh's name on a public surface.
-- A prose round has come back as "too AI-sounding" twice.
-- The voice is unfamiliar and the patterns above feel abstract.
-
-Cadence is heard, not described. The skill points; the essay teaches.
-
-## Creative prose (scenes, story, characters, dialogue)
-
-The bar for creative work: the reader finishes with the protagonist's pressure on their chest, not with a list of plot points in their head. If a reader who has never seen the game is not moved, the draft is wrong.
-
-The working voice sample for creative prose is the story summary in `designs/narrative/outline.md`. The analytical sample is `the-case-for-open-development.md`; calibrate against the right one.
-
-**Eight rules, ranked by impact:**
-
-1. **One beat per paragraph.** A beat is a single change in the protagonist's situation, knowledge, or stance. Caption each paragraph in one phrase; if you cannot, cut or merge.
-
-2. **Causation between paragraphs, not chronology.** Between any two paragraphs, insert *because* or *so*. If they only sit next to each other because they happen in that order, the summary is event-listing.
-
-3. **Player-chronology is narrative order.** Backstory surfaces where the player would learn it, not where the protagonist lived it. For each backstory detail: has the player earned this yet?
-
-4. **Vary sentence length deliberately.** Long sentences carry causation; short sentences land. Read aloud.
-
-5. **One concrete particular per paragraph.** Name one load-bearing concrete noun per beat that an art director could pick up.
-
-6. **The close lands the change.** Present-tense, concrete, short. No moral. No tease. Echo an image from the opening if the structure earns it.
-
-7. **Open with the protagonist's pressure, not the world.** Protagonist on the page by the second sentence.
-
-8. **Compression test.** The spine survives one sentence: protagonist + want + obstacle + cost. Write the logline first if stuck.
-
-**Working sequence:** logline → beat captions → one paragraph per beat with concrete particular → verify causation → read aloud for variance → check close → test against player-chronology → cut adverbs.
-
-**What to avoid:** em dashes, exclamation marks, closing morals, abstract summary in place of particular, lore-front-loading, teasing close, anthropomorphising the work. The full voice rules in `ai/STYLE.md` apply at full strength.
-
-Sources: McKee, Truby, Forster, Genette, Provost, Klinkenborg, Le Guin, Hemingway, Gardner, VanderMeer, Cron, Snyder.
+1. Is every factual claim (path, name, signature, number, sequence) something you read and confirmed, not recalled? If any is from memory, verify it now.
+2. Does the tense separate what exists from what is proposed?
+3. Can a reader who knows nothing of this work read the opening and know why the doc exists?
+4. Does every term appear before the thing that uses it?
+5. Read each paragraph and cut every word that carries no information. Most first drafts lose a quarter of their length and nothing else.
+6. Is there a guess anywhere, a "presumably" or a reasoned-around gap? Replace it with a checked fact or an explicit open question.
