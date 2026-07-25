@@ -69,6 +69,20 @@ if echo "$cmd" | grep -qE 'gh[[:space:]]+pr[[:space:]]+close([[:space:]]|$)'; th
   deny "gh pr close is blocked. Josh closes and merges challenges. If a PR should be superseded, tell Josh and let him close it."
 fi
 
+# gh-comment guard: comments and reviews are for humans. The swarm reports to
+# the dispatcher and posts nothing on the PR. Blocks the porcelain (gh pr/issue
+# comment, gh pr review) and the API write paths that post comments, reviews, or
+# review-thread replies (POST/PATCH to a .../comments, /reviews, or /replies URL).
+if echo "$cmd" | grep -qE 'gh[[:space:]]+(pr|issue)[[:space:]]+comment([[:space:]]|$)' \
+  || echo "$cmd" | grep -qE 'gh[[:space:]]+pr[[:space:]]+review([[:space:]]|$)'; then
+  deny "Posting PR/issue comments is blocked. Comments and reviews are for humans; report findings to Josh in chat instead."
+fi
+if echo "$cmd" | grep -qE 'gh[[:space:]]+api([[:space:]]|$)' \
+  && echo "$cmd" | grep -qE -- '-X[[:space:]]*(POST|PATCH)|-(-method|f|-field|F|-raw-field)([[:space:]]|=)' \
+  && echo "$cmd" | grep -qE '/(comments|reviews|replies)([[:space:]/?"'\'']|$)'; then
+  deny "Posting to a comments/reviews/replies endpoint via gh api is blocked. Comments and reviews are for humans; report findings to Josh in chat instead."
+fi
+
 # rm-permission-reason: rm invoked as a command token (start, whitespace,
 # separator, slash, backslash, or subshell char before it).
 if echo "$cmd" | grep -qE '(^|[[:space:]&|;`($\\/])rm[[:space:]]'; then
