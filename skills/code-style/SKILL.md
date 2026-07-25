@@ -9,10 +9,23 @@ Read `CODE_STYLE.md` at the root of the volley repo first. It is the source of
 truth for: blank line before every `if`, `@export` over `@onready` for child
 nodes, full-word names, descriptive variable names, one-line WHY-only comments,
 and tunables-live-in-data (`Resource` subclass once a cluster forms). Do not
-duplicate those rules here; if this skill and CODE_STYLE.md ever disagree,
-CODE_STYLE.md wins and this skill needs fixing.
+duplicate those rules here, with one deliberate exception: full words, restated
+below because it is the one agents break most. If this skill and CODE_STYLE.md
+ever disagree, CODE_STYLE.md wins and this skill needs fixing.
 
-This skill covers what CODE_STYLE.md does not.
+This skill covers what CODE_STYLE.md does not, and reinforces the one rule agents break most.
+
+## Full words, no abbreviations
+
+Spell every word out, in identifiers and in prose. `paddle_velocity`, not `pdl_vel`;
+`current_state`, not `cur_st`; `configuration`, not `config` in a name you are coining;
+`button`, not `btn`; `position`, not `pos`; `reference`, not `ref`; `temporary`, not `tmp`.
+The extra letters cost nothing to type and save the next reader the guess.
+
+The allowed shortlist is closed: `id`, `url`, `ui`, `ms`. Nothing joins it. When you catch
+yourself shortening a word to save space, that is the signal to write it out. This applies to
+variable, function, and file names, to comments, and to the prose in design docs and PR bodies.
+A reviewer who sees a coined abbreviation flags it.
 
 ## Resource and script UIDs
 
