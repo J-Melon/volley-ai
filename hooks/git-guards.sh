@@ -3,6 +3,7 @@
 # PreToolUse on Bash. Denies:
 #   - direct push to main/master on the game repo (not volley-ai, not --force/--delete)
 #   - git rebase (never rebase; --abort/--quit allowed as the escape hatch)
+#   - git commit --no-verify/-n (pre-commit hooks must run)
 #   - new branch carrying a Linear id (sh-N) or a malformed feature/ name
 #   - gh pr close (Josh closes and merges challenges, not the swarm)
 #   - rm chained with other commands (separator/subshell/newline present)
@@ -67,6 +68,12 @@ fi
 # pr-close guard: closing a challenge is Josh's call, not the swarm's.
 if echo "$cmd" | grep -qE 'gh[[:space:]]+pr[[:space:]]+close([[:space:]]|$)'; then
   deny "gh pr close is blocked. Josh closes and merges challenges. If a PR should be superseded, tell Josh and let him close it."
+fi
+
+# no-verify guard: pre-commit hooks must run. --no-verify and -n are blocked.
+if echo "$cmd" | grep -qE 'git[[:space:]]+commit[[:space:]].*--no-verify' \
+  || echo "$cmd" | grep -qE 'git[[:space:]]+commit[[:space:]].* -n([[:space:]]|$)'; then
+  deny "git commit --no-verify is blocked. Pre-commit hooks (gdlint, gdformat, gut) must run. Fix the failures instead of bypassing them."
 fi
 
 # gh-comment guard: comments and reviews are for humans. The swarm reports to
