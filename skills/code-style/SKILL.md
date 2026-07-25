@@ -31,8 +31,8 @@ A reviewer who sees a coined abbreviation flags it.
 
 - Every `.tres` file declares `uid="uid://…"` at the top.
 - Every `[ext_resource type="Script" ...]` line in a `.tres` or `.tscn` carries
-  `uid=`. Survives renames. Flag a new resource that ships without one;
-  style-warden is `.gd`-only and never sees this.
+  `uid=`. Survives renames. Flag a new resource that ships without one; the
+  `.gd`-only reviewers never see this.
 - Files renamed via plain rename (not `file_ops`) lose their `uid://` anchor.
   Flag any `.gd.uid` / `.tscn.uid` change that doesn't correspond to an
   intentional move.

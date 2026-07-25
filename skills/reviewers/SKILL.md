@@ -24,7 +24,7 @@ What this looks like concretely:
 - Code reviewer (code-quality, gdscript-conventions, signals-lifecycle): run `./scripts/ci/run_gut.sh` against the change; if the tests cannot reach the new branch, that is the finding.
 - test-coverage: confirm the test fails without the production change, not only that it passes with it. For player-facing ACs, also confirm at least one integration test drives the real input handler end-to-end.
 - godot-scene: load the `.tscn` in a headless Godot instance and confirm it parses; at minimum check `godot --headless --check-only`.
-- docs-and-writing: read the change against the doc it contradicts if any, not only `ai/STYLE.md`.
+- docs-and-writing: read the change against the doc it contradicts if any, and against the `voice` skill's technical-doc rules.
 
 If the role has no runtime step, name the failure modes you checked by reading and say why none triggered. Pattern-matching alone is not sufficient.
 
