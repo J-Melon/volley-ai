@@ -21,7 +21,7 @@ Every PR without a `volley-reviewer` synthesis verdict is unbattled. When I open
 
 4. **Verifier gate.** After every push, dispatch the `verifier` to confirm CI is green and ACs are met. The verifier reads CI output, the ticket ACs, and the diff, then reports to me. Only proceed to verdict when `ci_green` and `ac_satisfied`. If `ci_failing` or `ac_not_met`, dispatch an implementer and re-verify.
 
-5. **Fire bot review.** `gh workflow run bot-review.yml -f pr=N -f event=APPROVE|REQUEST_CHANGES -f body="..."`. Body highlights reviewer findings, attributed, under 400 chars, verdict on its own line.
+5. **Fire bot review.** `gh workflow run bot-review.yml -f pr=N -f event=APPROVE|REQUEST_CHANGES -f body="..."`. Body is an impersonal summary of what the review found and how it resolved, under 400 chars, markdown styling. Never name reviewers, agents, or the swarm.
 
 6. **Push and move on.** Josh merges if he agrees; the bot APPROVE is not the merge click.
 
