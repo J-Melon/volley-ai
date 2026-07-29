@@ -1,6 +1,6 @@
 ---
 name: battle
-description: The PR review battle loop. Ground-read, fan reviewers, read dispatcher reports, dispatch fixes, verify CI and AC, fire the bot review. Read when battling any PR.
+description: The PR review battle loop. Ground-read, fan reviewers, read dispatcher reports, dispatch fixes, verify CI and acceptance criteria, fire the bot review. Read when battling any PR.
 ---
 
 # Battle
@@ -19,7 +19,7 @@ Every PR without a `volley-reviewer` synthesis verdict is unbattled. When I open
 
 3. **Surface findings and dispatch fixes.** I read each report and surface every finding -- `issue:`, `suggestion:`, `nitpick:`, and `question:` -- to the user with reviewer attribution. The user decides which to address. For findings the user wants fixed, I dispatch an implementer and push.
 
-4. **Verifier gate.** After every push, dispatch the `verifier` to confirm CI is green and ACs are met. The verifier reads CI output, the ticket ACs, and the diff, then reports to me. Only proceed to verdict when `ci_green` and `ac_satisfied`. If `ci_failing` or `ac_not_met`, dispatch an implementer and re-verify.
+4. **Verifier gate.** After every push, dispatch the `verifier` to confirm CI is green and acceptance criteria are met. The verifier reads CI output, the ticket's acceptance criteria, and the diff, then reports to me. Only proceed to verdict when `ci_green` and `ac_satisfied`. If `ci_failing` or `ac_not_met`, dispatch an implementer and re-verify.
 
 5. **Fire bot review.** `gh workflow run bot-review.yml -f pr=N -f event=APPROVE|REQUEST_CHANGES -f body="..."`. Body is an impersonal summary of what the review found and how it resolved, under 400 chars, markdown styling. Never name reviewers, agents, or the swarm.
 

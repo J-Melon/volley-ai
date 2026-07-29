@@ -22,7 +22,7 @@ What this looks like concretely:
 
 - Shell-touching change (ci-and-workflows, asset-pipeline): run the script against a mock payload shaped like an attack, or like the known failure class.
 - Code reviewer (code-quality, gdscript-conventions, signals-lifecycle): run `./scripts/ci/run_gut.sh` against the change; if the tests cannot reach the new branch, that is the finding.
-- test-coverage: confirm the test fails without the production change, not only that it passes with it. For player-facing ACs, also confirm at least one integration test drives the real input handler end-to-end.
+- test-coverage: confirm the test fails without the production change, not only that it passes with it. For player-facing acceptance criteria, also confirm at least one integration test drives the real input handler end-to-end.
 - godot-scene: load the `.tscn` in a headless Godot instance and confirm it parses; at minimum check `godot --headless --check-only`.
 - docs-and-writing: read the change against the doc it contradicts if any, and against the `voice` skill's technical-doc rules.
 
