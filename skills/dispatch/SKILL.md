@@ -44,7 +44,8 @@ content.
 Brief every code-writing minion on this, or point them at this section:
 
 1. **Claim.** Resolve the GitHub mirror number `#N` (branch carries that, not `SH-N`).
-   No-ticket chore: file first via `./scripts/dev/new-ticket.sh`. Branch
+   No-ticket chore: I file the Linear ticket first ([[tickets]] holds the shape;
+   the GitHub mirror mints `#N` moments later). Branch
    `feature/<gh-number>-<slug>`; commit the claim on it, never `main`.
 2. **Cycle placement.** No cycle → move into the active one. Skip if none.
 3. **Log progress in Linear** (claim, blocker, ready-for-review) as ticket comments.
